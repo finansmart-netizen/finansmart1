@@ -1,0 +1,1053 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FinanSmart OS</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap');
+* { box-sizing: border-box; font-family: 'Rajdhani', sans-serif; margin: 0; padding: 0; }
+body {
+    --neon-cyan: #00f0ff; --neon-purple: #b537f2; --neon-green: #00ff88;
+    --neon-yellow: #ffcc00; --neon-orange: #ff6b00; --neon-red: #ff3355;
+    --bg-dark: #05060e; --bg-panel: rgba(10, 15, 35, 0.85);
+    background: var(--bg-dark); min-height: 100vh; color: #e0f7ff;
+    overflow-x: hidden;
+}
+body::before {
+    content: ''; position: fixed; inset: 0;
+    background-image: linear-gradient(rgba(0, 240, 255, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 240, 255, 0.04) 1px, transparent 1px);
+    background-size: 50px 50px; z-index: -2;
+}
+body::after {
+    content: ''; position: fixed; inset: 0;
+    background: radial-gradient(ellipse at 20% 10%, rgba(181, 55, 242, 0.15) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 90%, rgba(0, 240, 255, 0.12) 0%, transparent 50%);
+    z-index: -1; pointer-events: none;
+}
+.auth-screen { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; z-index: 9999; padding: 20px; }
+.auth-screen.hidden { display: none; }
+.auth-box {
+    background: linear-gradient(180deg, rgba(10, 15, 35, 0.98), rgba(5, 10, 25, 0.98));
+    border: 1px solid rgba(0, 240, 255, 0.4); border-radius: 12px;
+    padding: 40px; width: 100%; max-width: 420px;
+    box-shadow: 0 20px 80px rgba(0, 0, 0, 0.8);
+}
+.auth-logo { text-align: center; margin-bottom: 30px; }
+.auth-logo .logo-icon {
+    width: 70px; height: 70px; border-radius: 12px;
+    background: linear-gradient(135deg, #b537f2, #00f0ff);
+    display: inline-flex; align-items: center; justify-content: center;
+    font-family: 'Orbitron', sans-serif; font-size: 34px; font-weight: 900;
+    color: white; margin-bottom: 15px;
+}
+.auth-logo h2 {
+    font-family: 'Orbitron', sans-serif; font-size: 22px; font-weight: 900;
+    background: linear-gradient(90deg, #00f0ff, #b537f2);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    margin-bottom: 5px;
+}
+.auth-logo p { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #6b8aa8; letter-spacing: 3px; }
+.auth-form-group { margin-bottom: 16px; }
+.auth-form-label {
+    display: block; font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; color: #00f0ff; font-weight: 600;
+    margin-bottom: 8px; text-transform: uppercase; letter-spacing: 2px;
+}
+.auth-form-label::before { content: '▸ '; color: #b537f2; }
+.auth-input {
+    width: 100%; padding: 13px 16px;
+    border: 1px solid rgba(0, 240, 255, 0.3); border-radius: 10px;
+    font-size: 14px; background: rgba(5, 10, 25, 0.9);
+    color: #e0f7ff; font-family: 'Rajdhani', sans-serif;
+}
+.auth-input:focus { outline: none; border-color: #00f0ff; box-shadow: 0 0 0 3px rgba(0, 240, 255, 0.15); }
+.auth-btn {
+    width: 100%; padding: 14px; border-radius: 10px;
+    border: 1px solid #00f0ff;
+    background: linear-gradient(135deg, rgba(0, 240, 255, 0.15), rgba(0, 153, 255, 0.15));
+    color: #00f0ff; font-family: 'Orbitron', sans-serif; font-size: 13px; font-weight: 800;
+    letter-spacing: 2px; text-transform: uppercase; cursor: pointer; margin-top: 8px;
+}
+.auth-error {
+    background: rgba(255, 51, 85, 0.1); border: 1px solid #ff3355;
+    color: #ff3355; padding: 10px 14px; border-radius: 8px;
+    font-family: 'JetBrains Mono', monospace; font-size: 11px;
+    margin-bottom: 16px; display: none; text-align: center;
+}
+.auth-error.show { display: block; }
+.auth-info {
+    background: rgba(0, 240, 255, 0.05); border: 1px solid rgba(0, 240, 255, 0.2);
+    border-radius: 8px; padding: 12px 14px;
+    font-size: 11px; font-family: 'JetBrains Mono', monospace;
+    color: #6b8aa8; margin-top: 20px; line-height: 1.6; text-align: center;
+}
+.auth-info strong { color: #00f0ff; }
+.auth-info .diag { color: #ffcc00; font-size: 10px; display: block; margin-top: 4px; }
+.auth-info .err { color: #ff3355; font-size: 10px; display: block; margin-top: 4px; }
+.btn-reparar {
+    width: 100%; padding: 10px; margin-top: 12px;
+    border-radius: 8px; border: 1px solid #ff6b00;
+    background: rgba(255, 107, 0, 0.1); color: #ff6b00;
+    font-family: 'JetBrains Mono', monospace; font-size: 11px;
+    cursor: pointer; text-align: center;
+}
+.app { display: grid; grid-template-columns: 260px 1fr; min-height: 100vh; }
+.app.hidden { display: none; }
+.sidebar {
+    background: linear-gradient(180deg, rgba(5, 10, 30, 0.98), rgba(10, 5, 25, 0.95));
+    border-right: 1px solid rgba(0, 240, 255, 0.2);
+    padding: 24px 16px; position: sticky; top: 0; height: 100vh;
+    overflow-y: auto; display: flex; flex-direction: column; gap: 6px;
+}
+.sidebar-brand { display: flex; align-items: center; gap: 12px; padding: 0 8px 20px; border-bottom: 1px solid rgba(0, 240, 255, 0.15); margin-bottom: 20px; }
+.brand-icon {
+    width: 44px; height: 44px; border-radius: 10px;
+    background: linear-gradient(135deg, #b537f2, #00f0ff);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Orbitron', sans-serif; font-size: 22px; font-weight: 900; color: white;
+}
+.brand-name { font-family: 'Orbitron', sans-serif; font-size: 17px; font-weight: 900; background: linear-gradient(90deg, #00f0ff, #b537f2); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.brand-sub { font-size: 9px; color: #6b8aa8; letter-spacing: 3px; font-family: 'JetBrains Mono', monospace; }
+.user-badge { display: flex; align-items: center; gap: 10px; padding: 10px 12px; background: linear-gradient(135deg, rgba(0, 240, 255, 0.08), rgba(181, 55, 242, 0.08)); border: 1px solid rgba(0, 240, 255, 0.2); border-radius: 10px; margin-bottom: 16px; }
+.user-badge.admin { background: linear-gradient(135deg, rgba(255, 204, 0, 0.1), rgba(255, 107, 0, 0.1)); border-color: rgba(255, 204, 0, 0.4); }
+.user-avatar { width: 36px; height: 36px; border-radius: 8px; background: linear-gradient(135deg, #00f0ff, #b537f2); display: flex; align-items: center; justify-content: center; font-family: 'Orbitron', sans-serif; font-size: 15px; font-weight: 900; color: white; flex-shrink: 0; }
+.user-badge.admin .user-avatar { background: linear-gradient(135deg, #ffcc00, #ff6b00); }
+.user-info { flex: 1; min-width: 0; }
+.user-name { font-family: 'Orbitron', sans-serif; font-size: 12px; font-weight: 700; color: #00f0ff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.user-badge.admin .user-name { color: #ffcc00; }
+.user-role { font-size: 9px; color: #3d5570; font-family: 'JetBrains Mono', monospace; letter-spacing: 1.5px; text-transform: uppercase; }
+.btn-logout { background: rgba(255, 51, 85, 0.1); border: 1px solid #ff3355; color: #ff3355; border-radius: 6px; width: 28px; height: 28px; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.menu-section { font-family: 'Orbitron', sans-serif; font-size: 9px; color: #3d5570; text-transform: uppercase; letter-spacing: 3px; padding: 18px 12px 8px; font-weight: 700; }
+.menu-item { display: flex; align-items: center; gap: 12px; padding: 11px 14px; border-radius: 8px; cursor: pointer; color: #6b8aa8; font-size: 13.5px; font-weight: 600; border-left: 2px solid transparent; }
+.menu-item:hover { color: #00f0ff; background: rgba(0, 240, 255, 0.05); }
+.menu-item.active { color: #00f0ff; background: linear-gradient(90deg, rgba(0, 240, 255, 0.15), rgba(181, 55, 242, 0.05)); border-left-color: #00f0ff; }
+.menu-item.admin-only { display: none; }
+.menu-item.admin-only.visible { display: flex; }
+.mi-icon { font-size: 16px; width: 20px; text-align: center; }
+.sidebar-info { margin-top: auto; background: linear-gradient(135deg, rgba(0, 240, 255, 0.05), rgba(181, 55, 242, 0.05)); border: 1px solid rgba(0, 240, 255, 0.25); padding: 14px; border-radius: 10px; font-size: 11px; line-height: 1.5; color: #6b8aa8; }
+.si-title { color: #00f0ff; font-weight: 700; margin-bottom: 5px; font-family: 'Orbitron', sans-serif; font-size: 10px; }
+.main { padding: 24px 32px 60px; overflow-x: hidden; min-width: 0; }
+.topbar { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 28px; padding-bottom: 20px; border-bottom: 1px solid rgba(0, 240, 255, 0.15); }
+.breadcrumb { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #00f0ff; letter-spacing: 3px; font-weight: 600; text-transform: uppercase; margin-bottom: 8px; }
+.breadcrumb::before { content: '▸ '; color: #b537f2; }
+.topbar-left h1 { font-family: 'Orbitron', sans-serif; font-size: 28px; font-weight: 900; }
+.topbar-right { display: flex; gap: 10px; align-items: center; }
+.form-input { width: 100%; padding: 11px 16px; border: 1px solid rgba(0, 240, 255, 0.3); border-radius: 8px; font-size: 13.5px; background: rgba(10, 15, 35, 0.8); color: #e0f7ff; font-family: 'Rajdhani', sans-serif; }
+.form-input:focus { outline: none; border-color: #00f0ff; }
+.form-input.editable { background: rgba(255, 204, 0, 0.05); border-color: rgba(255, 204, 0, 0.4); }
+.form-select { width: 100%; padding: 12px 16px; border: 1px solid rgba(0, 240, 255, 0.45); border-radius: 8px; font-size: 13.5px; background-color: #0a0f23; color: #00f0ff; font-family: 'Rajdhani', sans-serif; font-weight: 700; cursor: pointer; }
+.form-select option { background: #0a0f23; color: #e0f7ff; }
+.select-row { display: flex; gap: 10px; align-items: stretch; }
+.select-row .form-select { flex: 1; }
+.btn { padding: 11px 22px; border-radius: 8px; border: 1px solid; font-size: 13px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; font-family: 'Rajdhani', sans-serif; letter-spacing: 1px; text-transform: uppercase; }
+.btn-primary { background: linear-gradient(135deg, rgba(0, 240, 255, 0.15), rgba(0, 153, 255, 0.15)); border-color: #00f0ff; color: #00f0ff; }
+.btn-success { background: linear-gradient(135deg, rgba(0, 255, 136, 0.15), rgba(0, 200, 100, 0.15)); border-color: #00ff88; color: #00ff88; }
+.btn-danger { background: linear-gradient(135deg, rgba(255, 51, 85, 0.15), rgba(200, 0, 40, 0.15)); border-color: #ff3355; color: #ff3355; }
+.btn-ghost { background: rgba(10, 15, 35, 0.6); border-color: rgba(107, 138, 168, 0.4); color: #6b8aa8; }
+.btn-small { padding: 7px 14px; font-size: 11px; }
+.btn-row { display: flex; gap: 12px; justify-content: flex-end; margin-top: 20px; }
+.module { display: none; }
+.module.active { display: block; }
+.panel { background: var(--bg-panel); border: 1px solid rgba(0, 240, 255, 0.2); border-radius: 12px; padding: 24px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4); }
+.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 20px; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+.form-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+.form-group { margin-bottom: 16px; }
+.form-label { display: block; font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #00f0ff; font-weight: 600; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 2px; }
+.form-label::before { content: '▸ '; color: #b537f2; }
+.data-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.data-table th { background: rgba(0, 240, 255, 0.06); color: #00f0ff; padding: 12px 14px; text-align: left; font-family: 'JetBrains Mono', monospace; font-weight: 600; font-size: 10px; text-transform: uppercase; border-bottom: 1px solid rgba(0, 240, 255, 0.25); }
+.data-table td { padding: 10px 14px; border-bottom: 1px solid rgba(0, 240, 255, 0.08); }
+.preview-box { background: rgba(0, 0, 0, 0.4); border: 1px dashed rgba(0, 240, 255, 0.3); border-radius: 10px; padding: 16px; margin-top: 12px; max-height: 200px; overflow-y: auto; position: relative; }
+.preview-box::before { content: '◉ PREVIEW'; position: absolute; top: -8px; left: 15px; background: var(--bg-dark); padding: 0 8px; font-family: 'JetBrains Mono', monospace; font-size: 9px; color: #00f0ff; }
+.preview-box table { width: 100%; font-size: 13px; border-collapse: collapse; }
+.preview-box th { background: transparent; border-bottom: 1px solid rgba(0, 240, 255, 0.2); text-align: left; padding: 8px; font-family: 'JetBrains Mono', monospace; font-size: 9px; color: #6b8aa8; }
+.preview-box td { padding: 9px 8px; border-bottom: 1px dotted rgba(0, 240, 255, 0.1); }
+.preview-box .num { text-align: right; font-family: 'JetBrains Mono', monospace; font-weight: 600; }
+.info-card { background: rgba(10, 15, 35, 0.6); border: 1px solid rgba(0, 240, 255, 0.2); border-radius: 12px; padding: 20px; display: flex; align-items: center; gap: 16px; }
+.info-icon { width: 48px; height: 48px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 22px; background: rgba(0, 240, 255, 0.1); border: 1px solid #00f0ff; color: #00f0ff; flex-shrink: 0; }
+.info-content { flex: 1; min-width: 0; }
+.info-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #6b8aa8; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 6px; }
+.info-value { font-family: 'Orbitron', sans-serif; font-size: 22px; font-weight: 700; }
+.info-value.green { color: #00ff88; }
+.info-value.purple { color: #b537f2; }
+.info-value.yellow { color: #ffcc00; }
+.modal-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.85); z-index: 10000; display: none; align-items: center; justify-content: center; padding: 20px; }
+.modal-overlay.show { display: flex; }
+.modal { background: linear-gradient(180deg, rgba(10, 15, 35, 0.98), rgba(5, 10, 25, 0.98)); border: 1px solid rgba(0, 240, 255, 0.4); border-radius: 16px; padding: 32px; width: 100%; max-width: 500px; }
+.modal h2 { font-family: 'Orbitron', sans-serif; font-size: 20px; font-weight: 900; letter-spacing: 2px; color: #00f0ff; margin-bottom: 24px; text-align: center; text-transform: uppercase; }
+.modal-footer { display: flex; gap: 12px; justify-content: flex-end; margin-top: 24px; }
+.sync-status { position: fixed; bottom: 20px; right: 20px; padding: 10px 16px; border-radius: 10px; font-family: 'JetBrains Mono', monospace; font-size: 11px; z-index: 9998; opacity: 0; pointer-events: none; max-width: 300px; }
+.sync-status.show { opacity: 1; }
+.sync-status.syncing { background: rgba(0, 240, 255, 0.15); border: 1px solid #00f0ff; color: #00f0ff; }
+.sync-status.success { background: rgba(0, 255, 136, 0.15); border: 1px solid #00ff88; color: #00ff88; }
+.sync-status.error { background: rgba(255, 51, 85, 0.15); border: 1px solid #ff3355; color: #ff3355; }
+.user-row-inactive td { opacity: 0.5; }
+.user-status-active { color: #00ff88; font-weight: 700; }
+.user-status-inactive { color: #ff3355; font-weight: 700; }
+.user-status-admin { color: #ffcc00; font-weight: 700; }
+.kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 18px; margin-bottom: 28px; }
+.kpi-card { background: var(--bg-panel); border: 1px solid; border-radius: 12px; padding: 22px; }
+.kpi-card.blue { --accent: #00f0ff; border-color: rgba(0, 240, 255, 0.3); }
+.kpi-card.green { --accent: #00ff88; border-color: rgba(0, 255, 136, 0.3); }
+.kpi-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #6b8aa8; font-weight: 600; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 14px; }
+.kpi-value { font-family: 'Orbitron', sans-serif; font-size: 26px; font-weight: 800; color: var(--accent); }
+.config-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.config-table th { background: rgba(0, 240, 255, 0.06); color: #00f0ff; padding: 12px 14px; text-align: left; font-family: 'JetBrains Mono', monospace; font-weight: 600; font-size: 10px; text-transform: uppercase; border-bottom: 1px solid rgba(0, 240, 255, 0.25); }
+.config-table td { padding: 10px 14px; border-bottom: 1px solid rgba(0, 240, 255, 0.08); }
+.config-table input, .config-table select { width: 100%; padding: 8px 10px; border: 1px solid rgba(0, 240, 255, 0.25); border-radius: 6px; background: rgba(10, 15, 35, 0.8); color: #e0f7ff; font-size: 12px; }
+.config-table select option { background: #0a0f23; color: #e0f7ff; }
+.btn-delete-row { background: rgba(255, 51, 85, 0.1); border: 1px solid #ff3355; color: #ff3355; border-radius: 4px; width: 24px; height: 24px; font-size: 12px; font-weight: 900; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; padding: 0; }
+.btn-delete-plantilla { background: linear-gradient(135deg, rgba(255, 51, 85, 0.15), rgba(200, 0, 40, 0.15)); border: 1px solid #ff3355; color: #ff3355; border-radius: 8px; padding: 0 18px; font-size: 16px; font-weight: 900; cursor: pointer; display: none; }
+.btn-delete-plantilla.admin-visible { display: flex; align-items: center; }
+.config-readonly { background: rgba(10, 15, 35, 0.4); border: 1px solid rgba(107, 138, 168, 0.3); border-radius: 10px; padding: 20px; text-align: center; color: #6b8aa8; font-family: 'JetBrains Mono', monospace; font-size: 12px; line-height: 1.8; margin-bottom: 20px; }
+@media (max-width: 900px) {
+    .app { grid-template-columns: 1fr; }
+    .sidebar { position: relative; height: auto; }
+    .grid-3 { grid-template-columns: 1fr; }
+    .form-row { grid-template-columns: 1fr; }
+    .form-row-3 { grid-template-columns: 1fr; }
+    .main { padding: 16px; }
+}
+</style>
+</head>
+<body>
+
+<div class="sync-status" id="syncStatus"></div>
+
+<div class="auth-screen" id="authScreen">
+    <div class="auth-box">
+        <div class="auth-logo">
+            <div class="logo-icon">F</div>
+            <h2>FINANSMART</h2>
+            <p>ACCESO AL SISTEMA</p>
+        </div>
+        <div class="auth-error" id="authError"></div>
+        <div class="auth-form-group">
+            <label class="auth-form-label">USUARIO</label>
+            <input type="text" class="auth-input" id="loginUser" placeholder="Ingresa tu usuario">
+        </div>
+        <div class="auth-form-group">
+            <label class="auth-form-label">CONTRASEÑA</label>
+            <input type="password" class="auth-input" id="loginPass" placeholder="Ingresa tu contraseña">
+        </div>
+        <button class="auth-btn" onclick="iniciarSesion()">⚡ INGRESAR</button>
+        <div class="auth-info" id="authInfoBox">
+            🔒 <strong>CONECTANDO...</strong>
+            <span class="diag" id="diagMsg">Esperando respuesta del servidor...</span>
+        </div>
+        <button class="btn-reparar" onclick="repararSistema()">🔧 Reparar sistema (limpiar servidor)</button>
+    </div>
+</div>
+
+<div class="app hidden" id="appMain">
+    <aside class="sidebar">
+        <div class="sidebar-brand">
+            <div class="brand-icon">F</div>
+            <div>
+                <div class="brand-name">FINANSMART</div>
+                <div class="brand-sub">OS · V7.0</div>
+            </div>
+        </div>
+        <div class="user-badge" id="userBadge">
+            <div class="user-avatar" id="userAvatar">U</div>
+            <div class="user-info">
+                <div class="user-name" id="userNameDisplay">Usuario</div>
+                <div class="user-role" id="userRoleDisplay">● ONLINE</div>
+            </div>
+            <button class="btn-logout" onclick="cerrarSesion()">⎋</button>
+        </div>
+        <div class="menu-section">CORE</div>
+        <div class="menu-item active" onclick="irModulo('dashboard', event)"><span class="mi-icon">◈</span> Dashboard / Resultados</div>
+        <div class="menu-item" onclick="irModulo('asientos', event)"><span class="mi-icon">◆</span> Movimiento</div>
+        <div class="menu-section">SYSTEM</div>
+        <div class="menu-item" onclick="irModulo('config', event)"><span class="mi-icon">⚙</span> Plantillas</div>
+        <div class="menu-item admin-only" id="menuUsuarios" onclick="irModulo('usuarios', event)"><span class="mi-icon">👥</span> Usuarios</div>
+        <div class="sidebar-info">
+            <div class="si-title" id="sidebarTitle">⚡ SESIÓN ACTIVA</div>
+            <div id="sidebarText">Datos protegidos.</div>
+        </div>
+    </aside>
+    <main class="main">
+        <section class="module active" id="mod-dashboard">
+            <div class="topbar">
+                <div class="topbar-left">
+                    <div class="breadcrumb">SISTEMA / DASHBOARD</div>
+                    <h1>Dashboard</h1>
+                </div>
+            </div>
+            <div class="kpi-grid">
+                <div class="kpi-card blue"><div class="kpi-label">DINERO DISPONIBLE</div><div class="kpi-value" id="kpiDinero">S/ 0.00</div></div>
+                <div class="kpi-card green"><div class="kpi-label">GANANCIA</div><div class="kpi-value" id="kpiGanancia">S/ 0.00</div></div>
+            </div>
+        </section>
+        <section class="module" id="mod-asientos">
+            <div class="topbar">
+                <div class="topbar-left">
+                    <div class="breadcrumb">CORE / MOVIMIENTO</div>
+                    <h1>Movimiento</h1>
+                </div>
+            </div>
+            <div class="panel">
+                <div class="form-group">
+                    <label class="form-label">TIPO DE OPERACIÓN</label>
+                    <div class="select-row">
+                        <select class="form-select" id="cboTipo" onchange="calcularYPrevisualizar()">
+                            <option value="" disabled selected>-- SELECCIONE --</option>
+                        </select>
+                        <button type="button" class="btn-delete-plantilla" id="btnEliminarPlantilla" onclick="eliminarPlantillaSeleccionada()">✕</button>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group"><label class="form-label">📅 FECHA</label><input type="date" class="form-input" id="txtFechaOperacion"></div>
+                    <div class="form-group"><label class="form-label">N° FACTURA</label><input type="text" class="form-input" id="txtFactura" placeholder="E001-005"></div>
+                </div>
+                <div class="form-row-3">
+                    <div class="form-group"><label class="form-label">BASE</label><input type="text" class="form-input editable" id="txtBase" placeholder="0.00" oninput="recalcularDesde('base')"></div>
+                    <div class="form-group"><label class="form-label">IGV (18%)</label><input type="text" class="form-input editable" id="txtIGV" placeholder="0.00" oninput="recalcularDesde('igv')"></div>
+                    <div class="form-group"><label class="form-label">TOTAL</label><input type="text" class="form-input editable" id="txtTotal" placeholder="0.00" oninput="recalcularDesde('total')"></div>
+                </div>
+                <div class="form-group"><label class="form-label">GLOSA</label><input type="text" class="form-input" id="txtGlosa" placeholder="Descripción"></div>
+                <div class="preview-box">
+                    <table id="tablaPreview">
+                        <thead><tr><th width="15%">CUENTA</th><th width="50%">DESCRIPCIÓN</th><th width="17%" style="text-align:right;">DEBE</th><th width="17%" style="text-align:right;">HABER</th></tr></thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+                <div class="btn-row">
+                    <button class="btn btn-ghost" onclick="limpiarFormulario()">🧹 LIMPIAR</button>
+                    <button class="btn btn-success" onclick="insertarAsiento()">⊕ REGISTRAR</button>
+                </div>
+            </div>
+        </section>
+        <section class="module" id="mod-config">
+            <div class="topbar">
+                <div class="topbar-left">
+                    <div class="breadcrumb">SYSTEM / PLANTILLAS</div>
+                    <h1>Tipos de Operación</h1>
+                </div>
+                <div class="topbar-right">
+                    <button class="btn btn-ghost" onclick="recargarTodoDesdeServidor()">⟳ RECARGAR</button>
+                </div>
+            </div>
+            <div class="config-readonly" id="configReadOnly" style="display:none;">🔒 <strong>MODO SOLO LECTURA</strong><br>Los tipos de operación son administrados por el admin.</div>
+            <div class="panel" id="configPanel">
+                <div class="form-group">
+                    <label class="form-label">NOMBRE DE LA PLANTILLA</label>
+                    <input type="text" class="form-input" id="txtNombrePlantilla" placeholder="Ej: Pago de Servicios">
+                </div>
+                <div>
+                    <label class="form-label">LÍNEAS DEL ASIENTO</label>
+                    <table class="config-table" id="tablaConfigLineas">
+                        <thead><tr><th width="15%">CÓDIGO</th><th width="25%">DESCRIPCIÓN</th><th width="12%">TIPO</th><th width="26%">VALOR</th><th width="10%">ACCIÓN</th></tr></thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+                <div style="margin-top: 12px;"><button class="btn btn-ghost" onclick="agregarLineaConfig()">+ AGREGAR LÍNEA</button></div>
+                <div class="btn-row">
+                    <button class="btn btn-ghost" onclick="limpiarConfig()">🧹 LIMPIAR</button>
+                    <button class="btn btn-success" onclick="guardarPlantilla()">💾 GUARDAR</button>
+                </div>
+            </div>
+        </section>
+        <section class="module" id="mod-usuarios">
+            <div class="topbar">
+                <div class="topbar-left">
+                    <div class="breadcrumb">ADMIN / USUARIOS</div>
+                    <h1>Gestión de Usuarios</h1>
+                </div>
+                <div class="topbar-right">
+                    <button class="btn btn-ghost" onclick="recargarTodoDesdeServidor()">⟳ RECARGAR</button>
+                    <button class="btn btn-success" onclick="abrirModalCrearUsuario()">+ NUEVO</button>
+                </div>
+            </div>
+            <div class="grid-3">
+                <div class="info-card"><div class="info-icon">👥</div><div class="info-content"><div class="info-label">TOTAL</div><div class="info-value yellow" id="adminTotalUsuarios">0</div></div></div>
+                <div class="info-card"><div class="info-icon">✓</div><div class="info-content"><div class="info-label">ACTIVOS</div><div class="info-value green" id="adminUsuariosActivos">0</div></div></div>
+                <div class="info-card"><div class="info-icon">⚡</div><div class="info-content"><div class="info-label">ADMINS</div><div class="info-value purple" id="adminUsuariosAdmin">0</div></div></div>
+            </div>
+            <div class="panel">
+                <div style="overflow-x: auto;">
+                    <table class="data-table" id="tablaUsuarios">
+                        <thead><tr><th>USUARIO</th><th>NOMBRE</th><th>ROL</th><th>ESTADO</th><th>CREADO</th><th style="text-align:center;">ACCIONES</th></tr></thead>
+                        <tbody id="cuerpoUsuarios"></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+    </main>
+</div>
+
+<div class="modal-overlay" id="modalUsuario">
+    <div class="modal">
+        <h2 id="modalUsuarioTitle">NUEVO USUARIO</h2>
+        <input type="hidden" id="modalUserIdOriginal">
+        <div class="auth-form-group"><label class="auth-form-label">USUARIO</label><input type="text" class="auth-input" id="modalUserUsername" placeholder="Ej: jperez"></div>
+        <div class="auth-form-group"><label class="auth-form-label">NOMBRE COMPLETO</label><input type="text" class="auth-input" id="modalUserNombre" placeholder="Ej: Juan Pérez"></div>
+        <div class="auth-form-group"><label class="auth-form-label">CONTRASEÑA</label><input type="password" class="auth-input" id="modalUserPass" placeholder="Mínimo 4 caracteres"></div>
+        <div class="auth-form-group"><label class="auth-form-label">ROL</label>
+            <select class="form-select" id="modalUserRol">
+                <option value="user">USUARIO NORMAL</option>
+                <option value="admin">ADMINISTRADOR</option>
+            </select>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-ghost" onclick="cerrarModalUsuario()">CANCELAR</button>
+            <button class="btn btn-success" onclick="guardarUsuarioModal()">💾 GUARDAR</button>
+        </div>
+    </div>
+</div>
+
+<script>
+// ==========================================
+// 🔑 API ENDPOINT (Netlify Function + Blobs)
+// ==========================================
+const API_URL = '/api/datos';
+
+const SESSION_KEY = 'finansmart_session_v18';
+const DATA_PREFIX = 'finansmart_data_';
+const CACHE_KEY = 'finansmart_cache_v18';
+
+let usuarioActual = null;
+let vBase = 0, vIGV = 0, vTotal = 0;
+let correlativo = 1;
+let lineasConfigTemp = [];
+let usuariosCache = {};
+let plantillasCache = {};
+
+function log(...args) { console.log('[FinanSmart]', ...args); }
+
+function setDiag(msg, isError) {
+    const el = document.getElementById('diagMsg');
+    if (!el) return;
+    el.textContent = msg;
+    el.className = isError ? 'err' : 'diag';
+}
+
+function mostrarSync(msg, tipo) {
+    const el = document.getElementById('syncStatus');
+    el.textContent = msg;
+    el.className = 'sync-status show ' + (tipo || 'syncing');
+    clearTimeout(el._t);
+    el._t = setTimeout(() => { el.className = 'sync-status'; }, 4000);
+}
+
+async function leerDatos() {
+    try {
+        log('📥 GET ' + API_URL);
+        setDiag('📥 Leyendo del servidor...');
+        const res = await fetch(API_URL + '?t=' + Date.now());
+        if (!res.ok) {
+            setDiag('❌ Error GET: HTTP ' + res.status, true);
+            throw new Error('HTTP ' + res.status);
+        }
+        const data = await res.json();
+        log('📥 Datos:', data);
+        setDiag('✅ GET OK');
+        return data || {};
+    } catch (e) {
+        console.error('❌ GET falló:', e);
+        setDiag('❌ GET falló: ' + e.message, true);
+        return null;
+    }
+}
+
+async function escribirDatos(datos) {
+    try {
+        log('📤 PUT ' + API_URL);
+        setDiag('📤 Escribiendo en servidor...');
+        const res = await fetch(API_URL, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(datos)
+        });
+        if (!res.ok) {
+            const errTxt = await res.text();
+            console.error('❌ Error servidor:', res.status, errTxt);
+            setDiag('❌ Error PUT: HTTP ' + res.status, true);
+            throw new Error('HTTP ' + res.status);
+        }
+        log('📤 Guardado OK');
+        setDiag('✅ PUT OK');
+        return true;
+    } catch (e) {
+        console.error('❌ PUT falló:', e);
+        setDiag('❌ PUT falló: ' + e.message, true);
+        return false;
+    }
+}
+
+async function guardarTodoEnServidor() {
+    return await escribirDatos({
+        plantillas: plantillasCache,
+        usuarios: usuariosCache,
+        version: 2,
+        timestamp: new Date().toISOString()
+    });
+}
+
+function plantillasPorDefecto() {
+    return {
+        venta_credito: { nombre: "VENTA (CRÉDITO)", lineas: [
+            { codigo: "1212", desc: "Facturas por cobrar", tipo: "debe", valor: "total" },
+            { codigo: "70121", desc: "Ventas", tipo: "haber", valor: "base" },
+            { codigo: "40111", desc: "IGV", tipo: "haber", valor: "igv" }
+        ]},
+        venta_contado: { nombre: "VENTA (CONTADO)", lineas: [
+            { codigo: "101", desc: "Caja", tipo: "debe", valor: "total" },
+            { codigo: "70121", desc: "Ventas", tipo: "haber", valor: "base" },
+            { codigo: "40111", desc: "IGV", tipo: "haber", valor: "igv" }
+        ]},
+        compra_credito: { nombre: "COMPRA (CRÉDITO)", lineas: [
+            { codigo: "60111", desc: "Compra", tipo: "debe", valor: "base" },
+            { codigo: "40111", desc: "IGV", tipo: "debe", valor: "igv" },
+            { codigo: "4212", desc: "Cuentas por pagar", tipo: "haber", valor: "total" }
+        ]},
+        compra_contado: { nombre: "COMPRA (CONTADO)", lineas: [
+            { codigo: "60111", desc: "Compra", tipo: "debe", valor: "base" },
+            { codigo: "40111", desc: "IGV", tipo: "debe", valor: "igv" },
+            { codigo: "101", desc: "Caja", tipo: "haber", valor: "total" }
+        ]}
+    };
+}
+
+function hashPassword(pass) {
+    let hash = 0;
+    for (let i = 0; i < pass.length; i++) {
+        const char = pass.charCodeAt(i);
+        hash = ((hash << 5) - hash) + char;
+        hash = hash & hash;
+    }
+    return 'h_' + Math.abs(hash).toString(36);
+}
+
+async function repararSistema() {
+    if (!confirm('⚠️ Esto limpiará el servidor y creará el admin por defecto.\n\n¿Continuar?')) return;
+    mostrarSync('⟳ Reparando...', 'syncing');
+    usuariosCache = {
+        admin: {
+            username: 'admin', nombre: 'Administrador',
+            pass: hashPassword('admin123'), rol: 'admin',
+            activo: true, tema: 'futurista',
+            creado: new Date().toISOString()
+        }
+    };
+    plantillasCache = plantillasPorDefecto();
+    const ok = await escribirDatos({
+        plantillas: plantillasCache,
+        usuarios: usuariosCache,
+        version: 2,
+        timestamp: new Date().toISOString()
+    });
+    if (ok) {
+        mostrarSync('✅ Reparado', 'success');
+        actualizarInfoLogin();
+        alert('✅ Sistema reparado.\n\nUsuario: admin\nContraseña: admin123');
+    } else {
+        mostrarSync('❌ Falló', 'error');
+        alert('⚠️ Falló. Mira el mensaje rojo en la pantalla de login.');
+    }
+}
+
+async function cargarDatosDelServidor() {
+    mostrarSync('⟳ Cargando...', 'syncing');
+    const datos = await leerDatos();
+    
+    if (datos && typeof datos === 'object') {
+        let modificado = false;
+        
+        if (datos.usuarios && Object.keys(datos.usuarios).length > 0) {
+            usuariosCache = datos.usuarios;
+            log('✓ Usuarios:', Object.keys(usuariosCache));
+        } else {
+            usuariosCache = {
+                admin: {
+                    username: 'admin', nombre: 'Administrador',
+                    pass: hashPassword('admin123'), rol: 'admin',
+                    activo: true, tema: 'futurista',
+                    creado: new Date().toISOString()
+                }
+            };
+            modificado = true;
+        }
+        
+        if (datos.plantillas && Object.keys(datos.plantillas).length > 0) {
+            plantillasCache = datos.plantillas;
+        } else {
+            plantillasCache = plantillasPorDefecto();
+            modificado = true;
+        }
+        
+        if (modificado) {
+            await escribirDatos({
+                plantillas: plantillasCache,
+                usuarios: usuariosCache,
+                version: 2
+            });
+        }
+        
+        localStorage.setItem(CACHE_KEY, JSON.stringify({
+            usuarios: usuariosCache, plantillas: plantillasCache
+        }));
+        
+        mostrarSync('✓ Datos cargados', 'success');
+    } else {
+        const cache = localStorage.getItem(CACHE_KEY);
+        if (cache) {
+            try {
+                const c = JSON.parse(cache);
+                usuariosCache = c.usuarios || {};
+                plantillasCache = c.plantillas || plantillasPorDefecto();
+                mostrarSync('⚠ Usando caché local', 'error');
+                setDiag('⚠ Sin conexión. Usando caché local.', true);
+            } catch (e) {
+                usuariosCache = {};
+                plantillasCache = plantillasPorDefecto();
+            }
+        } else {
+            usuariosCache = {
+                admin: {
+                    username: 'admin', nombre: 'Administrador',
+                    pass: hashPassword('admin123'), rol: 'admin',
+                    activo: true, tema: 'futurista',
+                    creado: new Date().toISOString()
+                }
+            };
+            plantillasCache = plantillasPorDefecto();
+            mostrarSync('⚠ Sin conexión', 'error');
+        }
+    }
+    
+    actualizarInfoLogin();
+    cargarComboBoxPlantillas();
+}
+
+function actualizarInfoLogin() {
+    const infoBox = document.getElementById('authInfoBox');
+    if (infoBox) {
+        const nUsers = Object.keys(usuariosCache).length;
+        const listaUsuarios = Object.keys(usuariosCache).join(', ');
+        infoBox.innerHTML = `🔒 <strong>USUARIOS (${nUsers})</strong><br>${listaUsuarios}<span class="diag" id="diagMsg"></span>`;
+    }
+}
+
+function getDataKey() { return DATA_PREFIX + usuarioActual.username; }
+function guardarEstado() { if (usuarioActual) localStorage.setItem(getDataKey(), JSON.stringify({ version: 2, correlativo: correlativo })); }
+function cargarEstado() {
+    if (!usuarioActual) return false;
+    try {
+        const raw = localStorage.getItem(getDataKey());
+        if (!raw) return false;
+        const estado = JSON.parse(raw);
+        if (estado.correlativo) correlativo = estado.correlativo;
+        return true;
+    } catch (e) { return false; }
+}
+
+function mostrarError(msg) {
+    const err = document.getElementById('authError');
+    err.textContent = '⚠ ' + msg;
+    err.classList.add('show');
+    setTimeout(() => err.classList.remove('show'), 6000);
+}
+
+function iniciarSesion() {
+    const username = document.getElementById('loginUser').value.trim().toLowerCase();
+    const pass = document.getElementById('loginPass').value;
+    if (!username || !pass) { mostrarError('Completa usuario y contraseña'); return; }
+    log('🔐 Login:', username);
+    const user = usuariosCache[username];
+    if (!user) {
+        mostrarError('Usuario no encontrado. Disponibles: ' + Object.keys(usuariosCache).join(', '));
+        return;
+    }
+    if (!user.activo) { mostrarError('Cuenta desactivada'); return; }
+    if (user.pass !== hashPassword(pass)) { mostrarError('Contraseña incorrecta'); return; }
+    usuarioActual = user;
+    sessionStorage.setItem(SESSION_KEY, username);
+    abrirApp();
+}
+
+function cerrarSesion() {
+    if (!confirm('¿Cerrar sesión?')) return;
+    sessionStorage.removeItem(SESSION_KEY);
+    usuarioActual = null;
+    location.reload();
+}
+
+function abrirApp() {
+    document.getElementById('userAvatar').textContent = usuarioActual.nombre.charAt(0).toUpperCase();
+    document.getElementById('userNameDisplay').textContent = usuarioActual.nombre;
+    const esAdmin = usuarioActual.rol === 'admin';
+    if (esAdmin) {
+        document.getElementById('userBadge').classList.add('admin');
+        document.getElementById('userRoleDisplay').textContent = '● ADMIN';
+        document.getElementById('userRoleDisplay').style.color = '#ffcc00';
+        document.getElementById('menuUsuarios').classList.add('visible');
+        document.getElementById('sidebarTitle').textContent = '⚡ MODO ADMIN';
+        document.getElementById('btnEliminarPlantilla').classList.add('admin-visible');
+    } else {
+        document.getElementById('userRoleDisplay').textContent = '● USUARIO';
+        document.getElementById('configReadOnly').style.display = 'block';
+        document.getElementById('configPanel').style.display = 'none';
+    }
+    document.getElementById('authScreen').classList.add('hidden');
+    document.getElementById('appMain').classList.remove('hidden');
+    inicializarFechaOperacion();
+    lineasConfigTemp = [
+        { codigo: "", desc: "", tipo: "debe", valor: "total" },
+        { codigo: "", desc: "", tipo: "haber", valor: "base" },
+        { codigo: "", desc: "", tipo: "haber", valor: "igv" }
+    ];
+    renderizarTablaConfig();
+    cargarEstado();
+    cargarComboBoxPlantillas();
+}
+
+async function recargarTodoDesdeServidor() {
+    mostrarSync('⟳ Recargando...', 'syncing');
+    const datos = await leerDatos();
+    if (datos) {
+        if (datos.usuarios) usuariosCache = datos.usuarios;
+        if (datos.plantillas) plantillasCache = datos.plantillas;
+        localStorage.setItem(CACHE_KEY, JSON.stringify({
+            usuarios: usuariosCache, plantillas: plantillasCache
+        }));
+        cargarComboBoxPlantillas();
+        renderizarUsuariosAdmin();
+        mostrarSync('✓ Actualizado', 'success');
+    } else {
+        mostrarSync('✗ Error', 'error');
+    }
+}
+
+function renderizarUsuariosAdmin() {
+    const tbody = document.getElementById('cuerpoUsuarios');
+    if (!tbody) return;
+    tbody.innerHTML = '';
+    let total = 0, activos = 0, admins = 0;
+    Object.keys(usuariosCache).forEach(key => {
+        const u = usuariosCache[key];
+        total++;
+        if (u.activo) activos++;
+        if (u.rol === 'admin') admins++;
+        const fecha = new Date(u.creado).toLocaleDateString('es-PE');
+        const tr = document.createElement('tr');
+        if (!u.activo) tr.className = 'user-row-inactive';
+        tr.innerHTML = `
+            <td style="color: #00f0ff; font-weight: 700;">${u.username}</td>
+            <td>${u.nombre}</td>
+            <td class="${u.rol === 'admin' ? 'user-status-admin' : ''}">${u.rol === 'admin' ? '👑 ADMIN' : 'USUARIO'}</td>
+            <td class="${u.activo ? 'user-status-active' : 'user-status-inactive'}">${u.activo ? '● ACTIVO' : '● INACTIVO'}</td>
+            <td>${fecha}</td>
+            <td style="text-align: center;">
+                <button class="btn btn-ghost btn-small" onclick="abrirModalEditarUsuario('${u.username}')">✎</button>
+                <button class="btn btn-ghost btn-small" onclick="toggleUsuario('${u.username}')">${u.activo ? '🔒' : '🔓'}</button>
+                ${u.username !== 'admin' ? `<button class="btn btn-danger btn-small" onclick="eliminarUsuario('${u.username}')">✕</button>` : ''}
+            </td>
+        `;
+        tbody.appendChild(tr);
+    });
+    document.getElementById('adminTotalUsuarios').textContent = total;
+    document.getElementById('adminUsuariosActivos').textContent = activos;
+    document.getElementById('adminUsuariosAdmin').textContent = admins;
+}
+
+function abrirModalCrearUsuario() {
+    document.getElementById('modalUsuarioTitle').textContent = 'NUEVO USUARIO';
+    document.getElementById('modalUserIdOriginal').value = '';
+    document.getElementById('modalUserUsername').value = '';
+    document.getElementById('modalUserUsername').disabled = false;
+    document.getElementById('modalUserNombre').value = '';
+    document.getElementById('modalUserPass').value = '';
+    document.getElementById('modalUserRol').value = 'user';
+    document.getElementById('modalUsuario').classList.add('show');
+}
+
+function abrirModalEditarUsuario(username) {
+    const u = usuariosCache[username];
+    if (!u) return;
+    document.getElementById('modalUsuarioTitle').textContent = 'EDITAR';
+    document.getElementById('modalUserIdOriginal').value = username;
+    document.getElementById('modalUserUsername').value = u.username;
+    document.getElementById('modalUserUsername').disabled = true;
+    document.getElementById('modalUserNombre').value = u.nombre;
+    document.getElementById('modalUserPass').value = '';
+    document.getElementById('modalUserPass').placeholder = 'Dejar vacío';
+    document.getElementById('modalUserRol').value = u.rol;
+    document.getElementById('modalUsuario').classList.add('show');
+}
+
+function cerrarModalUsuario() { document.getElementById('modalUsuario').classList.remove('show'); }
+
+async function guardarUsuarioModal() {
+    const original = document.getElementById('modalUserIdOriginal').value;
+    const username = document.getElementById('modalUserUsername').value.trim().toLowerCase();
+    const nombre = document.getElementById('modalUserNombre').value.trim();
+    const pass = document.getElementById('modalUserPass').value;
+    const rol = document.getElementById('modalUserRol').value;
+    if (!username) { alert('Ingresa usuario'); return; }
+    if (!nombre) { alert('Ingresa nombre'); return; }
+    if (!/^[a-z0-9_]+$/.test(username)) { alert('Solo letras, números y _'); return; }
+    
+    if (!original) {
+        if (usuariosCache[username]) { alert('⚠️ Ya existe'); return; }
+        if (pass.length < 4) { alert('Contraseña mínimo 4 caracteres'); return; }
+        usuariosCache[username] = {
+            username, nombre, pass: hashPassword(pass),
+            rol, activo: true, tema: 'futurista',
+            creado: new Date().toISOString()
+        };
+        mostrarSync('⟳ Subiendo...', 'syncing');
+        const ok = await guardarTodoEnServidor();
+        if (ok) {
+            mostrarSync('✓ Usuario creado', 'success');
+            alert(`✅ Usuario "${username}" creado.`);
+        } else {
+            mostrarSync('✗ Falló', 'error');
+            alert('⚠️ Falló al subir. Mira el mensaje rojo en el login.');
+        }
+    } else {
+        usuariosCache[original].nombre = nombre;
+        usuariosCache[original].rol = rol;
+        if (pass.length > 0) {
+            if (pass.length < 4) { alert('Contraseña mínimo 4 caracteres'); return; }
+            usuariosCache[original].pass = hashPassword(pass);
+        }
+        mostrarSync('⟳ Actualizando...', 'syncing');
+        const ok = await guardarTodoEnServidor();
+        if (ok) mostrarSync('✓ Actualizado', 'success');
+    }
+    cerrarModalUsuario();
+    renderizarUsuariosAdmin();
+}
+
+async function toggleUsuario(username) {
+    if (username === 'admin' && usuariosCache[username].activo) {
+        alert('⚠️ No puedes desactivar al admin');
+        return;
+    }
+    usuariosCache[username].activo = !usuariosCache[username].activo;
+    await guardarTodoEnServidor();
+    renderizarUsuariosAdmin();
+}
+
+async function eliminarUsuario(username) {
+    if (username === 'admin') { alert('⚠️ No puedes eliminar al admin'); return; }
+    if (username === usuarioActual.username) { alert('⚠️ No puedes eliminarte'); return; }
+    if (!confirm(`¿Eliminar a "${username}"?`)) return;
+    delete usuariosCache[username];
+    await guardarTodoEnServidor();
+    renderizarUsuariosAdmin();
+}
+
+function irModulo(nombre, event) {
+    document.querySelectorAll('.module').forEach(m => m.classList.remove('active'));
+    document.getElementById('mod-' + nombre).classList.add('active');
+    document.querySelectorAll('.menu-item').forEach(m => m.classList.remove('active'));
+    if (event && event.currentTarget) event.currentTarget.classList.add('active');
+    if (nombre === 'usuarios') renderizarUsuariosAdmin();
+}
+
+function inicializarFechaOperacion() {
+    const hoy = new Date();
+    const yyyy = hoy.getFullYear();
+    const mm = String(hoy.getMonth() + 1).padStart(2, '0');
+    const dd = String(hoy.getDate()).padStart(2, '0');
+    document.getElementById('txtFechaOperacion').value = `${yyyy}-${mm}-${dd}`;
+}
+
+function cargarComboBoxPlantillas() {
+    const cbo = document.getElementById('cboTipo');
+    if (!cbo) return;
+    cbo.innerHTML = '<option value="" disabled selected>-- SELECCIONE --</option>';
+    for (const key in plantillasCache) {
+        const option = document.createElement('option');
+        option.value = key;
+        option.textContent = plantillasCache[key].nombre;
+        cbo.appendChild(option);
+    }
+}
+
+function recalcularDesde(campo) {
+    const base = document.getElementById('txtBase');
+    const igv = document.getElementById('txtIGV');
+    const total = document.getElementById('txtTotal');
+    const TASA = 0.18;
+    if (campo === 'base') {
+        const b = parseFloat(base.value);
+        if (isNaN(b)) { vBase = vIGV = vTotal = 0; igv.value = ""; total.value = ""; }
+        else { vBase = b; vIGV = Math.round(b * TASA * 100) / 100; vTotal = b + vIGV; igv.value = vIGV.toFixed(2); total.value = vTotal.toFixed(2); }
+    } else if (campo === 'igv') {
+        const i = parseFloat(igv.value);
+        if (isNaN(i)) { vIGV = 0; }
+        else { vIGV = i; vBase = Math.round((i / TASA) * 100) / 100; vTotal = vBase + vIGV; base.value = vBase.toFixed(2); total.value = vTotal.toFixed(2); }
+    } else if (campo === 'total') {
+        const t = parseFloat(total.value);
+        if (isNaN(t)) { vTotal = 0; }
+        else { vTotal = t; vBase = Math.round((t / (1 + TASA)) * 100) / 100; vIGV = Math.round((t - vBase) * 100) / 100; base.value = vBase.toFixed(2); igv.value = vIGV.toFixed(2); }
+    }
+    calcularYPrevisualizar();
+}
+
+function calcularYPrevisualizar() {
+    const tbody = document.querySelector('#tablaPreview tbody');
+    const tipo = document.getElementById('cboTipo').value;
+    if (!tipo || !plantillasCache[tipo]) { tbody.innerHTML = ''; return; }
+    tbody.innerHTML = '';
+    plantillasCache[tipo].lineas.forEach(c => {
+        let monto = 0;
+        if (c.valor === 'base') monto = vBase;
+        else if (c.valor === 'igv') monto = vIGV;
+        else if (c.valor === 'total') monto = vTotal;
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td style="color: #00f0ff; font-weight: 700;">${c.codigo}</td>
+            <td>${c.desc}</td>
+            <td class="num" style="color:#00ff88;">${c.tipo === 'debe' ? monto.toFixed(2) : ''}</td>
+            <td class="num" style="color:#00f0ff;">${c.tipo === 'haber' ? monto.toFixed(2) : ''}</td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
+
+function insertarAsiento() {
+    const tipo = document.getElementById('cboTipo').value;
+    const factura = document.getElementById('txtFactura').value;
+    const glosaInput = document.getElementById('txtGlosa').value;
+    const fecha = document.getElementById('txtFechaOperacion').value;
+    if (!tipo) { alert("Seleccione tipo"); return; }
+    if (!factura) { alert("Ingrese factura"); return; }
+    if (!fecha) { alert("Seleccione fecha"); return; }
+    if (vTotal === 0) { alert("Ingrese montos"); return; }
+    const glosaFinal = glosaInput || plantillasCache[tipo].nombre + " - " + factura;
+    alert(`✅ Asiento registrado: ${glosaFinal}\nTotal: ${vTotal.toFixed(2)}`);
+    limpiarFormulario();
+    guardarEstado();
+}
+
+function limpiarFormulario() {
+    document.getElementById('txtBase').value = "";
+    document.getElementById('txtIGV').value = "";
+    document.getElementById('txtTotal').value = "";
+    document.getElementById('txtFactura').value = "";
+    document.getElementById('txtGlosa').value = "";
+    document.querySelector('#tablaPreview tbody').innerHTML = "";
+    vBase = vIGV = vTotal = 0;
+    document.getElementById('cboTipo').selectedIndex = 0;
+    inicializarFechaOperacion();
+}
+
+async function eliminarPlantillaSeleccionada() {
+    if (usuarioActual.rol !== 'admin') { alert('Solo admin'); return; }
+    const cbo = document.getElementById('cboTipo');
+    const key = cbo.value;
+    if (!key || !plantillasCache[key]) { alert('Selecciona plantilla'); return; }
+    if (!confirm(`¿Eliminar "${plantillasCache[key].nombre}"?`)) return;
+    delete plantillasCache[key];
+    mostrarSync('⟳ Eliminando...', 'syncing');
+    const ok = await guardarTodoEnServidor();
+    if (ok) {
+        cbo.value = '';
+        cargarComboBoxPlantillas();
+        limpiarFormulario();
+        mostrarSync('✓ Eliminado', 'success');
+    } else {
+        mostrarSync('✗ Falló', 'error');
+    }
+}
+
+function renderizarTablaConfig() {
+    const tbody = document.querySelector('#tablaConfigLineas tbody');
+    if (!tbody) return;
+    tbody.innerHTML = "";
+    lineasConfigTemp.forEach((linea, index) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td><input type="text" value="${linea.codigo}" onchange="actualizarLineaConfig(${index}, 'codigo', this.value)" placeholder="Ej: 101"></td>
+            <td><input type="text" value="${linea.desc}" onchange="actualizarLineaConfig(${index}, 'desc', this.value)" placeholder="Descripción"></td>
+            <td>
+                <select onchange="actualizarLineaConfig(${index}, 'tipo', this.value)">
+                    <option value="debe" ${linea.tipo === 'debe' ? 'selected' : ''}>DEBE</option>
+                    <option value="haber" ${linea.tipo === 'haber' ? 'selected' : ''}>HABER</option>
+                </select>
+            </td>
+            <td>
+                <select onchange="actualizarLineaConfig(${index}, 'valor', this.value)">
+                    <option value="base" ${linea.valor === 'base' ? 'selected' : ''}>BASE</option>
+                    <option value="igv" ${linea.valor === 'igv' ? 'selected' : ''}>IGV</option>
+                    <option value="total" ${linea.valor === 'total' ? 'selected' : ''}>TOTAL</option>
+                </select>
+            </td>
+            <td style="text-align:center;">
+                <button class="btn-delete-row" onclick="eliminarLineaConfig(${index})">✕</button>
+            </td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
+
+function actualizarLineaConfig(index, campo, valor) { lineasConfigTemp[index][campo] = valor; }
+function agregarLineaConfig() { lineasConfigTemp.push({ codigo: "", desc: "", tipo: "debe", valor: "base" }); renderizarTablaConfig(); }
+function eliminarLineaConfig(index) { if (lineasConfigTemp.length <= 2) { alert("Mínimo 2 líneas"); return; } lineasConfigTemp.splice(index, 1); renderizarTablaConfig(); }
+
+async function guardarPlantilla() {
+    if (usuarioActual.rol !== 'admin') { alert('Solo admin'); return; }
+    const nombre = document.getElementById('txtNombrePlantilla').value.trim();
+    if (!nombre) { alert("Ingrese nombre"); return; }
+    if (lineasConfigTemp.length < 2) { alert("Mínimo 2 líneas"); return; }
+    for (let i = 0; i < lineasConfigTemp.length; i++) {
+        const l = lineasConfigTemp[i];
+        if (!l.codigo || !l.desc) { alert(`Línea ${i+1} incompleta`); return; }
+    }
+    const key = "custom_" + Date.now();
+    plantillasCache[key] = { nombre: nombre.toUpperCase(), custom: true, lineas: JSON.parse(JSON.stringify(lineasConfigTemp)) };
+    mostrarSync('⟳ Subiendo...', 'syncing');
+    const ok = await guardarTodoEnServidor();
+    if (ok) {
+        cargarComboBoxPlantillas();
+        mostrarSync('✓ Plantilla guardada', 'success');
+        alert(`✅ Plantilla "${nombre}" guardada.`);
+        limpiarConfig();
+    } else {
+        delete plantillasCache[key];
+        mostrarSync('✗ Falló', 'error');
+    }
+}
+
+function limpiarConfig() {
+    document.getElementById('txtNombrePlantilla').value = "";
+    lineasConfigTemp = [
+        { codigo: "", desc: "", tipo: "debe", valor: "base" },
+        { codigo: "", desc: "", tipo: "haber", valor: "total" }
+    ];
+    renderizarTablaConfig();
+}
+
+window.onload = async function() {
+    log('🚀 Iniciando...');
+    await cargarDatosDelServidor();
+    const sessionUser = sessionStorage.getItem(SESSION_KEY);
+    if (sessionUser) {
+        const user = usuariosCache[sessionUser];
+        if (user && user.activo) {
+            usuarioActual = user;
+            abrirApp();
+            return;
+        }
+    }
+    document.getElementById('loginUser').focus();
+};
+
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter' && !document.getElementById('authScreen').classList.contains('hidden')) {
+        iniciarSesion();
+    }
+});
+</script>
+</body>
+</html>
