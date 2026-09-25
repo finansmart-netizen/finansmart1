@@ -440,7 +440,7 @@ table tr:hover td { background: #f9f9f9; }
                     </div>
                 </section>
 
-                <!-- REGISTRO DE GASTOS E INGRESOS (ANTES LIBRO DIARIO) -->
+                <!-- REGISTRO DE GASTOS E INGRESOS -->
                 <section class="module" id="mod-libro">
                     <div class="excel-sheet">
                         <div class="sheet-title">
@@ -482,6 +482,11 @@ table tr:hover td { background: #f9f9f9; }
                                         <th colspan="2">Saldos finales</th>
                                         <th colspan="2">Balance general</th>
                                         <th colspan="2">Result. naturaleza</th>
+                                    </tr>
+                                    <tr style="background:#fff4ce;">
+                                        <th colspan="8" style="font-size:10px; color:#666; font-weight:400;">Mismas cuentas del Registro de Movimiento</th>
+                                        <th colspan="2" style="font-size:10px; color:#217346; font-weight:600;">Total Deudor − Total Acreedor</th>
+                                        <th colspan="2" style="font-size:10px; color:#217346; font-weight:600;">Total Pérdidas − Total Ganancias</th>
                                     </tr>
                                     <tr>
                                         <th>Código</th><th>Denominación</th>
@@ -798,9 +803,9 @@ table tr:hover td { background: #f9f9f9; }
 
 <script>
 const API_URL = '/api/datos';
-const SESSION_KEY = 'finansmart_session_v23';
+const SESSION_KEY = 'finansmart_session_v24';
 const DATA_PREFIX = 'finansmart_data_';
-const CACHE_KEY = 'finansmart_cache_v23';
+const CACHE_KEY = 'finansmart_cache_v24';
 
 let usuarioActual = null;
 let vBase = 0, vIGV = 0, vTotal = 0;
@@ -2037,9 +2042,13 @@ function calcularBalance317() {
     const saldos = obtenerSaldos();
     let totalDeudor = 0, totalAcreedor = 0, totalDebe = 0, totalHaber = 0;
     let totalBGDeudor = 0, totalBGAcreedor = 0, totalPerdidasNat = 0, totalGananciasNat = 0;
-    catalogoCuentas.forEach(cuenta => {
+
+    // Mostrar EXACTAMENTE las mismas cuentas que aparecen en el Registro de Movimiento
+    const cuentasLibro = catalogoCuentas.filter(c => c.codigo.length <= 5 && !c.excluir317);
+
+    cuentasLibro.forEach(cuenta => {
         const s = saldos[cuenta.codigo];
-        if (!s || cuenta.excluir317) return;
+        if (!s) return;
         if (s.debe === 0 && s.haber === 0) return;
         const debe = s.debe, haber = s.haber;
         const elem = cuenta.codigo.charAt(0);
@@ -2069,6 +2078,7 @@ function calcularBalance317() {
         tbody.appendChild(tr);
     });
 
+    // Ahora: primero TOTALIZAR, luego RESTAR
     const difBG = totalBGDeudor - totalBGAcreedor;
     const difRN = totalPerdidasNat - totalGananciasNat;
 
@@ -2081,10 +2091,29 @@ function calcularBalance317() {
         <td class="num total">${totalHaber.toFixed(2)}</td>
         <td class="num total">${totalDeudor.toFixed(2)}</td>
         <td class="num total">${totalAcreedor.toFixed(2)}</td>
-        <td class="num total" colspan="2" style="text-align:center; ${difBG >= 0 ? 'color:#107c10;' : 'color:#a80000;'}">${difBG >= 0 ? 'Deudor: ' + difBG.toFixed(2) : 'Acreedor: ' + Math.abs(difBG).toFixed(2)}</td>
-        <td class="num total" colspan="2" style="text-align:center; ${difRN >= 0 ? 'color:#a80000;' : 'color:#107c10;'}">${difRN >= 0 ? 'Pérdidas: ' + difRN.toFixed(2) : 'Ganancias: ' + Math.abs(difRN).toFixed(2)}</td>
+        <td class="num total" style="text-align:right;">${totalBGDeudor.toFixed(2)}</td>
+        <td class="num total" style="text-align:right;">${totalBGAcreedor.toFixed(2)}</td>
+        <td class="num total" style="text-align:right;">${totalPerdidasNat.toFixed(2)}</td>
+        <td class="num total" style="text-align:right;">${totalGananciasNat.toFixed(2)}</td>
     `;
     tbody.appendChild(trTotal);
+
+    // Fila final con las DIFERENCIAS
+    const trDif = document.createElement('tr');
+    trDif.innerHTML = `
+        <td colspan="2" style="text-align:right; background:#e6f4ea; font-weight:700; color:#185c37;">DIFERENCIA (Total Deudor − Total Acreedor | Total Pérdidas − Total Ganancias)</td>
+        <td style="background:#e6f4ea;"></td>
+        <td style="background:#e6f4ea;"></td>
+        <td style="background:#e6f4ea;"></td>
+        <td style="background:#e6f4ea;"></td>
+        <td style="background:#e6f4ea;"></td>
+        <td style="background:#e6f4ea;"></td>
+        <td class="num total" style="text-align:center; background:#e6f4ea; font-weight:700; ${difBG >= 0 ? 'color:#107c10;' : 'color:#a80000;'}">${difBG >= 0 ? difBG.toFixed(2) : Math.abs(difBG).toFixed(2)}${difBG >= 0 ? ' (D)' : ' (A)'}</td>
+        <td style="background:#e6f4ea;"></td>
+        <td class="num total" style="text-align:center; background:#e6f4ea; font-weight:700; ${difRN >= 0 ? 'color:#a80000;' : 'color:#107c10;'}">${difRN >= 0 ? difRN.toFixed(2) : Math.abs(difRN).toFixed(2)}${difRN >= 0 ? ' (P)' : ' (G)'}</td>
+        <td style="background:#e6f4ea;"></td>
+    `;
+    tbody.appendChild(trDif);
 }
 
 function calcularESF() {
