@@ -106,6 +106,7 @@ table tr:hover td { background: #f9f9f9; }
 .excel-form-row { display: grid; gap: 0; margin-bottom: 0; grid-template-columns: repeat(2, 1fr); border: 1px solid var(--excel-border-dark); border-bottom: none; }
 .excel-form-row:last-of-type { border-bottom: 1px solid var(--excel-border-dark); }
 .excel-form-row-3 { grid-template-columns: repeat(3, 1fr); }
+.excel-form-row-4 { grid-template-columns: repeat(4, 1fr); }
 .excel-cell-label { background: var(--excel-header); padding: 8px 12px; font-weight: 700; font-size: 11px; color: #333; border-right: 1px solid var(--excel-border-dark); display: flex; align-items: center; }
 .excel-cell-input { padding: 4px; }
 .excel-cell-input input, .excel-cell-input select { width: 100%; padding: 6px 8px; border: none; font-size: 12px; background: white; color: #1f1f1f; }
@@ -165,6 +166,7 @@ table tr:hover td { background: #f9f9f9; }
 .btn-ghost { background: white; color: #333; }
 .btn-small { padding: 3px 10px; font-size: 11px; }
 .btn-row { display: flex; gap: 8px; justify-content: flex-end; margin-top: 12px; }
+.btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
 .btn-delete-row { background: #fde7e9; border: 1px solid #a80000; color: #a80000; width: 22px; height: 22px; font-size: 12px; cursor: pointer; border-radius: 2px; display: inline-flex; align-items: center; justify-content: center; }
 .btn-delete-row:hover { background: #a80000; color: white; }
@@ -214,14 +216,26 @@ table tr:hover td { background: #f9f9f9; }
 .inv-kpi { background: white; border: 1px solid var(--excel-border-dark); border-left: 4px solid var(--excel-green); padding: 12px; }
 .inv-kpi.entrada { border-left-color: #0078d4; }
 .inv-kpi.salida { border-left-color: #c0504d; }
+.inv-kpi.venta { border-left-color: #ff8c00; }
 .inv-kpi.final { border-left-color: #217346; background: #e6f4ea; }
 .inv-kpi-label { font-size: 10px; color: #666; text-transform: uppercase; font-weight: 700; margin-bottom: 4px; }
 .inv-kpi-value { font-size: 20px; font-weight: 700; color: #1f1f1f; }
+
+.prod-lista { max-height: 200px; overflow-y: auto; border: 1px solid var(--excel-border-dark); background: white; }
+.prod-lista table { width: 100%; }
+.prod-lista table th { position: sticky; top: 0; z-index: 2; }
+.prod-lista .vacio { text-align: center; color: #999; padding: 12px; font-size: 11px; }
+
+.badge-tipo { padding: 2px 8px; border-radius: 10px; font-size: 10px; font-weight: 700; }
+.badge-entrada { background: #e6f0fb; color: #0078d4; }
+.badge-salida { background: #fde7e9; color: #c0504d; }
+.badge-venta { background: #fff4ce; color: #b06a00; }
 
 @media (max-width: 900px) {
     .excel-sidebar-left { width: 160px; }
     .excel-form-row { grid-template-columns: 1fr; }
     .excel-form-row-3 { grid-template-columns: 1fr; }
+    .excel-form-row-4 { grid-template-columns: 1fr; }
     .theme-selector { grid-template-columns: 1fr; }
 }
 
@@ -478,47 +492,157 @@ table tr:hover td { background: #f9f9f9; }
                     <div class="excel-sheet">
                         <div class="sheet-title">
                             <span>Inventario</span>
-                            <span class="sheet-tabs">Entradas (20111) y Salidas (69111) · Descripción y Monto</span>
-                        </div>
-                        <div class="sheet-toolbar">
-                            <button class="btn primary" onclick="calcularInventario()">Actualizar</button>
+                            <span class="sheet-tabs">Productos y Movimientos</span>
                         </div>
                         <div class="excel-panel-body">
+
+                            <!-- KPIs -->
                             <div class="inv-kpi-grid">
                                 <div class="inv-kpi entrada">
-                                    <div class="inv-kpi-label">Entradas (20111)</div>
+                                    <div class="inv-kpi-label">Entradas</div>
                                     <div class="inv-kpi-value" id="invEntradas">S/ 0.00</div>
                                 </div>
                                 <div class="inv-kpi salida">
-                                    <div class="inv-kpi-label">Salidas (69111)</div>
+                                    <div class="inv-kpi-label">Salidas</div>
                                     <div class="inv-kpi-value" id="invSalidas">S/ 0.00</div>
                                 </div>
+                                <div class="inv-kpi venta">
+                                    <div class="inv-kpi-label">Ventas</div>
+                                    <div class="inv-kpi-value" id="invVentas">S/ 0.00</div>
+                                </div>
                                 <div class="inv-kpi final">
-                                    <div class="inv-kpi-label">Final (Entrada − Salida)</div>
+                                    <div class="inv-kpi-label">Final (E − S + V)</div>
                                     <div class="inv-kpi-value" id="invFinal">S/ 0.00</div>
                                 </div>
                             </div>
-                            <div class="excel-panel" style="margin:0;">
+
+                            <!-- Registro de Producto -->
+                            <div class="excel-panel">
                                 <div class="excel-panel-header">
                                     <div>
-                                        <div class="excel-panel-title">Registro de Movimiento de Inventario</div>
-                                        <div class="excel-panel-sub">Solo se muestra descripción (cuenta) y monto</div>
+                                        <div class="excel-panel-title">📦 Registrar Producto</div>
+                                        <div class="excel-panel-sub">Crea un código con descripción, cantidad y precio unitario</div>
                                     </div>
                                 </div>
-                                <div style="overflow:auto; max-height:calc(100vh - 400px);">
+                                <div class="excel-panel-body">
+                                    <div class="excel-form-row excel-form-row-4">
+                                        <div class="excel-cell-label">Código</div>
+                                        <div class="excel-cell-label">Descripción</div>
+                                        <div class="excel-cell-label">Cantidad</div>
+                                        <div class="excel-cell-label">Precio Unitario</div>
+                                    </div>
+                                    <div class="excel-form-row excel-form-row-4">
+                                        <div class="excel-cell-input"><input type="text" id="prodCodigo" placeholder="Ej: P001"></div>
+                                        <div class="excel-cell-input"><input type="text" id="prodDesc" placeholder="Ej: Cuaderno"></div>
+                                        <div class="excel-cell-input"><input type="number" id="prodCantidad" placeholder="0" min="0" step="1" oninput="calcularSubtotalProducto()"></div>
+                                        <div class="excel-cell-input"><input type="number" id="prodPrecio" placeholder="0.00" min="0" step="0.01" oninput="calcularSubtotalProducto()"></div>
+                                    </div>
+                                    <div class="excel-form-row">
+                                        <div class="excel-cell-label" style="background:#e6f4ea; color:#185c37;">Subtotal (Cantidad × Precio)</div>
+                                        <div class="excel-cell-input"><input type="text" id="prodSubtotal" placeholder="0.00" readonly style="background:#f3f3f3; font-weight:700; color:#185c37;"></div>
+                                    </div>
+                                    <div class="btn-row">
+                                        <button class="btn btn-ghost" onclick="limpiarFormularioProducto()">Limpiar</button>
+                                        <button class="btn btn-success" onclick="registrarProducto()">Guardar Producto</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Lista de productos -->
+                            <div class="excel-panel">
+                                <div class="excel-panel-header">
+                                    <div>
+                                        <div class="excel-panel-title">📋 Catálogo de Productos</div>
+                                        <div class="excel-panel-sub">Productos registrados disponibles para movimientos</div>
+                                    </div>
+                                </div>
+                                <div class="prod-lista">
+                                    <table class="excel-data-table" id="tablaProductos">
+                                        <thead>
+                                            <tr>
+                                                <th style="width:12%;">Código</th>
+                                                <th style="width:38%;">Descripción</th>
+                                                <th class="num" style="width:12%;">Cantidad</th>
+                                                <th class="num" style="width:16%;">Precio Unit.</th>
+                                                <th class="num" style="width:16%;">Subtotal</th>
+                                                <th style="width:6%;">✕</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="cuerpoProductos"></tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <!-- Movimiento de Inventario -->
+                            <div class="excel-panel">
+                                <div class="excel-panel-header">
+                                    <div>
+                                        <div class="excel-panel-title">🔄 Registrar Movimiento</div>
+                                        <div class="excel-panel-sub">Selecciona tipo de operación para habilitar el registro</div>
+                                    </div>
+                                </div>
+                                <div class="excel-panel-body">
+                                    <div class="excel-form-row excel-form-row-4">
+                                        <div class="excel-cell-label">Tipo de Operación</div>
+                                        <div class="excel-cell-label">Código</div>
+                                        <div class="excel-cell-label">Cantidad</div>
+                                        <div class="excel-cell-label">Subtotal</div>
+                                    </div>
+                                    <div class="excel-form-row excel-form-row-4">
+                                        <div class="excel-cell-input">
+                                            <select id="movTipo" onchange="habilitarRegistroMovimiento()">
+                                                <option value="" disabled selected>-- Seleccione --</option>
+                                                <option value="entrada">Entrada</option>
+                                                <option value="salida">Salida</option>
+                                                <option value="venta">Venta</option>
+                                            </select>
+                                        </div>
+                                        <div class="excel-cell-input">
+                                            <select id="movCodigo" onchange="calcularSubtotalMovimiento()" disabled>
+                                                <option value="" disabled selected>-- Seleccione producto --</option>
+                                            </select>
+                                        </div>
+                                        <div class="excel-cell-input">
+                                            <input type="number" id="movCantidad" placeholder="0" min="1" step="1" oninput="calcularSubtotalMovimiento()" disabled>
+                                        </div>
+                                        <div class="excel-cell-input">
+                                            <input type="text" id="movSubtotal" placeholder="0.00" readonly style="background:#f3f3f3; font-weight:700;" disabled>
+                                        </div>
+                                    </div>
+                                    <div class="btn-row">
+                                        <button class="btn btn-ghost" onclick="limpiarFormularioMovimiento()">Limpiar</button>
+                                        <button class="btn btn-success" id="btnRegistrarMovimiento" onclick="registrarMovimiento()" disabled>Registrar</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Historial de movimientos -->
+                            <div class="excel-panel">
+                                <div class="excel-panel-header">
+                                    <div>
+                                        <div class="excel-panel-title">📜 Historial de Movimientos de Inventario</div>
+                                        <div class="excel-panel-sub">Descripción, tipo, cantidad, precio unitario y subtotal</div>
+                                    </div>
+                                    <button class="btn" onclick="calcularInventario()">Actualizar</button>
+                                </div>
+                                <div style="overflow:auto; max-height:400px;">
                                     <table class="excel-data-table" id="tablaInventario">
                                         <thead>
                                             <tr>
-                                                <th style="width:8%;">N°</th>
-                                                <th style="width:12%;">Tipo</th>
-                                                <th style="width:55%;">Descripción</th>
-                                                <th class="num" style="width:25%;">Monto</th>
+                                                <th style="width:6%;">N°</th>
+                                                <th style="width:10%;">Tipo</th>
+                                                <th style="width:30%;">Descripción</th>
+                                                <th class="num" style="width:10%;">Cantidad</th>
+                                                <th class="num" style="width:14%;">Precio Unit.</th>
+                                                <th class="num" style="width:14%;">Subtotal</th>
+                                                <th style="width:6%;">✕</th>
                                             </tr>
                                         </thead>
                                         <tbody id="cuerpoInventario"></tbody>
                                     </table>
                                 </div>
                             </div>
+
                         </div>
                     </div>
                 </section>
@@ -876,6 +1000,10 @@ let lineasConfigTemp = [];
 let usuariosCache = {};
 let plantillasCache = {};
 
+/* Inventario */
+let productosCache = {};   // { codigo: { codigo, desc, cantidad, precio, subtotal } }
+let movimientosInvCache = []; // [{ tipo, codigo, desc, cantidad, precio, subtotal }]
+
 function log(...args) { console.log('[FinanSmart]', ...args); }
 
 function setDiag(msg, isError) {
@@ -1091,8 +1219,11 @@ function getDataKey() { return DATA_PREFIX + usuarioActual.username; }
 function guardarEstado() {
     if (!usuarioActual) return;
     localStorage.setItem(getDataKey(), JSON.stringify({
-        version: 3, timestamp: new Date().toISOString(),
-        correlativo: correlativo, asientos: obtenerAsientosDelDOM()
+        version: 4, timestamp: new Date().toISOString(),
+        correlativo: correlativo,
+        asientos: obtenerAsientosDelDOM(),
+        productos: productosCache,
+        movimientosInv: movimientosInvCache
     }));
 }
 
@@ -1104,12 +1235,14 @@ function cargarEstado() {
         const estado = JSON.parse(raw);
         if (estado.correlativo) correlativo = estado.correlativo;
         if (estado.asientos && estado.asientos.length > 0) restaurarAsientos(estado.asientos);
+        if (estado.productos) productosCache = estado.productos;
+        if (estado.movimientosInv) movimientosInvCache = estado.movimientosInv;
         return true;
     } catch (e) { return false; }
 }
 
 /* ==========================================
-   GUARDAR ASIENTOS: cada cuenta guarda { debe, haber } como objeto
+   GUARDAR ASIENTOS
    ========================================== */
 function obtenerAsientosDelDOM() {
     const asientos = [];
@@ -1122,7 +1255,7 @@ function obtenerAsientosDelDOM() {
             fecha: celdas[1].textContent,
             glosa: celdas[2].textContent,
             factura: celdas[3].textContent,
-            cuentas: {} // { codigo: { debe: X, haber: Y } }
+            cuentas: {}
         };
         for (let i = 4; i < celdas.length - 1; i++) {
             const codigo = cuentasLibro[i - 4].codigo;
@@ -1132,7 +1265,6 @@ function obtenerAsientosDelDOM() {
             if (dataDebe > 0 || dataHaber > 0) {
                 asiento.cuentas[codigo] = { debe: dataDebe, haber: dataHaber };
             } else {
-                // Compatibilidad con formato antiguo (texto)
                 const texto = td.textContent.trim();
                 if (texto !== "" && texto !== "-") {
                     if (texto.indexOf("/") !== -1) {
@@ -1172,7 +1304,6 @@ function restaurarAsientos(asientos) {
                     debe = datos.debe || 0;
                     haber = datos.haber || 0;
                 } else {
-                    // formato antiguo (número)
                     const v = parseFloat(datos) || 0;
                     if (v > 0) debe = v;
                     else if (v < 0) haber = Math.abs(v);
@@ -1194,9 +1325,9 @@ function restaurarAsientos(asientos) {
 }
 
 function resetearDatosUsuario() {
-    if (!confirm('¿Borrar TODOS tus asientos?')) return;
+    if (!confirm('¿Borrar TODOS tus asientos, productos y movimientos?')) return;
     if (!confirm('ÚLTIMA ADVERTENCIA.')) return;
-    localStorage.setItem(getDataKey(), JSON.stringify({ version: 3, timestamp: new Date().toISOString(), correlativo: 1, asientos: [] }));
+    localStorage.setItem(getDataKey(), JSON.stringify({ version: 4, timestamp: new Date().toISOString(), correlativo: 1, asientos: [], productos: {}, movimientosInv: [] }));
     location.reload();
 }
 
@@ -1275,6 +1406,10 @@ function abrirApp() {
     cargarEstado();
     calcularDashboard();
     cargarComboBoxPlantillas();
+    renderizarProductos();
+    renderizarMovimientosInv();
+    actualizarKpisInventario();
+    cargarComboBoxProductos();
 }
 
 async function recargarTodoDesdeServidor() {
@@ -1443,7 +1578,7 @@ function irModulo(nombre, event) {
     document.getElementById('tituloModuloActual').textContent = titulos[nombre] || nombre;
 
     if (nombre === 'dashboard') calcularDashboard();
-    if (nombre === 'inventario') calcularInventario();
+    if (nombre === 'inventario') { renderizarProductos(); renderizarMovimientosInv(); actualizarKpisInventario(); cargarComboBoxProductos(); }
     if (nombre === 'balance') calcularBalance317();
     if (nombre === 'esf') calcularESF();
     if (nombre === 'er') calcularER();
@@ -1834,8 +1969,7 @@ function insertarAsiento() {
     const fechaFormateada = formatearFecha(fechaOperacion);
     const nroAsiento = correlativo++;
 
-    // Acumular por cuenta respetando Debe y Haber
-    const acumulado = {}; // { codigo: { debe, haber } }
+    const acumulado = {};
     plantillasCache[tipo].lineas.forEach(linea => {
         let monto = 0;
         if (linea.valor === 'base') monto = vBase;
@@ -1856,16 +1990,11 @@ function insertarAsiento() {
         td.className = 'num';
         const acc = acumulado[cuentaCatalogo.codigo];
         if (acc && (acc.debe > 0 || acc.haber > 0)) {
-            // Guardar Debe y Haber por separado en atributos
             td.setAttribute('data-debe', acc.debe.toFixed(2));
             td.setAttribute('data-haber', acc.haber.toFixed(2));
-            if (acc.debe > 0 && acc.haber > 0) {
-                td.textContent = acc.debe.toFixed(2) + "/" + acc.haber.toFixed(2);
-            } else if (acc.debe > 0) {
-                td.textContent = acc.debe.toFixed(2);
-            } else {
-                td.textContent = "-" + acc.haber.toFixed(2);
-            }
+            if (acc.debe > 0 && acc.haber > 0) td.textContent = acc.debe.toFixed(2) + "/" + acc.haber.toFixed(2);
+            else if (acc.debe > 0) td.textContent = acc.debe.toFixed(2);
+            else td.textContent = "-" + acc.haber.toFixed(2);
         }
         tr.appendChild(td);
     });
@@ -1875,7 +2004,7 @@ function insertarAsiento() {
     tr.appendChild(tdAccion);
     tbodyLibro.appendChild(tr);
 
-    alert(`Asiento N° ${nroAsiento} registrado el ${fechaFormateada}.`);
+    alert(`Asiento N° ${nroAsiento} registrado el ${formatearFecha(fechaOperacion)}.`);
     limpiarFormulario();
     guardarEstado();
     calcularDashboard();
@@ -2124,14 +2253,12 @@ function obtenerSaldos() {
         for (let i = 4; i < celdas.length - 1; i++) {
             const codigoCuenta = cuentasLibro[i - 4].codigo;
             const td = celdas[i];
-            // Leer atributos data-debe / data-haber
             const dataDebe = parseFloat(td.getAttribute('data-debe'));
             const dataHaber = parseFloat(td.getAttribute('data-haber'));
             if (!isNaN(dataDebe) || !isNaN(dataHaber)) {
                 saldos[codigoCuenta].debe += dataDebe || 0;
                 saldos[codigoCuenta].haber += dataHaber || 0;
             } else {
-                // Compatibilidad con formato antiguo
                 const texto = td.textContent.trim();
                 if (texto === "" || texto === "-") continue;
                 if (texto.indexOf("/") !== -1) {
@@ -2152,84 +2279,209 @@ function obtenerSaldos() {
 }
 
 /* ==========================================
-   INVENTARIO: lee movimientos de 20111 (entradas) y 69111 (salidas)
+   INVENTARIO: Productos y Movimientos
    ========================================== */
-function calcularInventario() {
+
+function calcularSubtotalProducto() {
+    const cant = parseFloat(document.getElementById('prodCantidad').value) || 0;
+    const prec = parseFloat(document.getElementById('prodPrecio').value) || 0;
+    const sub = cant * prec;
+    document.getElementById('prodSubtotal').value = sub > 0 ? sub.toFixed(2) : '';
+}
+
+function limpiarFormularioProducto() {
+    document.getElementById('prodCodigo').value = '';
+    document.getElementById('prodDesc').value = '';
+    document.getElementById('prodCantidad').value = '';
+    document.getElementById('prodPrecio').value = '';
+    document.getElementById('prodSubtotal').value = '';
+}
+
+function registrarProducto() {
+    const codigo = document.getElementById('prodCodigo').value.trim().toUpperCase();
+    const desc = document.getElementById('prodDesc').value.trim();
+    const cant = parseFloat(document.getElementById('prodCantidad').value) || 0;
+    const prec = parseFloat(document.getElementById('prodPrecio').value) || 0;
+    if (!codigo) { alert('Ingrese el código'); return; }
+    if (!desc) { alert('Ingrese la descripción'); return; }
+    if (cant <= 0) { alert('Ingrese una cantidad válida'); return; }
+    if (prec <= 0) { alert('Ingrese un precio unitario válido'); return; }
+    if (productosCache[codigo]) { alert('Ese código ya existe'); return; }
+
+    const subtotal = cant * prec;
+    productosCache[codigo] = { codigo, desc, cantidad: cant, precio: prec, subtotal };
+    renderizarProductos();
+    cargarComboBoxProductos();
+    limpiarFormularioProducto();
+    guardarEstado();
+    mostrarSync('Producto guardado', 'success');
+}
+
+function renderizarProductos() {
+    const tbody = document.getElementById('cuerpoProductos');
+    if (!tbody) return;
+    tbody.innerHTML = '';
+    const codigos = Object.keys(productosCache);
+    if (codigos.length === 0) {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td colspan="6" style="text-align:center; color:#999; padding:12px;">No hay productos registrados</td>`;
+        tbody.appendChild(tr);
+        return;
+    }
+    codigos.forEach(cod => {
+        const p = productosCache[cod];
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td style="font-weight:700; color:#217346;">${p.codigo}</td>
+            <td>${p.desc}</td>
+            <td class="num">${p.cantidad}</td>
+            <td class="num">${p.precio.toFixed(2)}</td>
+            <td class="num">${p.subtotal.toFixed(2)}</td>
+            <td style="text-align:center;">
+                <button class="btn-delete-row" onclick="eliminarProducto('${p.codigo}')">✕</button>
+            </td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
+
+function eliminarProducto(codigo) {
+    if (!confirm(`¿Eliminar el producto "${codigo}"?`)) return;
+    delete productosCache[codigo];
+    renderizarProductos();
+    cargarComboBoxProductos();
+    guardarEstado();
+}
+
+function cargarComboBoxProductos() {
+    const cbo = document.getElementById('movCodigo');
+    if (!cbo) return;
+    cbo.innerHTML = '<option value="" disabled selected>-- Seleccione producto --</option>';
+    Object.keys(productosCache).forEach(cod => {
+        const p = productosCache[cod];
+        const opt = document.createElement('option');
+        opt.value = cod;
+        opt.textContent = `${p.codigo} - ${p.desc}`;
+        cbo.appendChild(opt);
+    });
+}
+
+function habilitarRegistroMovimiento() {
+    const tipo = document.getElementById('movTipo').value;
+    const habilitar = tipo !== '';
+    document.getElementById('movCodigo').disabled = !habilitar;
+    document.getElementById('movCantidad').disabled = !habilitar;
+    document.getElementById('movSubtotal').disabled = !habilitar;
+    document.getElementById('btnRegistrarMovimiento').disabled = !habilitar;
+    calcularSubtotalMovimiento();
+}
+
+function calcularSubtotalMovimiento() {
+    const cod = document.getElementById('movCodigo').value;
+    const cant = parseFloat(document.getElementById('movCantidad').value) || 0;
+    const subInput = document.getElementById('movSubtotal');
+    if (!cod || !productosCache[cod] || cant <= 0) {
+        subInput.value = '';
+        return;
+    }
+    const precio = productosCache[cod].precio;
+    const sub = cant * precio;
+    subInput.value = sub.toFixed(2);
+}
+
+function limpiarFormularioMovimiento() {
+    document.getElementById('movTipo').value = '';
+    document.getElementById('movCodigo').value = '';
+    document.getElementById('movCantidad').value = '';
+    document.getElementById('movSubtotal').value = '';
+    habilitarRegistroMovimiento();
+}
+
+function registrarMovimiento() {
+    const tipo = document.getElementById('movTipo').value;
+    const cod = document.getElementById('movCodigo').value;
+    const cant = parseFloat(document.getElementById('movCantidad').value) || 0;
+    if (!tipo) { alert('Seleccione el tipo de operación'); return; }
+    if (!cod || !productosCache[cod]) { alert('Seleccione un producto válido'); return; }
+    if (cant <= 0) { alert('Ingrese una cantidad válida'); return; }
+
+    const prod = productosCache[cod];
+    const subtotal = cant * prod.precio;
+    const mov = {
+        tipo,
+        codigo: prod.codigo,
+        desc: prod.desc,
+        cantidad: cant,
+        precio: prod.precio,
+        subtotal,
+        fecha: new Date().toISOString()
+    };
+    movimientosInvCache.push(mov);
+
+    // En venta solo jala código y cantidad, y envía su multiplicación al subtotal.
+    // En entrada/salida también registra el movimiento.
+    renderizarMovimientosInv();
+    actualizarKpisInventario();
+    limpiarFormularioMovimiento();
+    guardarEstado();
+    mostrarSync('Movimiento registrado', 'success');
+}
+
+function renderizarMovimientosInv() {
     const tbody = document.getElementById('cuerpoInventario');
     if (!tbody) return;
     tbody.innerHTML = '';
-    const saldos = obtenerSaldos();
-
-    // Buscar las cuentas 20111 y 69111 en el catálogo
-    const cuentaEntrada = catalogoCuentas.find(c => c.codigo === '20111');
-    const cuentaSalida = catalogoCuentas.find(c => c.codigo === '69111');
-
-    const descEntrada = cuentaEntrada ? `${cuentaEntrada.codigo} - ${cuentaEntrada.nombre}` : '20111 - Costo';
-    const descSalida = cuentaSalida ? `${cuentaSalida.codigo} - ${cuentaSalida.nombre}` : '69111 - Costo de Ventas - Mercaderías';
-
-    let totalEntradas = 0;
-    let totalSalidas = 0;
-    let contador = 0;
-
-    // Recorrer los asientos del libro para extraer los movimientos individuales
-    const filas = document.querySelectorAll('#cuerpoLibro tr');
-    const cuentasLibro = catalogoCuentas.filter(c => c.codigo.length <= 5 && !c.excluir317);
-
-    filas.forEach(fila => {
-        const celdas = fila.querySelectorAll('td');
-        const nro = celdas[0]?.textContent || '';
-        // Recorrer todas las cuentas de la fila
-        for (let i = 4; i < celdas.length - 1; i++) {
-            const cuenta = cuentasLibro[i - 4];
-            if (!cuenta) continue;
-            if (cuenta.codigo === '20111') {
-                const td = celdas[i];
-                const debe = parseFloat(td.getAttribute('data-debe')) || 0;
-                const haber = parseFloat(td.getAttribute('data-haber')) || 0;
-                const monto = debe - haber; // entrada positiva
-                if (monto > 0) {
-                    contador++;
-                    totalEntradas += monto;
-                    const tr = document.createElement('tr');
-                    tr.innerHTML = `
-                        <td>${contador}</td>
-                        <td style="color:#0078d4; font-weight:700;">Entrada</td>
-                        <td>${descEntrada}</td>
-                        <td class="num">${monto.toFixed(2)}</td>
-                    `;
-                    tbody.appendChild(tr);
-                }
-            } else if (cuenta.codigo === '69111') {
-                const td = celdas[i];
-                const debe = parseFloat(td.getAttribute('data-debe')) || 0;
-                const haber = parseFloat(td.getAttribute('data-haber')) || 0;
-                const monto = debe - haber; // salida positiva
-                if (monto > 0) {
-                    contador++;
-                    totalSalidas += monto;
-                    const tr = document.createElement('tr');
-                    tr.innerHTML = `
-                        <td>${contador}</td>
-                        <td style="color:#c0504d; font-weight:700;">Salida</td>
-                        <td>${descSalida}</td>
-                        <td class="num">${monto.toFixed(2)}</td>
-                    `;
-                    tbody.appendChild(tr);
-                }
-            }
-        }
-    });
-
-    // Si no hay movimientos, mostrar fila vacía informativa
-    if (contador === 0) {
+    if (movimientosInvCache.length === 0) {
         const tr = document.createElement('tr');
-        tr.innerHTML = `<td colspan="4" style="text-align:center; color:#999; padding:20px;">No hay movimientos de inventario (cuentas 20111 y 69111)</td>`;
+        tr.innerHTML = `<td colspan="7" style="text-align:center; color:#999; padding:20px;">No hay movimientos registrados</td>`;
         tbody.appendChild(tr);
+        return;
     }
+    movimientosInvCache.forEach((m, idx) => {
+        const badge = m.tipo === 'entrada' ? '<span class="badge-tipo badge-entrada">ENTRADA</span>'
+                    : m.tipo === 'salida' ? '<span class="badge-tipo badge-salida">SALIDA</span>'
+                    : '<span class="badge-tipo badge-venta">VENTA</span>';
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td>${idx + 1}</td>
+            <td>${badge}</td>
+            <td>${m.codigo} - ${m.desc}</td>
+            <td class="num">${m.cantidad}</td>
+            <td class="num">${m.precio.toFixed(2)}</td>
+            <td class="num">${m.subtotal.toFixed(2)}</td>
+            <td style="text-align:center;">
+                <button class="btn-delete-row" onclick="eliminarMovimientoInv(${idx})">✕</button>
+            </td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
 
-    document.getElementById('invEntradas').textContent = 'S/ ' + formatoNumero(totalEntradas);
-    document.getElementById('invSalidas').textContent = 'S/ ' + formatoNumero(totalSalidas);
-    document.getElementById('invFinal').textContent = 'S/ ' + formatoNumero(totalEntradas - totalSalidas);
+function eliminarMovimientoInv(idx) {
+    if (!confirm('¿Eliminar este movimiento?')) return;
+    movimientosInvCache.splice(idx, 1);
+    renderizarMovimientosInv();
+    actualizarKpisInventario();
+    guardarEstado();
+}
+
+function actualizarKpisInventario() {
+    let entradas = 0, salidas = 0, ventas = 0;
+    movimientosInvCache.forEach(m => {
+        if (m.tipo === 'entrada') entradas += m.subtotal;
+        else if (m.tipo === 'salida') salidas += m.subtotal;
+        else if (m.tipo === 'venta') ventas += m.subtotal;
+    });
+    document.getElementById('invEntradas').textContent = 'S/ ' + formatoNumero(entradas);
+    document.getElementById('invSalidas').textContent = 'S/ ' + formatoNumero(salidas);
+    document.getElementById('invVentas').textContent = 'S/ ' + formatoNumero(ventas);
+    document.getElementById('invFinal').textContent = 'S/ ' + formatoNumero(entradas - salidas + ventas);
+}
+
+function calcularInventario() {
+    renderizarProductos();
+    renderizarMovimientosInv();
+    actualizarKpisInventario();
 }
 
 function actualizarInfoDatos() {
