@@ -20,26 +20,19 @@
     --excel-bg-alt: #f3f3f3;
     --excel-header: #f5f5f5;
     --excel-text: #1f1f1f;
-    --excel-text-light: #605e5c;
-    --excel-hover: #f0f0f0;
-    --excel-selected: #e6f4ea;
-    --excel-row-header: #e6e6e6;
     --excel-red: #c00;
     --excel-orange: #ff8c00;
 }
 
 body { background: #f3f2f1; color: var(--excel-text); overflow: hidden; height: 100vh; }
 
-/* ==========================================
-   LOGIN ESTILO EXCEL
-   ========================================== */
+/* LOGIN */
 .auth-screen {
     position: fixed; inset: 0; z-index: 9999;
     background: linear-gradient(135deg, #217346 0%, #185c37 100%);
     display: flex; align-items: center; justify-content: center; padding: 20px;
 }
 .auth-screen.hidden { display: none; }
-
 .auth-box {
     background: white; border-radius: 4px; padding: 40px;
     width: 100%; max-width: 420px;
@@ -85,294 +78,116 @@ body { background: #f3f2f1; color: var(--excel-text); overflow: hidden; height: 
 }
 .btn-reparar:hover { background: #f3f3f3; }
 
-/* ==========================================
-   APP - ESTRUCTURA EXCEL
-   ========================================== */
+/* APP */
 .app { display: none; height: 100vh; flex-direction: column; }
 .app.hidden { display: none; }
 .app:not(.hidden) { display: flex; }
 
-/* Cinta superior (Ribbon) */
-.excel-ribbon {
-    background: var(--excel-green); color: white; display: flex; flex-direction: column;
-}
-.ribbon-title {
-    display: flex; align-items: center; gap: 10px; padding: 6px 14px;
-    border-bottom: 1px solid rgba(255,255,255,0.15);
-}
-.ribbon-icon {
-    width: 26px; height: 26px; background: white; color: var(--excel-green);
-    border-radius: 3px; display: flex; align-items: center; justify-content: center;
-    font-weight: 900; font-size: 16px;
-}
+/* RIBBON */
+.excel-ribbon { background: var(--excel-green); color: white; display: flex; flex-direction: column; }
+.ribbon-title { display: flex; align-items: center; gap: 10px; padding: 6px 14px; border-bottom: 1px solid rgba(255,255,255,0.15); }
+.ribbon-icon { width: 26px; height: 26px; background: white; color: var(--excel-green); border-radius: 3px; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 16px; }
 .ribbon-title h1 { font-size: 14px; font-weight: 600; }
 .ribbon-title .subtitle { font-size: 11px; opacity: 0.9; margin-left: 10px; }
-.ribbon-user {
-    margin-left: auto; display: flex; align-items: center; gap: 8px;
-    background: rgba(255,255,255,0.15); padding: 4px 10px; border-radius: 2px;
-    font-size: 11px;
-}
-.ribbon-user .avatar {
-    width: 22px; height: 22px; background: white; color: var(--excel-green);
-    border-radius: 50%; display: flex; align-items: center; justify-content: center;
-    font-weight: 700; font-size: 11px;
-}
-.ribbon-btn-salir {
-    background: rgba(255,255,255,0.15); border: none; color: white;
-    padding: 3px 8px; border-radius: 2px; cursor: pointer; font-size: 11px;
-}
+.ribbon-user { margin-left: auto; display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.15); padding: 4px 10px; border-radius: 2px; font-size: 11px; }
+.ribbon-user .avatar { width: 22px; height: 22px; background: white; color: var(--excel-green); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 11px; }
+.ribbon-btn-salir { background: rgba(255,255,255,0.15); border: none; color: white; padding: 3px 8px; border-radius: 2px; cursor: pointer; font-size: 11px; }
 .ribbon-btn-salir:hover { background: rgba(255,255,255,0.25); }
-
-.ribbon-tabs {
-    display: flex; background: #185c37; padding: 0 8px;
-}
-.ribbon-tab {
-    padding: 6px 14px; font-size: 12px; color: rgba(255,255,255,0.85);
-    cursor: pointer; border-bottom: 2px solid transparent;
-}
+.ribbon-tabs { display: flex; background: #185c37; padding: 0 8px; overflow-x: auto; }
+.ribbon-tab { padding: 6px 14px; font-size: 12px; color: rgba(255,255,255,0.85); cursor: pointer; border-bottom: 2px solid transparent; white-space: nowrap; }
 .ribbon-tab:hover { background: rgba(255,255,255,0.08); }
 .ribbon-tab.active { background: var(--excel-green-light); color: var(--excel-green); border-bottom-color: white; font-weight: 600; }
+.ribbon-tab.admin-only { display: none; }
+.ribbon-tab.admin-only.visible { display: block; }
 
-.ribbon-toolbar {
-    background: white; border-bottom: 1px solid var(--excel-border);
-    padding: 6px 14px; display: flex; align-items: center; gap: 10px;
-    min-height: 42px; overflow-x: auto;
-}
-.toolbar-group {
-    display: flex; align-items: center; gap: 4px; padding-right: 10px;
-    border-right: 1px solid var(--excel-border); height: 30px;
-}
-.toolbar-group:last-child { border-right: none; }
-.toolbar-btn {
-    background: transparent; border: 1px solid transparent;
-    padding: 4px 8px; font-size: 11px; cursor: pointer; border-radius: 2px;
-    color: #333; display: flex; align-items: center; gap: 4px;
-}
-.toolbar-btn:hover { background: var(--excel-hover); border-color: var(--excel-border); }
-.toolbar-btn.primary { background: var(--excel-green); color: white; }
-.toolbar-btn.primary:hover { background: var(--excel-green-dark); }
-.toolbar-btn.danger { color: #a80000; }
-.toolbar-btn.danger:hover { background: #fde7e9; }
+.ribbon-toolbar { background: white; border-bottom: 1px solid var(--excel-border); padding: 6px 14px; display: flex; align-items: center; gap: 10px; min-height: 42px; }
 
-/* Barra de fórmulas */
-.formula-bar {
-    background: white; border-bottom: 1px solid var(--excel-border);
-    display: flex; align-items: center; padding: 0 8px; height: 26px; font-size: 12px;
-}
-.formula-cell-ref {
-    width: 80px; padding: 0 8px; font-weight: 600; color: #333;
-    border-right: 1px solid var(--excel-border);
-}
+.formula-bar { background: white; border-bottom: 1px solid var(--excel-border); display: flex; align-items: center; padding: 0 8px; height: 26px; font-size: 12px; }
+.formula-cell-ref { width: 80px; padding: 0 8px; font-weight: 600; color: #333; border-right: 1px solid var(--excel-border); }
 .formula-fx { padding: 0 8px; color: #666; font-style: italic; font-weight: 600; }
 .formula-content { flex: 1; padding: 0 8px; color: #333; }
 
-/* Contenido principal */
-.excel-main {
-    flex: 1; display: flex; flex-direction: column; overflow: hidden; background: white;
-}
-
-/* Barra lateral (grupos del libro) */
-.excel-sidebar {
-    display: flex; flex-direction: row; height: 100%; overflow: hidden;
-}
-.excel-sidebar-left {
-    width: 200px; background: #f5f5f5; border-right: 1px solid var(--excel-border);
-    overflow-y: auto; padding: 8px 0; flex-shrink: 0;
-}
-.sidebar-group {
-    font-size: 10px; font-weight: 700; color: #666;
-    padding: 10px 14px 4px; text-transform: uppercase;
-}
-.sidebar-item {
-    padding: 6px 14px 6px 22px; font-size: 12px; cursor: pointer;
-    color: #333; display: flex; align-items: center; gap: 6px;
-    border-left: 3px solid transparent;
-}
-.sidebar-item:hover { background: var(--excel-hover); }
-.sidebar-item.active {
-    background: var(--excel-green-light); color: var(--excel-green-dark);
-    border-left-color: var(--excel-green); font-weight: 600;
-}
+.excel-main { flex: 1; display: flex; flex-direction: column; overflow: hidden; background: white; }
+.excel-sidebar { display: flex; flex-direction: row; height: 100%; overflow: hidden; flex: 1; }
+.excel-sidebar-left { width: 200px; background: #f5f5f5; border-right: 1px solid var(--excel-border); overflow-y: auto; padding: 8px 0; flex-shrink: 0; }
+.sidebar-group { font-size: 10px; font-weight: 700; color: #666; padding: 10px 14px 4px; text-transform: uppercase; }
+.sidebar-item { padding: 6px 14px 6px 22px; font-size: 12px; cursor: pointer; color: #333; display: flex; align-items: center; gap: 6px; border-left: 3px solid transparent; }
+.sidebar-item:hover { background: var(--excel-hover, #f0f0f0); }
+.sidebar-item.active { background: var(--excel-green-light); color: var(--excel-green-dark); border-left-color: var(--excel-green); font-weight: 600; }
 .sidebar-item.admin-only { display: none; }
 .sidebar-item.admin-only.visible { display: flex; }
 .sidebar-icon { font-size: 12px; width: 16px; text-align: center; }
 
-/* Área de trabajo (hoja) */
-.excel-workspace {
-    flex: 1; overflow: auto; background: #f3f2f1; padding: 12px;
-}
-.excel-sheet {
-    background: white; border: 1px solid var(--excel-border);
-    min-height: calc(100vh - 200px);
-}
-
-.sheet-title {
-    padding: 8px 14px; background: var(--excel-green); color: white;
-    font-size: 13px; font-weight: 600;
-    display: flex; justify-content: space-between; align-items: center;
-    border-bottom: 1px solid var(--excel-green-dark);
-}
+.excel-workspace { flex: 1; overflow: auto; background: #f3f2f1; padding: 12px; }
+.excel-sheet { background: white; border: 1px solid var(--excel-border); min-height: calc(100vh - 200px); }
+.sheet-title { padding: 8px 14px; background: var(--excel-green); color: white; font-size: 13px; font-weight: 600; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--excel-green-dark); }
 .sheet-title .sheet-tabs { font-size: 10px; font-weight: 400; opacity: 0.85; }
-
-.sheet-toolbar {
-    padding: 6px 14px; background: var(--excel-bg-alt);
-    border-bottom: 1px solid var(--excel-border);
-    display: flex; gap: 8px; align-items: center; flex-wrap: wrap;
-}
-.sheet-toolbar .btn {
-    padding: 4px 12px; border: 1px solid var(--excel-border);
-    background: white; color: #333; font-size: 11px; cursor: pointer; border-radius: 2px;
-}
+.sheet-toolbar { padding: 6px 14px; background: var(--excel-bg-alt); border-bottom: 1px solid var(--excel-border); display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.sheet-toolbar .btn { padding: 4px 12px; border: 1px solid var(--excel-border); background: white; color: #333; font-size: 11px; cursor: pointer; border-radius: 2px; }
 .sheet-toolbar .btn:hover { background: #f0f0f0; }
 .sheet-toolbar .btn.primary { background: var(--excel-green); color: white; border-color: var(--excel-green); }
-.sheet-toolbar .btn.primary:hover { background: var(--excel-green-dark); }
-.sheet-toolbar .btn.danger { background: white; color: #a80000; border-color: #a80000; }
-.sheet-toolbar .btn.danger:hover { background: #fde7e9; }
 
-/* Tablas tipo Excel */
-table {
-    border-collapse: collapse; width: 100%; font-size: 12px;
-    font-family: 'Calibri', 'Segoe UI', sans-serif;
-}
-table th, table td {
-    border: 1px solid var(--excel-border-dark);
-    padding: 4px 8px; text-align: left; height: 22px; vertical-align: middle;
-}
-table th {
-    background: var(--excel-header); color: #333; font-weight: 700;
-    text-align: center; font-size: 11px;
-}
-table td.num, table th.num { text-align: right; font-family: 'Calibri', monospace; }
-table td.centro { text-align: center; }
+table { border-collapse: collapse; width: 100%; font-size: 12px; font-family: 'Calibri', 'Segoe UI', sans-serif; }
+table th, table td { border: 1px solid var(--excel-border-dark); padding: 4px 8px; text-align: left; height: 22px; vertical-align: middle; }
+table th { background: var(--excel-header); color: #333; font-weight: 700; text-align: center; font-size: 11px; }
+table td.num, table th.num { text-align: right; }
 table tr:hover td { background: #f9f9f9; }
-
-.excel-data-table { width: 100%; }
-.excel-data-table tr.row-header th {
-    background: var(--excel-green); color: white;
-    font-weight: 700; text-align: center; border-color: var(--excel-green-dark);
-}
-.excel-data-table tr.subheader th {
-    background: var(--excel-green-light); color: var(--excel-green-dark); font-size: 10px;
-}
+.excel-data-table tr.row-header th { background: var(--excel-green); color: white; font-weight: 700; text-align: center; border-color: var(--excel-green-dark); }
 .excel-data-table td.total { background: #fff4ce; font-weight: 700; }
 .excel-data-table td.total-strong { background: var(--excel-green-light); font-weight: 700; color: var(--excel-green-dark); }
 .excel-data-table td.utilidad { background: #dff6dd; font-weight: 700; color: var(--excel-green-dark); }
 
-/* Formularios como celdas */
-.excel-form-row {
-    display: grid; gap: 0; margin-bottom: 0;
-    grid-template-columns: repeat(2, 1fr);
-    border: 1px solid var(--excel-border-dark); border-bottom: none;
-}
-.excel-form-row:last-child { border-bottom: 1px solid var(--excel-border-dark); }
+.excel-form-row { display: grid; gap: 0; margin-bottom: 0; grid-template-columns: repeat(2, 1fr); border: 1px solid var(--excel-border-dark); border-bottom: none; }
+.excel-form-row:last-of-type { border-bottom: 1px solid var(--excel-border-dark); }
 .excel-form-row-3 { grid-template-columns: repeat(3, 1fr); }
-.excel-form-row-4 { grid-template-columns: repeat(4, 1fr); }
-.excel-cell-label {
-    background: var(--excel-header); padding: 8px 12px;
-    font-weight: 700; font-size: 11px; color: #333;
-    border-right: 1px solid var(--excel-border-dark);
-    display: flex; align-items: center;
-}
+.excel-cell-label { background: var(--excel-header); padding: 8px 12px; font-weight: 700; font-size: 11px; color: #333; border-right: 1px solid var(--excel-border-dark); display: flex; align-items: center; }
 .excel-cell-input { padding: 4px; }
-.excel-cell-input input, .excel-cell-input select {
-    width: 100%; padding: 6px 8px; border: none; font-size: 12px;
-    background: white; color: #1f1f1f;
-}
-.excel-cell-input input:focus, .excel-cell-input select:focus {
-    outline: 2px solid var(--excel-green); outline-offset: -2px;
-}
+.excel-cell-input input, .excel-cell-input select { width: 100%; padding: 6px 8px; border: none; font-size: 12px; background: white; color: #1f1f1f; }
+.excel-cell-input input:focus, .excel-cell-input select:focus { outline: 2px solid var(--excel-green); outline-offset: -2px; }
 
-/* Tarjetas KPI estilo Excel */
-.kpi-grid {
-    display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 10px; margin-bottom: 14px;
-}
-.kpi-card {
-    background: white; border: 1px solid var(--excel-border-dark);
-    border-left: 4px solid var(--excel-green); padding: 12px;
-}
+.kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin-bottom: 14px; }
+.kpi-card { background: white; border: 1px solid var(--excel-border-dark); border-left: 4px solid var(--excel-green); padding: 12px; }
 .kpi-card.blue { border-left-color: var(--excel-blue); }
-.kpi-card.green { border-left-color: var(--excel-green); }
 .kpi-card.purple { border-left-color: #7b1fa2; }
 .kpi-card.orange { border-left-color: var(--excel-orange); }
-.kpi-card.red { border-left-color: var(--excel-red); }
 .kpi-label { font-size: 10px; color: #666; text-transform: uppercase; font-weight: 700; margin-bottom: 4px; }
 .kpi-value { font-size: 20px; font-weight: 700; color: #1f1f1f; }
 .kpi-footer { font-size: 10px; color: #666; margin-top: 4px; }
 
-/* Info cards */
-.info-grid {
-    display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 10px; margin-bottom: 14px;
-}
-.info-card {
-    background: white; border: 1px solid var(--excel-border-dark);
-    padding: 12px; display: flex; align-items: center; gap: 10px;
-}
-.info-icon {
-    width: 36px; height: 36px; background: var(--excel-green-light);
-    color: var(--excel-green); border-radius: 4px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 18px; flex-shrink: 0;
-}
+.info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; margin-bottom: 14px; }
+.info-card { background: white; border: 1px solid var(--excel-border-dark); padding: 12px; display: flex; align-items: center; gap: 10px; }
+.info-icon { width: 36px; height: 36px; background: var(--excel-green-light); color: var(--excel-green); border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
 .info-label { font-size: 10px; color: #666; text-transform: uppercase; font-weight: 700; }
 .info-value { font-size: 18px; font-weight: 700; color: #1f1f1f; }
 
-/* Panel genérico */
-.excel-panel {
-    background: white; border: 1px solid var(--excel-border-dark);
-    margin-bottom: 14px;
-}
-.excel-panel-header {
-    background: var(--excel-bg-alt); padding: 8px 12px;
-    border-bottom: 1px solid var(--excel-border-dark);
-    display: flex; justify-content: space-between; align-items: center;
-}
+.excel-panel { background: white; border: 1px solid var(--excel-border-dark); margin-bottom: 14px; }
+.excel-panel-header { background: var(--excel-bg-alt); padding: 8px 12px; border-bottom: 1px solid var(--excel-border-dark); display: flex; justify-content: space-between; align-items: center; }
 .excel-panel-title { font-weight: 700; font-size: 12px; color: #333; }
 .excel-panel-sub { font-size: 10px; color: #666; }
 .excel-panel-body { padding: 12px; }
 
-/* Preview box */
-.preview-box { border: 1px solid var(--excel-border-dark); background: white; margin-top: 10px; }
+.preview-box { border: 1px solid var(--excel-border-dark); background: white; margin-top: 10px; display: none; }
+.preview-box.visible { display: block; }
 .preview-box::before {
     content: 'Vista previa del asiento'; display: block;
     padding: 6px 10px; background: var(--excel-bg-alt);
     border-bottom: 1px solid var(--excel-border-dark);
     font-size: 10px; font-weight: 700; color: #666; text-transform: uppercase;
 }
-.preview-box table { font-size: 12px; }
 
-/* Dona */
 .dona-wrap { display: flex; flex-direction: column; align-items: center; gap: 14px; }
-.dona-chart {
-    width: 180px; height: 180px; border-radius: 50%; position: relative;
-    display: flex; align-items: center; justify-content: center;
-    border: 1px solid var(--excel-border-dark);
-}
-.dona-chart::before {
-    content: ''; position: absolute; width: 110px; height: 110px;
-    background: white; border-radius: 50%;
-}
+.dona-chart { width: 180px; height: 180px; border-radius: 50%; position: relative; display: flex; align-items: center; justify-content: center; border: 1px solid var(--excel-border-dark); }
+.dona-chart::before { content: ''; position: absolute; width: 110px; height: 110px; background: white; border-radius: 50%; }
 .dona-legend { display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; }
 .dona-legend .item { display: flex; align-items: center; gap: 6px; font-size: 11px; color: #333; }
 .dona-legend .dot { width: 10px; height: 10px; border-radius: 2px; }
 
-/* Modales */
-.modal-overlay {
-    position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 10000;
-    display: none; align-items: center; justify-content: center; padding: 20px;
-}
+.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 10000; display: none; align-items: center; justify-content: center; padding: 20px; }
 .modal-overlay.show { display: flex; }
-.modal {
-    background: white; border-radius: 4px; padding: 20px;
-    width: 100%; max-width: 460px;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.3);
-    border-top: 4px solid var(--excel-green);
-}
+.modal { background: white; border-radius: 4px; padding: 20px; width: 100%; max-width: 460px; box-shadow: 0 8px 24px rgba(0,0,0,0.3); border-top: 4px solid var(--excel-green); }
 .modal h2 { font-size: 15px; font-weight: 700; color: #217346; margin-bottom: 16px; }
 .modal-footer { display: flex; gap: 8px; justify-content: flex-end; margin-top: 18px; }
 
-/* Botones */
 .btn { padding: 6px 14px; border: 1px solid var(--excel-border); background: white; color: #333; font-size: 12px; cursor: pointer; border-radius: 2px; }
 .btn:hover { background: #f0f0f0; }
 .btn-primary { background: var(--excel-green); color: white; border-color: var(--excel-green); }
@@ -385,120 +200,56 @@ table tr:hover td { background: #f9f9f9; }
 .btn-small { padding: 3px 10px; font-size: 11px; }
 .btn-row { display: flex; gap: 8px; justify-content: flex-end; margin-top: 12px; }
 
-.btn-delete-row {
-    background: #fde7e9; border: 1px solid #a80000; color: #a80000;
-    width: 22px; height: 22px; font-size: 12px; cursor: pointer;
-    border-radius: 2px; display: inline-flex; align-items: center; justify-content: center;
-}
+.btn-delete-row { background: #fde7e9; border: 1px solid #a80000; color: #a80000; width: 22px; height: 22px; font-size: 12px; cursor: pointer; border-radius: 2px; display: inline-flex; align-items: center; justify-content: center; }
 .btn-delete-row:hover { background: #a80000; color: white; }
 
-.btn-delete-plantilla {
-    background: #fde7e9; border: 1px solid #a80000; color: #a80000;
-    padding: 0 12px; font-size: 14px; cursor: pointer; border-radius: 2px;
-    display: none;
-}
+.btn-delete-plantilla { background: #fde7e9; border: 1px solid #a80000; color: #a80000; padding: 0 12px; font-size: 14px; cursor: pointer; border-radius: 2px; display: none; }
 .btn-delete-plantilla.admin-visible { display: inline-flex; align-items: center; }
 
-/* Módulos (hojas) */
 .module { display: none; }
 .module.active { display: block; }
 
-/* Estados de usuario */
 .user-status-active { color: #107c10; font-weight: 700; }
 .user-status-inactive { color: #a80000; font-weight: 700; }
 .user-status-admin { color: #ff8c00; font-weight: 700; }
 .user-row-inactive { opacity: 0.5; }
 
-/* Sync status */
-.sync-status {
-    position: fixed; bottom: 40px; right: 20px;
-    padding: 8px 14px; border-radius: 2px; font-size: 12px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    opacity: 0; pointer-events: none; transition: opacity 0.3s;
-    z-index: 9998; background: white; border-left: 4px solid #666;
-}
+.sync-status { position: fixed; bottom: 40px; right: 20px; padding: 8px 14px; border-radius: 2px; font-size: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); opacity: 0; pointer-events: none; transition: opacity 0.3s; z-index: 9998; background: white; border-left: 4px solid #666; }
 .sync-status.show { opacity: 1; }
 .sync-status.syncing { border-left-color: #0078d4; color: #0078d4; }
 .sync-status.success { border-left-color: var(--excel-green); color: var(--excel-green); }
 .sync-status.error { border-left-color: #a80000; color: #a80000; }
 
-/* Pestañas de hojas abajo (tipo Excel) */
-.sheet-tabs-bar {
-    background: var(--excel-bg-alt); border-top: 1px solid var(--excel-border);
-    padding: 4px 8px; display: flex; gap: 2px; align-items: center;
-    overflow-x: auto; height: 32px; flex-shrink: 0;
-}
-.sheet-tab {
-    padding: 4px 14px; background: white; border: 1px solid var(--excel-border);
-    border-bottom: none; font-size: 11px; cursor: pointer;
-    border-radius: 3px 3px 0 0; white-space: nowrap;
-}
-.sheet-tab.active {
-    background: var(--excel-green); color: white; border-color: var(--excel-green-dark);
-    font-weight: 600;
-}
+.sheet-tabs-bar { background: var(--excel-bg-alt); border-top: 1px solid var(--excel-border); padding: 4px 8px; display: flex; gap: 2px; align-items: center; overflow-x: auto; height: 32px; flex-shrink: 0; }
+.sheet-tab { padding: 4px 14px; background: white; border: 1px solid var(--excel-border); border-bottom: none; font-size: 11px; cursor: pointer; border-radius: 3px 3px 0 0; white-space: nowrap; }
+.sheet-tab.active { background: var(--excel-green); color: white; border-color: var(--excel-green-dark); font-weight: 600; }
 .sheet-tab:hover:not(.active) { background: #f0f0f0; }
-.sheet-tabs-nav {
-    background: var(--excel-green); color: white; width: 24px; height: 24px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 12px; cursor: pointer; border-radius: 2px; margin: 0 2px;
-}
+.sheet-tabs-nav { background: var(--excel-green); color: white; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-size: 12px; cursor: pointer; border-radius: 2px; margin: 0 2px; }
 
-/* Fila de encabezados A, B, C */
-.col-headers {
-    display: flex; background: var(--excel-row-header);
-    border-bottom: 1px solid var(--excel-border-dark); font-size: 10px;
-    font-weight: 600; color: #333; text-align: center;
-}
-.col-header {
-    flex: 1; padding: 3px 6px; border-right: 1px solid var(--excel-border-dark);
-    min-width: 80px;
-}
-.col-header.corner { flex: 0 0 34px; min-width: 34px; }
+.config-table input, .config-table select { width: 100%; padding: 4px 6px; border: 1px solid var(--excel-border); font-size: 11px; background: white; color: #1f1f1f; }
+.config-table input:focus, .config-table select:focus { outline: 2px solid var(--excel-green); outline-offset: -2px; }
 
-/* Config table */
-.config-table input, .config-table select {
-    width: 100%; padding: 4px 6px; border: 1px solid var(--excel-border);
-    font-size: 11px; background: white; color: #1f1f1f;
-}
-.config-table input:focus, .config-table select:focus {
-    outline: 2px solid var(--excel-green); outline-offset: -2px;
-}
-
-/* Danger zone */
-.danger-zone {
-    border: 1px solid #a80000; background: #fde7e9;
-    padding: 14px; margin-top: 14px; border-radius: 2px;
-}
+.danger-zone { border: 1px solid #a80000; background: #fde7e9; padding: 14px; margin-top: 14px; border-radius: 2px; }
 .danger-zone h3 { color: #a80000; font-size: 13px; margin-bottom: 6px; }
 .danger-zone p { font-size: 12px; color: #333; margin-bottom: 10px; }
 
-/* Theme selector */
 .theme-selector { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 10px; }
-.theme-option {
-    background: white; border: 2px solid var(--excel-border);
-    padding: 10px; cursor: pointer; text-align: center; border-radius: 2px;
-}
+.theme-option { background: white; border: 2px solid var(--excel-border); padding: 10px; cursor: pointer; text-align: center; border-radius: 2px; }
 .theme-option.selected { border-color: var(--excel-green); background: var(--excel-green-light); }
-.theme-preview {
-    height: 40px; border-radius: 2px; margin-bottom: 6px;
-}
+.theme-preview { height: 40px; border-radius: 2px; margin-bottom: 6px; }
 .theme-preview.futurista { background: linear-gradient(135deg, #217346, #185c37); }
 .theme-preview.ejecutivo { background: linear-gradient(135deg, #1f3864, #2e5597); }
 .theme-preview.claro { background: linear-gradient(135deg, #ffffff, #f0f0f0); border: 1px solid #ccc; }
 .theme-name { font-size: 11px; font-weight: 700; color: #333; }
 .theme-desc { font-size: 10px; color: #666; }
 
-/* Responsive */
 @media (max-width: 900px) {
     .excel-sidebar-left { width: 160px; }
     .excel-form-row { grid-template-columns: 1fr; }
     .excel-form-row-3 { grid-template-columns: 1fr; }
-    .excel-form-row-4 { grid-template-columns: 1fr 1fr; }
     .theme-selector { grid-template-columns: 1fr; }
 }
 
-/* Scrollbars */
 ::-webkit-scrollbar { width: 12px; height: 12px; }
 ::-webkit-scrollbar-track { background: #f0f0f0; }
 ::-webkit-scrollbar-thumb { background: #c0c0c0; border-radius: 6px; border: 3px solid #f0f0f0; }
@@ -538,8 +289,6 @@ table tr:hover td { background: #f9f9f9; }
 
 <!-- APP -->
 <div class="app hidden" id="appMain">
-
-    <!-- RIBBON SUPERIOR -->
     <div class="excel-ribbon">
         <div class="ribbon-title">
             <div class="ribbon-icon">X</div>
@@ -553,30 +302,27 @@ table tr:hover td { background: #f9f9f9; }
             </div>
         </div>
         <div class="ribbon-tabs">
-            <div class="ribbon-tab active" onclick="irModulo('dashboard', event)" data-mod="dashboard">Inicio</div>
-            <div class="ribbon-tab" onclick="irModulo('asientos', event)" data-mod="asientos">Movimiento</div>
-            <div class="ribbon-tab" onclick="irModulo('libro', event)" data-mod="libro">Libro Diario</div>
-            <div class="ribbon-tab" onclick="irModulo('balance', event)" data-mod="balance">Balance 3.17</div>
-            <div class="ribbon-tab" onclick="irModulo('esf', event)" data-mod="esf">Estado Financiero</div>
-            <div class="ribbon-tab" onclick="irModulo('er', event)" data-mod="er">Resultados</div>
-            <div class="ribbon-tab" onclick="irModulo('pcge', event)" data-mod="pcge">Plan Contable</div>
-            <div class="ribbon-tab" onclick="irModulo('config', event)" data-mod="config">Plantillas</div>
-            <div class="ribbon-tab" onclick="irModulo('datos', event)" data-mod="datos">Mis Datos</div>
-            <div class="ribbon-tab admin-only" id="tabUsuarios" onclick="irModulo('usuarios', event)" data-mod="usuarios">Usuarios</div>
+            <div class="ribbon-tab active" onclick="irModulo('dashboard', event)">Inicio</div>
+            <div class="ribbon-tab" onclick="irModulo('asientos', event)">Movimiento</div>
+            <div class="ribbon-tab" onclick="irModulo('libro', event)">Libro Diario</div>
+            <div class="ribbon-tab" onclick="irModulo('balance', event)">Balance 3.17</div>
+            <div class="ribbon-tab" onclick="irModulo('esf', event)">Estado Financiero</div>
+            <div class="ribbon-tab" onclick="irModulo('er', event)">Resultados</div>
+            <div class="ribbon-tab" onclick="irModulo('pcge', event)">Plan Contable</div>
+            <div class="ribbon-tab" onclick="irModulo('config', event)">Plantillas</div>
+            <div class="ribbon-tab" onclick="irModulo('datos', event)">Mis Datos</div>
+            <div class="ribbon-tab admin-only" id="tabUsuarios" onclick="irModulo('usuarios', event)">Usuarios</div>
         </div>
     </div>
 
-    <!-- TOOLBAR RIBBON -->
     <div class="ribbon-toolbar" id="ribbonToolbar"></div>
 
-    <!-- BARRA DE FÓRMULAS -->
     <div class="formula-bar">
         <div class="formula-cell-ref" id="cellRef">A1</div>
         <div class="formula-fx">fx</div>
         <div class="formula-content" id="formulaContent">FinanSmart OS</div>
     </div>
 
-    <!-- ÁREA PRINCIPAL -->
     <div class="excel-main">
         <div class="excel-sidebar">
             <div class="excel-sidebar-left">
@@ -609,7 +355,7 @@ table tr:hover td { background: #f9f9f9; }
                                     <div class="kpi-label">Dinero disponible</div>
                                     <div class="kpi-value" id="kpiDinero">S/ 0.00</div>
                                 </div>
-                                <div class="kpi-card green">
+                                <div class="kpi-card">
                                     <div class="kpi-label">Ganancia del mes</div>
                                     <div class="kpi-value" id="kpiGanancia">S/ 0.00</div>
                                 </div>
@@ -690,7 +436,7 @@ table tr:hover td { background: #f9f9f9; }
                                 <div class="excel-cell-label">IGV (18%)</div>
                                 <div class="excel-cell-label">Total</div>
                             </div>
-                            <div class="excel-form-row excel-form-row-3" style="border-bottom:1px solid var(--excel-border-dark);">
+                            <div class="excel-form-row excel-form-row-3">
                                 <div class="excel-cell-input"><input type="text" id="txtBase" placeholder="0.00" oninput="recalcularDesde('base')"></div>
                                 <div class="excel-cell-input"><input type="text" id="txtIGV" placeholder="0.00" oninput="recalcularDesde('igv')"></div>
                                 <div class="excel-cell-input"><input type="text" id="txtTotal" placeholder="0.00" oninput="recalcularDesde('total')"></div>
@@ -700,7 +446,15 @@ table tr:hover td { background: #f9f9f9; }
                                 <div class="excel-cell-input"><input type="text" id="txtGlosa" placeholder="Ej: VENTA DE MERCADERIA"></div>
                             </div>
 
-                            <div class="preview-box">
+                            <!-- BOTÓN PARA MOSTRAR/OCULTAR VISTA PREVIA -->
+                            <div style="margin-top:14px; margin-bottom:8px;">
+                                <button type="button" class="btn btn-ghost" onclick="toggleVistaPreview()" id="btnTogglePreview">
+                                    ▶ Mostrar vista previa del asiento
+                                </button>
+                            </div>
+
+                            <!-- VISTA PREVIA (OCULTA POR DEFECTO) -->
+                            <div class="preview-box" id="previewBox">
                                 <table id="tablaPreview">
                                     <thead>
                                         <tr>
@@ -1030,7 +784,6 @@ table tr:hover td { background: #f9f9f9; }
             </div>
         </div>
 
-        <!-- PESTAÑAS INFERIORES TIPO EXCEL -->
         <div class="sheet-tabs-bar" id="sheetTabsBar">
             <div class="sheet-tabs-nav" title="Anterior">◀</div>
             <div class="sheet-tab active" onclick="irModulo('dashboard', event)">Dashboard</div>
@@ -1080,13 +833,10 @@ table tr:hover td { background: #f9f9f9; }
 </div>
 
 <script>
-// ==========================================
-// CONFIGURACIÓN NETLIFY BLOBS
-// ==========================================
 const API_URL = '/api/datos';
-const SESSION_KEY = 'finansmart_session_v21';
+const SESSION_KEY = 'finansmart_session_v22';
 const DATA_PREFIX = 'finansmart_data_';
-const CACHE_KEY = 'finansmart_cache_v21';
+const CACHE_KEY = 'finansmart_cache_v22';
 
 let usuarioActual = null;
 let vBase = 0, vIGV = 0, vTotal = 0;
@@ -1110,6 +860,25 @@ function mostrarSync(msg, tipo) {
     el.className = 'sync-status show ' + (tipo || 'syncing');
     clearTimeout(el._t);
     el._t = setTimeout(() => { el.className = 'sync-status'; }, 4000);
+}
+
+/* ==========================================
+   VISTA PREVIA - MOSTRAR/OCULTAR
+   ========================================== */
+function toggleVistaPreview() {
+    const box = document.getElementById('previewBox');
+    const btn = document.getElementById('btnTogglePreview');
+    if (!box || !btn) return;
+    const visible = box.classList.contains('visible');
+    if (visible) {
+        box.classList.remove('visible');
+        box.style.display = 'none';
+        btn.textContent = '▶ Mostrar vista previa del asiento';
+    } else {
+        box.classList.add('visible');
+        box.style.display = 'block';
+        btn.textContent = '▼ Ocultar vista previa del asiento';
+    }
 }
 
 async function leerDatos() {
@@ -1407,8 +1176,7 @@ function abrirApp() {
         document.getElementById('userRoleDisplay').textContent = '● ADMIN';
         document.getElementById('menuUsuarios').classList.add('visible');
         document.getElementById('tabUsuarios').classList.add('visible');
-        document.getElementById('tabUsuarios').style.display = 'block';
-        document.getElementById('tabUsuariosBajo').style.display = 'block';
+        document.getElementById('tabUsuariosBajo').classList.add('visible');
         document.getElementById('btnEliminarPlantilla').classList.add('admin-visible');
         document.getElementById('configSubtitle').textContent = 'Configuración global (admin)';
     } else {
