@@ -209,6 +209,15 @@ table tr:hover td { background: #f9f9f9; }
 .theme-name { font-size: 11px; font-weight: 700; color: #333; }
 .theme-desc { font-size: 10px; color: #666; }
 
+/* Inventario */
+.inv-kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; margin-bottom: 14px; }
+.inv-kpi { background: white; border: 1px solid var(--excel-border-dark); border-left: 4px solid var(--excel-green); padding: 12px; }
+.inv-kpi.entrada { border-left-color: #0078d4; }
+.inv-kpi.salida { border-left-color: #c0504d; }
+.inv-kpi.final { border-left-color: #217346; background: #e6f4ea; }
+.inv-kpi-label { font-size: 10px; color: #666; text-transform: uppercase; font-weight: 700; margin-bottom: 4px; }
+.inv-kpi-value { font-size: 20px; font-weight: 700; color: #1f1f1f; }
+
 @media (max-width: 900px) {
     .excel-sidebar-left { width: 160px; }
     .excel-form-row { grid-template-columns: 1fr; }
@@ -271,6 +280,7 @@ table tr:hover td { background: #f9f9f9; }
             <div class="ribbon-tab active" onclick="irModulo('dashboard', event)">Inicio</div>
             <div class="ribbon-tab" onclick="irModulo('asientos', event)">Movimiento</div>
             <div class="ribbon-tab" onclick="irModulo('libro', event)">Registro de Gastos e Ingresos</div>
+            <div class="ribbon-tab" onclick="irModulo('inventario', event)">Inventario</div>
             <div class="ribbon-tab" onclick="irModulo('balance', event)">Balance 3.17</div>
             <div class="ribbon-tab" onclick="irModulo('esf', event)">Estado Financiero</div>
             <div class="ribbon-tab" onclick="irModulo('er', event)">Resultados</div>
@@ -296,6 +306,7 @@ table tr:hover td { background: #f9f9f9; }
                 <div class="sidebar-item active" onclick="irModulo('dashboard', event)"><span class="sidebar-icon">📊</span> Dashboard</div>
                 <div class="sidebar-item" onclick="irModulo('asientos', event)"><span class="sidebar-icon">📝</span> Movimiento</div>
                 <div class="sidebar-item" onclick="irModulo('libro', event)"><span class="sidebar-icon">📖</span> Registro de Gastos e Ingresos</div>
+                <div class="sidebar-item" onclick="irModulo('inventario', event)"><span class="sidebar-icon">📦</span> Inventario</div>
                 <div class="sidebar-group">Reportes</div>
                 <div class="sidebar-item" onclick="irModulo('balance', event)"><span class="sidebar-icon">📋</span> Balance 3.17</div>
                 <div class="sidebar-item" onclick="irModulo('esf', event)"><span class="sidebar-icon">💰</span> Estado Financiero</div>
@@ -458,6 +469,56 @@ table tr:hover td { background: #f9f9f9; }
                                 </thead>
                                 <tbody id="cuerpoLibro"></tbody>
                             </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- INVENTARIO -->
+                <section class="module" id="mod-inventario">
+                    <div class="excel-sheet">
+                        <div class="sheet-title">
+                            <span>Inventario</span>
+                            <span class="sheet-tabs">Entradas (20111) y Salidas (69111) · Descripción y Monto</span>
+                        </div>
+                        <div class="sheet-toolbar">
+                            <button class="btn primary" onclick="calcularInventario()">Actualizar</button>
+                        </div>
+                        <div class="excel-panel-body">
+                            <div class="inv-kpi-grid">
+                                <div class="inv-kpi entrada">
+                                    <div class="inv-kpi-label">Entradas (20111)</div>
+                                    <div class="inv-kpi-value" id="invEntradas">S/ 0.00</div>
+                                </div>
+                                <div class="inv-kpi salida">
+                                    <div class="inv-kpi-label">Salidas (69111)</div>
+                                    <div class="inv-kpi-value" id="invSalidas">S/ 0.00</div>
+                                </div>
+                                <div class="inv-kpi final">
+                                    <div class="inv-kpi-label">Final (Entrada − Salida)</div>
+                                    <div class="inv-kpi-value" id="invFinal">S/ 0.00</div>
+                                </div>
+                            </div>
+                            <div class="excel-panel" style="margin:0;">
+                                <div class="excel-panel-header">
+                                    <div>
+                                        <div class="excel-panel-title">Registro de Movimiento de Inventario</div>
+                                        <div class="excel-panel-sub">Solo se muestra descripción (cuenta) y monto</div>
+                                    </div>
+                                </div>
+                                <div style="overflow:auto; max-height:calc(100vh - 400px);">
+                                    <table class="excel-data-table" id="tablaInventario">
+                                        <thead>
+                                            <tr>
+                                                <th style="width:8%;">N°</th>
+                                                <th style="width:12%;">Tipo</th>
+                                                <th style="width:55%;">Descripción</th>
+                                                <th class="num" style="width:25%;">Monto</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="cuerpoInventario"></tbody>
+                                    </table>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </section>
@@ -758,6 +819,7 @@ table tr:hover td { background: #f9f9f9; }
             <div class="sheet-tab active" onclick="irModulo('dashboard', event)">Dashboard</div>
             <div class="sheet-tab" onclick="irModulo('asientos', event)">Movimiento</div>
             <div class="sheet-tab" onclick="irModulo('libro', event)">Gastos e Ingresos</div>
+            <div class="sheet-tab" onclick="irModulo('inventario', event)">Inventario</div>
             <div class="sheet-tab" onclick="irModulo('balance', event)">Balance 3.17</div>
             <div class="sheet-tab" onclick="irModulo('esf', event)">ESF</div>
             <div class="sheet-tab" onclick="irModulo('er', event)">Resultados</div>
@@ -1377,10 +1439,11 @@ function irModulo(nombre, event) {
         if (m.getAttribute('onclick') && m.getAttribute('onclick').includes("'" + nombre + "'")) m.classList.add('active');
     });
 
-    const titulos = { dashboard: 'Dashboard', asientos: 'Movimiento', libro: 'Registro de Gastos e Ingresos', balance: 'Balance 3.17', esf: 'Estado Financiero', er: 'Resultados', pcge: 'Plan Contable', config: 'Plantillas', datos: 'Mis Datos', usuarios: 'Usuarios' };
+    const titulos = { dashboard: 'Dashboard', asientos: 'Movimiento', libro: 'Registro de Gastos e Ingresos', inventario: 'Inventario', balance: 'Balance 3.17', esf: 'Estado Financiero', er: 'Resultados', pcge: 'Plan Contable', config: 'Plantillas', datos: 'Mis Datos', usuarios: 'Usuarios' };
     document.getElementById('tituloModuloActual').textContent = titulos[nombre] || nombre;
 
     if (nombre === 'dashboard') calcularDashboard();
+    if (nombre === 'inventario') calcularInventario();
     if (nombre === 'balance') calcularBalance317();
     if (nombre === 'esf') calcularESF();
     if (nombre === 'er') calcularER();
@@ -1590,6 +1653,7 @@ const PCGE_RAW = [
     ["686","Amortización de intangibles","6","G"],["687","Valuación de activos","6","G"],
     ["688","Deterioro del valor de los activos","6","G"],["689","Provisiones","6","G"],
     ["69","COSTO DE VENTAS","6","G"],["691","Costo de Ventas - Mercaderías","6","G"],
+    ["6911","Costo de Ventas - Mercaderías","6","G"],["69111","Costo de Ventas - Mercaderías","6","G"],
     ["692","Productos terminados","6","G"],["693","Servicios terminados","6","G"],
     ["694","Subproductos, desechos y desperdicios","6","G"],
     ["695","Gastos por desvalorización de inventarios","6","G"],
@@ -2085,6 +2149,87 @@ function obtenerSaldos() {
         }
     });
     return saldos;
+}
+
+/* ==========================================
+   INVENTARIO: lee movimientos de 20111 (entradas) y 69111 (salidas)
+   ========================================== */
+function calcularInventario() {
+    const tbody = document.getElementById('cuerpoInventario');
+    if (!tbody) return;
+    tbody.innerHTML = '';
+    const saldos = obtenerSaldos();
+
+    // Buscar las cuentas 20111 y 69111 en el catálogo
+    const cuentaEntrada = catalogoCuentas.find(c => c.codigo === '20111');
+    const cuentaSalida = catalogoCuentas.find(c => c.codigo === '69111');
+
+    const descEntrada = cuentaEntrada ? `${cuentaEntrada.codigo} - ${cuentaEntrada.nombre}` : '20111 - Costo';
+    const descSalida = cuentaSalida ? `${cuentaSalida.codigo} - ${cuentaSalida.nombre}` : '69111 - Costo de Ventas - Mercaderías';
+
+    let totalEntradas = 0;
+    let totalSalidas = 0;
+    let contador = 0;
+
+    // Recorrer los asientos del libro para extraer los movimientos individuales
+    const filas = document.querySelectorAll('#cuerpoLibro tr');
+    const cuentasLibro = catalogoCuentas.filter(c => c.codigo.length <= 5 && !c.excluir317);
+
+    filas.forEach(fila => {
+        const celdas = fila.querySelectorAll('td');
+        const nro = celdas[0]?.textContent || '';
+        // Recorrer todas las cuentas de la fila
+        for (let i = 4; i < celdas.length - 1; i++) {
+            const cuenta = cuentasLibro[i - 4];
+            if (!cuenta) continue;
+            if (cuenta.codigo === '20111') {
+                const td = celdas[i];
+                const debe = parseFloat(td.getAttribute('data-debe')) || 0;
+                const haber = parseFloat(td.getAttribute('data-haber')) || 0;
+                const monto = debe - haber; // entrada positiva
+                if (monto > 0) {
+                    contador++;
+                    totalEntradas += monto;
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${contador}</td>
+                        <td style="color:#0078d4; font-weight:700;">Entrada</td>
+                        <td>${descEntrada}</td>
+                        <td class="num">${monto.toFixed(2)}</td>
+                    `;
+                    tbody.appendChild(tr);
+                }
+            } else if (cuenta.codigo === '69111') {
+                const td = celdas[i];
+                const debe = parseFloat(td.getAttribute('data-debe')) || 0;
+                const haber = parseFloat(td.getAttribute('data-haber')) || 0;
+                const monto = debe - haber; // salida positiva
+                if (monto > 0) {
+                    contador++;
+                    totalSalidas += monto;
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${contador}</td>
+                        <td style="color:#c0504d; font-weight:700;">Salida</td>
+                        <td>${descSalida}</td>
+                        <td class="num">${monto.toFixed(2)}</td>
+                    `;
+                    tbody.appendChild(tr);
+                }
+            }
+        }
+    });
+
+    // Si no hay movimientos, mostrar fila vacía informativa
+    if (contador === 0) {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td colspan="4" style="text-align:center; color:#999; padding:20px;">No hay movimientos de inventario (cuentas 20111 y 69111)</td>`;
+        tbody.appendChild(tr);
+    }
+
+    document.getElementById('invEntradas').textContent = 'S/ ' + formatoNumero(totalEntradas);
+    document.getElementById('invSalidas').textContent = 'S/ ' + formatoNumero(totalSalidas);
+    document.getElementById('invFinal').textContent = 'S/ ' + formatoNumero(totalEntradas - totalSalidas);
 }
 
 function actualizarInfoDatos() {
