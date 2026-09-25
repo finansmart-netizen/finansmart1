@@ -803,9 +803,9 @@ table tr:hover td { background: #f9f9f9; }
 
 <script>
 const API_URL = '/api/datos';
-const SESSION_KEY = 'finansmart_session_v25';
+const SESSION_KEY = 'finansmart_session_v26';
 const DATA_PREFIX = 'finansmart_data_';
-const CACHE_KEY = 'finansmart_cache_v25';
+const CACHE_KEY = 'finansmart_cache_v26';
 
 let usuarioActual = null;
 let vBase = 0, vIGV = 0, vTotal = 0;
@@ -1029,7 +1029,7 @@ function getDataKey() { return DATA_PREFIX + usuarioActual.username; }
 function guardarEstado() {
     if (!usuarioActual) return;
     localStorage.setItem(getDataKey(), JSON.stringify({
-        version: 2, timestamp: new Date().toISOString(),
+        version: 3, timestamp: new Date().toISOString(),
         correlativo: correlativo, asientos: obtenerAsientosDelDOM()
     }));
 }
@@ -1047,29 +1047,8 @@ function cargarEstado() {
 }
 
 /* ==========================================
-   FORMATO DE CELDA: "DEBE|HABER" (separador |)
-   Si es un solo valor: se asume DEBE si > 0, HABER si < 0 (compatibilidad antigua)
+   GUARDAR ASIENTOS: cada cuenta guarda { debe, haber } como objeto
    ========================================== */
-function parsearCelda(texto) {
-    if (!texto || texto.trim() === "") return { debe: 0, haber: 0 };
-    const s = String(texto).trim();
-    if (s.indexOf("|") !== -1) {
-        const partes = s.split("|");
-        return {
-            debe: parseFloat(partes[0]) || 0,
-            haber: parseFloat(partes[1]) || 0
-        };
-    }
-    // Compatibilidad con valores antiguos (un solo número)
-    const v = parseFloat(s) || 0;
-    return { debe: v > 0 ? v : 0, haber: v < 0 ? Math.abs(v) : 0 };
-}
-
-function formatearCelda(debe, haber) {
-    if (debe === 0 && haber === 0) return "";
-    return debe.toFixed(2) + "|" + haber.toFixed(2);
-}
-
 function obtenerAsientosDelDOM() {
     const asientos = [];
     const filas = document.querySelectorAll('#cuerpoLibro tr');
@@ -1081,13 +1060,32 @@ function obtenerAsientosDelDOM() {
             fecha: celdas[1].textContent,
             glosa: celdas[2].textContent,
             factura: celdas[3].textContent,
-            cuentas: {}
+            cuentas: {} // { codigo: { debe: X, haber: Y } }
         };
         for (let i = 4; i < celdas.length - 1; i++) {
             const codigo = cuentasLibro[i - 4].codigo;
-            const raw = celdas[i].textContent.trim();
-            if (raw !== "" && raw !== "-") {
-                asiento.cuentas[codigo] = raw;
+            const td = celdas[i];
+            const dataDebe = parseFloat(td.getAttribute('data-debe')) || 0;
+            const dataHaber = parseFloat(td.getAttribute('data-haber')) || 0;
+            if (dataDebe > 0 || dataHaber > 0) {
+                asiento.cuentas[codigo] = { debe: dataDebe, haber: dataHaber };
+            } else {
+                // Compatibilidad con formato antiguo (texto)
+                const texto = td.textContent.trim();
+                if (texto !== "" && texto !== "-") {
+                    if (texto.indexOf("/") !== -1) {
+                        const partes = texto.split("/");
+                        asiento.cuentas[codigo] = {
+                            debe: parseFloat(partes[0]) || 0,
+                            haber: parseFloat(partes[1]) || 0
+                        };
+                    } else {
+                        const v = parseFloat(texto);
+                        if (!isNaN(v)) {
+                            asiento.cuentas[codigo] = v > 0 ? { debe: v, haber: 0 } : { debe: 0, haber: Math.abs(v) };
+                        }
+                    }
+                }
             }
         }
         asientos.push(asiento);
@@ -1105,18 +1103,24 @@ function restaurarAsientos(asientos) {
         cuentasLibro.forEach(cuentaCatalogo => {
             const td = document.createElement('td');
             td.className = 'num';
-            const raw = asiento.cuentas[cuentaCatalogo.codigo];
-            if (raw !== undefined && raw !== "") {
-                // Si viene del formato nuevo "DEBE|HABER", mostrarlo de forma legible
-                if (String(raw).indexOf("|") !== -1) {
-                    const { debe, haber } = parsearCelda(raw);
-                    if (debe > 0 && haber > 0) td.textContent = debe.toFixed(2) + "/" + haber.toFixed(2);
-                    else if (debe > 0) td.textContent = debe.toFixed(2);
-                    else if (haber > 0) td.textContent = "-" + haber.toFixed(2);
+            const datos = asiento.cuentas[cuentaCatalogo.codigo];
+            if (datos) {
+                let debe = 0, haber = 0;
+                if (typeof datos === 'object') {
+                    debe = datos.debe || 0;
+                    haber = datos.haber || 0;
                 } else {
-                    td.textContent = raw;
+                    // formato antiguo (número)
+                    const v = parseFloat(datos) || 0;
+                    if (v > 0) debe = v;
+                    else if (v < 0) haber = Math.abs(v);
                 }
-            } else td.textContent = "";
+                td.setAttribute('data-debe', debe.toFixed(2));
+                td.setAttribute('data-haber', haber.toFixed(2));
+                if (debe > 0 && haber > 0) td.textContent = debe.toFixed(2) + "/" + haber.toFixed(2);
+                else if (debe > 0) td.textContent = debe.toFixed(2);
+                else if (haber > 0) td.textContent = "-" + haber.toFixed(2);
+            }
             tr.appendChild(td);
         });
         const tdAccion = document.createElement('td');
@@ -1130,7 +1134,7 @@ function restaurarAsientos(asientos) {
 function resetearDatosUsuario() {
     if (!confirm('¿Borrar TODOS tus asientos?')) return;
     if (!confirm('ÚLTIMA ADVERTENCIA.')) return;
-    localStorage.setItem(getDataKey(), JSON.stringify({ version: 2, timestamp: new Date().toISOString(), correlativo: 1, asientos: [] }));
+    localStorage.setItem(getDataKey(), JSON.stringify({ version: 3, timestamp: new Date().toISOString(), correlativo: 1, asientos: [] }));
     location.reload();
 }
 
@@ -1762,23 +1766,12 @@ function insertarAsiento() {
     if (!fechaOperacion) { alert("Seleccione la fecha de operación"); return; }
     if (vTotal === 0) { alert("Ingrese los montos"); return; }
 
-    let sumaDebe = 0, sumaHaber = 0;
-    plantillasCache[tipo].lineas.forEach(c => {
-        let monto = 0;
-        if (c.valor === 'base') monto = vBase;
-        else if (c.valor === 'igv') monto = vIGV;
-        else if (c.valor === 'total') monto = vTotal;
-        if (c.tipo === 'debe') sumaDebe += monto;
-        else sumaHaber += monto;
-    });
-    if (Math.abs(sumaDebe - sumaHaber) > 0.01) { alert("Descuadrado. Verifica la plantilla."); return; }
-
     const glosaFinal = glosaInput !== "" ? glosaInput.toUpperCase() : plantillasCache[tipo].nombre + " SEGUN FACTURA " + factura;
     const fechaFormateada = formatearFecha(fechaOperacion);
     const nroAsiento = correlativo++;
 
-    // 🔧 Acumular por cuenta respetando Debe y Haber
-    const acumulado = {}; // { codigo: { debe: 0, haber: 0 } }
+    // Acumular por cuenta respetando Debe y Haber
+    const acumulado = {}; // { codigo: { debe, haber } }
     plantillasCache[tipo].lineas.forEach(linea => {
         let monto = 0;
         if (linea.valor === 'base') monto = vBase;
@@ -1799,7 +1792,7 @@ function insertarAsiento() {
         td.className = 'num';
         const acc = acumulado[cuentaCatalogo.codigo];
         if (acc && (acc.debe > 0 || acc.haber > 0)) {
-            // Guardar como "DEBE|HABER" y mostrar solo el que tenga valor (o ambos)
+            // Guardar Debe y Haber por separado en atributos
             td.setAttribute('data-debe', acc.debe.toFixed(2));
             td.setAttribute('data-haber', acc.haber.toFixed(2));
             if (acc.debe > 0 && acc.haber > 0) {
@@ -1809,7 +1802,7 @@ function insertarAsiento() {
             } else {
                 td.textContent = "-" + acc.haber.toFixed(2);
             }
-        } else td.textContent = "";
+        }
         tr.appendChild(td);
     });
     const tdAccion = document.createElement('td');
@@ -2067,14 +2060,14 @@ function obtenerSaldos() {
         for (let i = 4; i < celdas.length - 1; i++) {
             const codigoCuenta = cuentasLibro[i - 4].codigo;
             const td = celdas[i];
-            // Leer del atributo data-debe / data-haber (formato nuevo)
-            const dataDebe = td.getAttribute('data-debe');
-            const dataHaber = td.getAttribute('data-haber');
-            if (dataDebe !== null || dataHaber !== null) {
-                saldos[codigoCuenta].debe += parseFloat(dataDebe) || 0;
-                saldos[codigoCuenta].haber += parseFloat(dataHaber) || 0;
+            // Leer atributos data-debe / data-haber
+            const dataDebe = parseFloat(td.getAttribute('data-debe'));
+            const dataHaber = parseFloat(td.getAttribute('data-haber'));
+            if (!isNaN(dataDebe) || !isNaN(dataHaber)) {
+                saldos[codigoCuenta].debe += dataDebe || 0;
+                saldos[codigoCuenta].haber += dataHaber || 0;
             } else {
-                // Compatibilidad con formato antiguo (texto)
+                // Compatibilidad con formato antiguo
                 const texto = td.textContent.trim();
                 if (texto === "" || texto === "-") continue;
                 if (texto.indexOf("/") !== -1) {
