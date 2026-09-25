@@ -803,9 +803,9 @@ table tr:hover td { background: #f9f9f9; }
 
 <script>
 const API_URL = '/api/datos';
-const SESSION_KEY = 'finansmart_session_v24';
+const SESSION_KEY = 'finansmart_session_v25';
 const DATA_PREFIX = 'finansmart_data_';
-const CACHE_KEY = 'finansmart_cache_v24';
+const CACHE_KEY = 'finansmart_cache_v25';
 
 let usuarioActual = null;
 let vBase = 0, vIGV = 0, vTotal = 0;
@@ -1046,17 +1046,49 @@ function cargarEstado() {
     } catch (e) { return false; }
 }
 
+/* ==========================================
+   FORMATO DE CELDA: "DEBE|HABER" (separador |)
+   Si es un solo valor: se asume DEBE si > 0, HABER si < 0 (compatibilidad antigua)
+   ========================================== */
+function parsearCelda(texto) {
+    if (!texto || texto.trim() === "") return { debe: 0, haber: 0 };
+    const s = String(texto).trim();
+    if (s.indexOf("|") !== -1) {
+        const partes = s.split("|");
+        return {
+            debe: parseFloat(partes[0]) || 0,
+            haber: parseFloat(partes[1]) || 0
+        };
+    }
+    // Compatibilidad con valores antiguos (un solo número)
+    const v = parseFloat(s) || 0;
+    return { debe: v > 0 ? v : 0, haber: v < 0 ? Math.abs(v) : 0 };
+}
+
+function formatearCelda(debe, haber) {
+    if (debe === 0 && haber === 0) return "";
+    return debe.toFixed(2) + "|" + haber.toFixed(2);
+}
+
 function obtenerAsientosDelDOM() {
     const asientos = [];
     const filas = document.querySelectorAll('#cuerpoLibro tr');
     const cuentasLibro = catalogoCuentas.filter(c => c.codigo.length <= 5 && !c.excluir317);
     filas.forEach(fila => {
         const celdas = fila.querySelectorAll('td');
-        const asiento = { nro: celdas[0].textContent, fecha: celdas[1].textContent, glosa: celdas[2].textContent, factura: celdas[3].textContent, cuentas: {} };
+        const asiento = {
+            nro: celdas[0].textContent,
+            fecha: celdas[1].textContent,
+            glosa: celdas[2].textContent,
+            factura: celdas[3].textContent,
+            cuentas: {}
+        };
         for (let i = 4; i < celdas.length - 1; i++) {
             const codigo = cuentasLibro[i - 4].codigo;
-            const valor = parseFloat(celdas[i].textContent);
-            if (!isNaN(valor) && valor !== 0) asiento.cuentas[codigo] = valor;
+            const raw = celdas[i].textContent.trim();
+            if (raw !== "" && raw !== "-") {
+                asiento.cuentas[codigo] = raw;
+            }
         }
         asientos.push(asiento);
     });
@@ -1073,9 +1105,18 @@ function restaurarAsientos(asientos) {
         cuentasLibro.forEach(cuentaCatalogo => {
             const td = document.createElement('td');
             td.className = 'num';
-            const valor = asiento.cuentas[cuentaCatalogo.codigo];
-            if (valor !== undefined && valor !== 0) td.textContent = valor.toFixed(2);
-            else td.textContent = "";
+            const raw = asiento.cuentas[cuentaCatalogo.codigo];
+            if (raw !== undefined && raw !== "") {
+                // Si viene del formato nuevo "DEBE|HABER", mostrarlo de forma legible
+                if (String(raw).indexOf("|") !== -1) {
+                    const { debe, haber } = parsearCelda(raw);
+                    if (debe > 0 && haber > 0) td.textContent = debe.toFixed(2) + "/" + haber.toFixed(2);
+                    else if (debe > 0) td.textContent = debe.toFixed(2);
+                    else if (haber > 0) td.textContent = "-" + haber.toFixed(2);
+                } else {
+                    td.textContent = raw;
+                }
+            } else td.textContent = "";
             tr.appendChild(td);
         });
         const tdAccion = document.createElement('td');
@@ -1730,11 +1771,23 @@ function insertarAsiento() {
         if (c.tipo === 'debe') sumaDebe += monto;
         else sumaHaber += monto;
     });
-    if (Math.abs(sumaDebe - sumaHaber) > 0.01) { alert("Descuadrado."); return; }
+    if (Math.abs(sumaDebe - sumaHaber) > 0.01) { alert("Descuadrado. Verifica la plantilla."); return; }
 
     const glosaFinal = glosaInput !== "" ? glosaInput.toUpperCase() : plantillasCache[tipo].nombre + " SEGUN FACTURA " + factura;
     const fechaFormateada = formatearFecha(fechaOperacion);
     const nroAsiento = correlativo++;
+
+    // 🔧 Acumular por cuenta respetando Debe y Haber
+    const acumulado = {}; // { codigo: { debe: 0, haber: 0 } }
+    plantillasCache[tipo].lineas.forEach(linea => {
+        let monto = 0;
+        if (linea.valor === 'base') monto = vBase;
+        else if (linea.valor === 'igv') monto = vIGV;
+        else if (linea.valor === 'total') monto = vTotal;
+        if (!acumulado[linea.codigo]) acumulado[linea.codigo] = { debe: 0, haber: 0 };
+        if (linea.tipo === 'debe') acumulado[linea.codigo].debe += monto;
+        else acumulado[linea.codigo].haber += monto;
+    });
 
     const tbodyLibro = document.getElementById('cuerpoLibro');
     const tr = document.createElement('tr');
@@ -1744,14 +1797,18 @@ function insertarAsiento() {
     cuentasLibro.forEach(cuentaCatalogo => {
         const td = document.createElement('td');
         td.className = 'num';
-        const cuentaAsiento = plantillasCache[tipo].lineas.find(c => c.codigo === cuentaCatalogo.codigo);
-        if (cuentaAsiento) {
-            let montoLogico = 0;
-            if (cuentaAsiento.valor === 'base') montoLogico = vBase;
-            else if (cuentaAsiento.valor === 'igv') montoLogico = vIGV;
-            else if (cuentaAsiento.valor === 'total') montoLogico = vTotal;
-            let montoFinal = (cuentaAsiento.tipo === 'debe') ? montoLogico : -montoLogico;
-            td.textContent = montoFinal.toFixed(2);
+        const acc = acumulado[cuentaCatalogo.codigo];
+        if (acc && (acc.debe > 0 || acc.haber > 0)) {
+            // Guardar como "DEBE|HABER" y mostrar solo el que tenga valor (o ambos)
+            td.setAttribute('data-debe', acc.debe.toFixed(2));
+            td.setAttribute('data-haber', acc.haber.toFixed(2));
+            if (acc.debe > 0 && acc.haber > 0) {
+                td.textContent = acc.debe.toFixed(2) + "/" + acc.haber.toFixed(2);
+            } else if (acc.debe > 0) {
+                td.textContent = acc.debe.toFixed(2);
+            } else {
+                td.textContent = "-" + acc.haber.toFixed(2);
+            }
         } else td.textContent = "";
         tr.appendChild(td);
     });
@@ -2009,9 +2066,29 @@ function obtenerSaldos() {
         const celdas = fila.querySelectorAll('td');
         for (let i = 4; i < celdas.length - 1; i++) {
             const codigoCuenta = cuentasLibro[i - 4].codigo;
-            const valor = parseFloat(celdas[i].textContent) || 0;
-            if (valor > 0) saldos[codigoCuenta].debe += valor;
-            else if (valor < 0) saldos[codigoCuenta].haber += Math.abs(valor);
+            const td = celdas[i];
+            // Leer del atributo data-debe / data-haber (formato nuevo)
+            const dataDebe = td.getAttribute('data-debe');
+            const dataHaber = td.getAttribute('data-haber');
+            if (dataDebe !== null || dataHaber !== null) {
+                saldos[codigoCuenta].debe += parseFloat(dataDebe) || 0;
+                saldos[codigoCuenta].haber += parseFloat(dataHaber) || 0;
+            } else {
+                // Compatibilidad con formato antiguo (texto)
+                const texto = td.textContent.trim();
+                if (texto === "" || texto === "-") continue;
+                if (texto.indexOf("/") !== -1) {
+                    const partes = texto.split("/");
+                    saldos[codigoCuenta].debe += parseFloat(partes[0]) || 0;
+                    saldos[codigoCuenta].haber += parseFloat(partes[1]) || 0;
+                } else {
+                    const v = parseFloat(texto);
+                    if (!isNaN(v)) {
+                        if (v > 0) saldos[codigoCuenta].debe += v;
+                        else if (v < 0) saldos[codigoCuenta].haber += Math.abs(v);
+                    }
+                }
+            }
         }
     });
     return saldos;
@@ -2043,7 +2120,6 @@ function calcularBalance317() {
     let totalDeudor = 0, totalAcreedor = 0, totalDebe = 0, totalHaber = 0;
     let totalBGDeudor = 0, totalBGAcreedor = 0, totalPerdidasNat = 0, totalGananciasNat = 0;
 
-    // Mostrar EXACTAMENTE las mismas cuentas que aparecen en el Registro de Movimiento
     const cuentasLibro = catalogoCuentas.filter(c => c.codigo.length <= 5 && !c.excluir317);
 
     cuentasLibro.forEach(cuenta => {
@@ -2078,7 +2154,6 @@ function calcularBalance317() {
         tbody.appendChild(tr);
     });
 
-    // Ahora: primero TOTALIZAR, luego RESTAR
     const difBG = totalBGDeudor - totalBGAcreedor;
     const difRN = totalPerdidasNat - totalGananciasNat;
 
@@ -2098,7 +2173,6 @@ function calcularBalance317() {
     `;
     tbody.appendChild(trTotal);
 
-    // Fila final con las DIFERENCIAS
     const trDif = document.createElement('tr');
     trDif.innerHTML = `
         <td colspan="2" style="text-align:right; background:#e6f4ea; font-weight:700; color:#185c37;">DIFERENCIA (Total Deudor − Total Acreedor | Total Pérdidas − Total Ganancias)</td>
