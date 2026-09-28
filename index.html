@@ -210,25 +210,16 @@ table tr:hover td { background: #f9f9f9; }
 .theme-name { font-size: 11px; font-weight: 700; color: #333; }
 .theme-desc { font-size: 10px; color: #666; }
 
+/* Badges TOTAL / PARCIAL */
+.badge-tipo-total { background:#fff4ce; color:#b06a00; padding:2px 8px; border-radius:10px; font-size:10px; font-weight:700; display:inline-block; }
+.badge-tipo-parcial { background:#e6f0fb; color:#0078d4; padding:2px 8px; border-radius:10px; font-size:10px; font-weight:700; display:inline-block; }
+
 /* ==========================================
    MODAL ESCANEAR DOCUMENTO
    ========================================== */
 .scan-modal { max-width: 620px; }
-.scan-modal .drop-zone {
-    border: 3px dashed #217346;
-    border-radius: 6px;
-    padding: 30px 20px;
-    text-align: center;
-    background: #f8fcf9;
-    cursor: pointer;
-    transition: all 0.2s;
-    margin-bottom: 14px;
-}
-.scan-modal .drop-zone:hover, .scan-modal .drop-zone.dragover {
-    background: #e6f4ea;
-    border-color: #185c37;
-    transform: scale(1.01);
-}
+.scan-modal .drop-zone { border: 3px dashed #217346; border-radius: 6px; padding: 30px 20px; text-align: center; background: #f8fcf9; cursor: pointer; transition: all 0.2s; margin-bottom: 14px; }
+.scan-modal .drop-zone:hover, .scan-modal .drop-zone.dragover { background: #e6f4ea; border-color: #185c37; transform: scale(1.01); }
 .scan-modal .drop-zone .icon { font-size: 40px; margin-bottom: 10px; display: block; }
 .scan-modal .drop-zone .title { font-size: 14px; font-weight: 700; color: #217346; margin-bottom: 6px; }
 .scan-modal .drop-zone .hint { font-size: 11px; color: #666; }
@@ -321,6 +312,8 @@ table tr:hover td { background: #f9f9f9; }
             <div class="ribbon-tab active" onclick="irModulo('dashboard', event)">Inicio</div>
             <div class="ribbon-tab" onclick="irModulo('asientos', event)">Movimiento</div>
             <div class="ribbon-tab" onclick="irModulo('libro', event)">Registro de Gastos e Ingresos</div>
+            <div class="ribbon-tab" onclick="irModulo('cxp', event)">Cuentas por Pagar</div>
+            <div class="ribbon-tab" onclick="irModulo('cxc', event)">Otras Cuentas por Cobrar</div>
             <div class="ribbon-tab" onclick="irModulo('balance', event)">Balance 3.17</div>
             <div class="ribbon-tab" onclick="irModulo('esf', event)">Estado Financiero</div>
             <div class="ribbon-tab" onclick="irModulo('er', event)">Resultados</div>
@@ -346,6 +339,8 @@ table tr:hover td { background: #f9f9f9; }
                 <div class="sidebar-item active" onclick="irModulo('dashboard', event)"><span class="sidebar-icon">📊</span> Dashboard</div>
                 <div class="sidebar-item" onclick="irModulo('asientos', event)"><span class="sidebar-icon">📝</span> Movimiento</div>
                 <div class="sidebar-item" onclick="irModulo('libro', event)"><span class="sidebar-icon">📖</span> Registro de Gastos e Ingresos</div>
+                <div class="sidebar-item" onclick="irModulo('cxp', event)"><span class="sidebar-icon">💸</span> Cuentas por Pagar</div>
+                <div class="sidebar-item" onclick="irModulo('cxc', event)"><span class="sidebar-icon">💵</span> Otras Cuentas por Cobrar</div>
                 <div class="sidebar-group">Reportes</div>
                 <div class="sidebar-item" onclick="irModulo('balance', event)"><span class="sidebar-icon">📋</span> Balance 3.17</div>
                 <div class="sidebar-item" onclick="irModulo('esf', event)"><span class="sidebar-icon">💰</span> Estado Financiero</div>
@@ -514,6 +509,116 @@ table tr:hover td { background: #f9f9f9; }
                                 </thead>
                                 <tbody id="cuerpoLibro"></tbody>
                             </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- CUENTAS POR PAGAR -->
+                <section class="module" id="mod-cxp">
+                    <div class="excel-sheet">
+                        <div class="sheet-title">
+                            <span>Cuentas por Pagar</span>
+                            <span class="sheet-tabs">Total y Parcial · Cuenta 4212</span>
+                        </div>
+                        <div class="sheet-toolbar">
+                            <button class="btn primary" onclick="calcularCxP()">Actualizar</button>
+                            <button class="btn" onclick="filtrarCxP('')">Todas</button>
+                            <button class="btn" onclick="filtrarCxP('TOTAL')">Solo Total</button>
+                            <button class="btn" onclick="filtrarCxP('PARCIAL')">Solo Parcial</button>
+                            <button class="btn btn-danger" onclick="limpiarCxP()">Limpiar módulo</button>
+                        </div>
+                        <div class="excel-panel-body">
+                            <div class="kpi-grid">
+                                <div class="kpi-card orange">
+                                    <div class="kpi-label">Total por pagar</div>
+                                    <div class="kpi-value" id="cxpTotalMonto">S/ 0.00</div>
+                                </div>
+                                <div class="kpi-card">
+                                    <div class="kpi-label">Registros TOTAL</div>
+                                    <div class="kpi-value" id="cxpCantTotal">0</div>
+                                </div>
+                                <div class="kpi-card purple">
+                                    <div class="kpi-label">Registros PARCIAL</div>
+                                    <div class="kpi-value" id="cxpCantParcial">0</div>
+                                </div>
+                                <div class="kpi-card blue">
+                                    <div class="kpi-label">Total registros</div>
+                                    <div class="kpi-value" id="cxpCantTotalReg">0</div>
+                                </div>
+                            </div>
+
+                            <div style="overflow:auto; max-height:calc(100vh - 380px);">
+                                <table class="excel-data-table" id="tablaCxP">
+                                    <thead>
+                                        <tr class="row-header">
+                                            <th style="width:6%;">N°</th>
+                                            <th style="width:9%;">Fecha</th>
+                                            <th style="width:9%;">Doc.</th>
+                                            <th style="width:30%;">Glosa</th>
+                                            <th style="width:12%;">Cuenta</th>
+                                            <th class="num" style="width:11%;">Debe</th>
+                                            <th class="num" style="width:11%;">Haber</th>
+                                            <th style="width:12%;">Tipo</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="cuerpoCxP"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- OTRAS CUENTAS POR COBRAR -->
+                <section class="module" id="mod-cxc">
+                    <div class="excel-sheet">
+                        <div class="sheet-title">
+                            <span>Otras Cuentas por Cobrar</span>
+                            <span class="sheet-tabs">Total y Parcial · Cuenta 1212</span>
+                        </div>
+                        <div class="sheet-toolbar">
+                            <button class="btn primary" onclick="calcularCxC()">Actualizar</button>
+                            <button class="btn" onclick="filtrarCxC('')">Todas</button>
+                            <button class="btn" onclick="filtrarCxC('TOTAL')">Solo Total</button>
+                            <button class="btn" onclick="filtrarCxC('PARCIAL')">Solo Parcial</button>
+                            <button class="btn btn-danger" onclick="limpiarCxC()">Limpiar módulo</button>
+                        </div>
+                        <div class="excel-panel-body">
+                            <div class="kpi-grid">
+                                <div class="kpi-card blue">
+                                    <div class="kpi-label">Total por cobrar</div>
+                                    <div class="kpi-value" id="cxcTotalMonto">S/ 0.00</div>
+                                </div>
+                                <div class="kpi-card">
+                                    <div class="kpi-label">Registros TOTAL</div>
+                                    <div class="kpi-value" id="cxcCantTotal">0</div>
+                                </div>
+                                <div class="kpi-card purple">
+                                    <div class="kpi-label">Registros PARCIAL</div>
+                                    <div class="kpi-value" id="cxcCantParcial">0</div>
+                                </div>
+                                <div class="kpi-card orange">
+                                    <div class="kpi-label">Total registros</div>
+                                    <div class="kpi-value" id="cxcCantTotalReg">0</div>
+                                </div>
+                            </div>
+
+                            <div style="overflow:auto; max-height:calc(100vh - 380px);">
+                                <table class="excel-data-table" id="tablaCxC">
+                                    <thead>
+                                        <tr class="row-header">
+                                            <th style="width:6%;">N°</th>
+                                            <th style="width:9%;">Fecha</th>
+                                            <th style="width:9%;">Doc.</th>
+                                            <th style="width:30%;">Glosa</th>
+                                            <th style="width:12%;">Cuenta</th>
+                                            <th class="num" style="width:11%;">Debe</th>
+                                            <th class="num" style="width:11%;">Haber</th>
+                                            <th style="width:12%;">Tipo</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="cuerpoCxC"></tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </section>
@@ -815,6 +920,8 @@ table tr:hover td { background: #f9f9f9; }
             <div class="sheet-tab active" onclick="irModulo('dashboard', event)">Dashboard</div>
             <div class="sheet-tab" onclick="irModulo('asientos', event)">Movimiento</div>
             <div class="sheet-tab" onclick="irModulo('libro', event)">Gastos e Ingresos</div>
+            <div class="sheet-tab" onclick="irModulo('cxp', event)">Ctas. por Pagar</div>
+            <div class="sheet-tab" onclick="irModulo('cxc', event)">Otras Ctas. por Cobrar</div>
             <div class="sheet-tab" onclick="irModulo('balance', event)">Balance 3.17</div>
             <div class="sheet-tab" onclick="irModulo('esf', event)">ESF</div>
             <div class="sheet-tab" onclick="irModulo('er', event)">Resultados</div>
@@ -947,6 +1054,12 @@ let usuariosCache = {};
 let plantillasCache = {};
 
 let tipoGastoSeleccionado = null;
+
+/* Módulos CxP y CxC */
+let cxpCache = [];   // Cuentas por Pagar (cuenta 4212)
+let cxcCache = [];   // Otras Cuentas por Cobrar (cuenta 1212)
+let cxpFiltroActual = '';
+let cxcFiltroActual = '';
 
 function log(...args) { console.log('[FinanSmart]', ...args); }
 
@@ -1163,9 +1276,11 @@ function getDataKey() { return DATA_PREFIX + usuarioActual.username; }
 function guardarEstado() {
     if (!usuarioActual) return;
     localStorage.setItem(getDataKey(), JSON.stringify({
-        version: 4, timestamp: new Date().toISOString(),
+        version: 5, timestamp: new Date().toISOString(),
         correlativo: correlativo,
-        asientos: obtenerAsientosDelDOM()
+        asientos: obtenerAsientosDelDOM(),
+        cxp: cxpCache,
+        cxc: cxcCache
     }));
 }
 
@@ -1177,6 +1292,8 @@ function cargarEstado() {
         const estado = JSON.parse(raw);
         if (estado.correlativo) correlativo = estado.correlativo;
         if (estado.asientos && estado.asientos.length > 0) restaurarAsientos(estado.asientos);
+        if (estado.cxp) cxpCache = estado.cxp;
+        if (estado.cxc) cxcCache = estado.cxc;
         return true;
     } catch (e) { return false; }
 }
@@ -1264,7 +1381,7 @@ function restaurarAsientos(asientos) {
 function resetearDatosUsuario() {
     if (!confirm('¿Borrar TODOS tus asientos?')) return;
     if (!confirm('ÚLTIMA ADVERTENCIA.')) return;
-    localStorage.setItem(getDataKey(), JSON.stringify({ version: 4, timestamp: new Date().toISOString(), correlativo: 1, asientos: [] }));
+    localStorage.setItem(getDataKey(), JSON.stringify({ version: 5, timestamp: new Date().toISOString(), correlativo: 1, asientos: [], cxp: [], cxc: [] }));
     location.reload();
 }
 
@@ -1341,12 +1458,14 @@ function abrirApp() {
     document.getElementById('fechaESF').textContent = new Date().toLocaleDateString('es-PE');
     document.getElementById('anioER').textContent = new Date().getFullYear();
     cargarEstado();
+    recalcularModulosCxPxCxC();
     calcularDashboard();
     cargarComboBoxPlantillas();
     renderizarCardsTipo();
+    calcularCxP();
+    calcularCxC();
 }
-
-async function recargarTodoDesdeServidor() {
+    async function recargarTodoDesdeServidor() {
     mostrarSync('Recargando...', 'syncing');
     const datos = await leerDatos();
     if (datos) {
@@ -1509,10 +1628,17 @@ function irModulo(nombre, event) {
         if (m.getAttribute('onclick') && m.getAttribute('onclick').includes("'" + nombre + "'")) m.classList.add('active');
     });
 
-    const titulos = { dashboard: 'Dashboard', asientos: 'Movimiento', libro: 'Registro de Gastos e Ingresos', balance: 'Balance 3.17', esf: 'Estado Financiero', er: 'Resultados', pcge: 'Plan Contable', config: 'Plantillas', datos: 'Mis Datos', usuarios: 'Usuarios' };
+    const titulos = {
+        dashboard: 'Dashboard', asientos: 'Movimiento', libro: 'Registro de Gastos e Ingresos',
+        cxp: 'Cuentas por Pagar', cxc: 'Otras Cuentas por Cobrar',
+        balance: 'Balance 3.17', esf: 'Estado Financiero', er: 'Resultados',
+        pcge: 'Plan Contable', config: 'Plantillas', datos: 'Mis Datos', usuarios: 'Usuarios'
+    };
     document.getElementById('tituloModuloActual').textContent = titulos[nombre] || nombre;
 
     if (nombre === 'dashboard') calcularDashboard();
+    if (nombre === 'cxp') calcularCxP();
+    if (nombre === 'cxc') calcularCxC();
     if (nombre === 'balance') calcularBalance317();
     if (nombre === 'esf') calcularESF();
     if (nombre === 'er') calcularER();
@@ -1564,9 +1690,9 @@ function formatearFecha(fechaISO) {
     if (partes.length !== 3) return fechaISO;
     return `${partes[2]}/${partes[1]}/${partes[0]}`;
 }
+
 /* ==========================================
    PCGE CON COLUMNA ESF
-   Formato: [codigo, nombre, esf, elemento, tipo]
    ========================================== */
 const PCGE_RAW = [
     ["10","EFECTIVO Y EQUIVALENTES DE EFECTIVO","","1","A"],
@@ -2191,6 +2317,7 @@ function insertarAsiento() {
     tr.appendChild(tdAccion);
     tbodyLibro.appendChild(tr);
 
+    recalcularModulosCxPxCxC();
     alert(`Asiento N° ${nroAsiento} registrado el ${formatearFecha(fechaOperacion)}.`);
     limpiarFormulario();
     guardarEstado();
@@ -2212,6 +2339,7 @@ function limpiarFormulario() {
 function eliminarAsiento(btn) {
     if (!confirm('¿Eliminar este asiento?')) return;
     btn.closest('tr').remove();
+    recalcularModulosCxPxCxC();
     guardarEstado();
     calcularDashboard();
 }
@@ -2465,6 +2593,175 @@ function obtenerSaldos() {
         }
     });
     return saldos;
+}
+
+/* ==========================================
+   MÓDULOS CUENTAS POR PAGAR (CxP) Y
+   OTRAS CUENTAS POR COBRAR (CxC)
+   ==========================================
+   Reglas:
+   - 4212 (Facturas por Pagar) → CxP
+     · Si Haber de 4212 == Total del asiento → marca "TOTAL"
+     · Si Haber de 4212 < Total → marca "PARCIAL"
+   - 1212 (Facturas por Cobrar) → CxC
+     · Si Debe de 1212 == Total del asiento → marca "TOTAL"
+     · Si Debe de 1212 < Total → marca "PARCIAL"
+*/
+const CUENTA_CXP = "4212";
+const CUENTA_CXC = "1212";
+
+function clasificarAsiento(asiento) {
+    const resultado = { cxp: null, cxc: null };
+
+    let totalAsiento = 0;
+    Object.values(asiento.cuentas).forEach(c => { totalAsiento += (c.debe || 0); });
+    totalAsiento = Math.round(totalAsiento * 100) / 100;
+
+    const cta4212 = asiento.cuentas[CUENTA_CXP];
+    if (cta4212 && cta4212.haber > 0) {
+        const monto = Math.round(cta4212.haber * 100) / 100;
+        const tipo = (Math.abs(monto - totalAsiento) < 0.01) ? "TOTAL" : "PARCIAL";
+        resultado.cxp = {
+            nro: asiento.nro, fecha: asiento.fecha, factura: asiento.factura,
+            glosa: asiento.glosa, cuenta: CUENTA_CXP,
+            debe: 0, haber: monto, tipo: tipo, totalAsiento: totalAsiento
+        };
+    }
+
+    const cta1212 = asiento.cuentas[CUENTA_CXC];
+    if (cta1212 && cta1212.debe > 0) {
+        const monto = Math.round(cta1212.debe * 100) / 100;
+        const tipo = (Math.abs(monto - totalAsiento) < 0.01) ? "TOTAL" : "PARCIAL";
+        resultado.cxc = {
+            nro: asiento.nro, fecha: asiento.fecha, factura: asiento.factura,
+            glosa: asiento.glosa, cuenta: CUENTA_CXC,
+            debe: monto, haber: 0, tipo: tipo, totalAsiento: totalAsiento
+        };
+    }
+
+    return resultado;
+}
+
+function recalcularModulosCxPxCxC() {
+    cxpCache = [];
+    cxcCache = [];
+    const asientos = obtenerAsientosDelDOM();
+    asientos.forEach(a => {
+        const r = clasificarAsiento(a);
+        if (r.cxp) cxpCache.push(r.cxp);
+        if (r.cxc) cxcCache.push(r.cxc);
+    });
+    // Refrescar vistas si están activas
+    if (document.getElementById('mod-cxp')?.classList.contains('active')) calcularCxP();
+    if (document.getElementById('mod-cxc')?.classList.contains('active')) calcularCxC();
+}
+
+function filtrarCxP(tipo) {
+    cxpFiltroActual = tipo || '';
+    calcularCxP();
+}
+
+function calcularCxP() {
+    if (cxpCache.length === 0) recalcularModulosCxPxCxC();
+    const tbody = document.getElementById('cuerpoCxP');
+    if (!tbody) return;
+    tbody.innerHTML = '';
+
+    let lista = cxpCache.slice();
+    if (cxpFiltroActual) lista = lista.filter(x => x.tipo === cxpFiltroActual);
+
+    if (lista.length === 0) {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td colspan="8" style="text-align:center; color:#999; padding:16px;">No hay registros de Cuentas por Pagar${cxpFiltroActual ? ' con tipo ' + cxpFiltroActual : ''}</td>`;
+        tbody.appendChild(tr);
+    } else {
+        lista.forEach(r => {
+            const tr = document.createElement('tr');
+            const badge = r.tipo === 'TOTAL'
+                ? '<span class="badge-tipo-total">TOTAL</span>'
+                : '<span class="badge-tipo-parcial">PARCIAL</span>';
+            tr.innerHTML = `
+                <td>${r.nro}</td>
+                <td>${r.fecha}</td>
+                <td>${r.factura}</td>
+                <td>${r.glosa}</td>
+                <td style="font-family:monospace; font-weight:700;">${r.cuenta}</td>
+                <td class="num">${r.debe > 0 ? r.debe.toFixed(2) : '-'}</td>
+                <td class="num">${r.haber > 0 ? r.haber.toFixed(2) : '-'}</td>
+                <td style="text-align:center;">${badge}</td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    const totalMonto = cxpCache.reduce((a, b) => a + b.haber, 0);
+    const cantTotal = cxpCache.filter(x => x.tipo === 'TOTAL').length;
+    const cantParcial = cxpCache.filter(x => x.tipo === 'PARCIAL').length;
+    const el1 = document.getElementById('cxpTotalMonto'); if (el1) el1.textContent = 'S/ ' + formatoNumero(totalMonto);
+    const el2 = document.getElementById('cxpCantTotal'); if (el2) el2.textContent = cantTotal;
+    const el3 = document.getElementById('cxpCantParcial'); if (el3) el3.textContent = cantParcial;
+    const el4 = document.getElementById('cxpCantTotalReg'); if (el4) el4.textContent = cxpCache.length;
+}
+
+function limpiarCxP() {
+    if (!confirm('¿Vaciar el módulo de Cuentas por Pagar? (No borra los asientos)')) return;
+    cxpCache = [];
+    guardarEstado();
+    calcularCxP();
+}
+
+function filtrarCxC(tipo) {
+    cxcFiltroActual = tipo || '';
+    calcularCxC();
+}
+
+function calcularCxC() {
+    if (cxcCache.length === 0) recalcularModulosCxPxCxC();
+    const tbody = document.getElementById('cuerpoCxC');
+    if (!tbody) return;
+    tbody.innerHTML = '';
+
+    let lista = cxcCache.slice();
+    if (cxcFiltroActual) lista = lista.filter(x => x.tipo === cxcFiltroActual);
+
+    if (lista.length === 0) {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td colspan="8" style="text-align:center; color:#999; padding:16px;">No hay registros de Cuentas por Cobrar${cxcFiltroActual ? ' con tipo ' + cxcFiltroActual : ''}</td>`;
+        tbody.appendChild(tr);
+    } else {
+        lista.forEach(r => {
+            const tr = document.createElement('tr');
+            const badge = r.tipo === 'TOTAL'
+                ? '<span class="badge-tipo-total">TOTAL</span>'
+                : '<span class="badge-tipo-parcial">PARCIAL</span>';
+            tr.innerHTML = `
+                <td>${r.nro}</td>
+                <td>${r.fecha}</td>
+                <td>${r.factura}</td>
+                <td>${r.glosa}</td>
+                <td style="font-family:monospace; font-weight:700;">${r.cuenta}</td>
+                <td class="num">${r.debe > 0 ? r.debe.toFixed(2) : '-'}</td>
+                <td class="num">${r.haber > 0 ? r.haber.toFixed(2) : '-'}</td>
+                <td style="text-align:center;">${badge}</td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    const totalMonto = cxcCache.reduce((a, b) => a + b.debe, 0);
+    const cantTotal = cxcCache.filter(x => x.tipo === 'TOTAL').length;
+    const cantParcial = cxcCache.filter(x => x.tipo === 'PARCIAL').length;
+    const el1 = document.getElementById('cxcTotalMonto'); if (el1) el1.textContent = 'S/ ' + formatoNumero(totalMonto);
+    const el2 = document.getElementById('cxcCantTotal'); if (el2) el2.textContent = cantTotal;
+    const el3 = document.getElementById('cxcCantParcial'); if (el3) el3.textContent = cantParcial;
+    const el4 = document.getElementById('cxcCantTotalReg'); if (el4) el4.textContent = cxcCache.length;
+}
+
+function limpiarCxC() {
+    if (!confirm('¿Vaciar el módulo de Otras Cuentas por Cobrar? (No borra los asientos)')) return;
+    cxcCache = [];
+    guardarEstado();
+    calcularCxC();
 }
 
 /* ==========================================
@@ -2773,8 +3070,6 @@ function calcularBalance317() {
 
 /* ==========================================
    ESF — 100% BASADO EN LA COLUMNA ESF
-   Solo aparecen las cuentas que tienen ESF definido.
-   Las que comparten el mismo ESF se agrupan y suman.
    ========================================== */
 function calcularESF() {
     const tbody = document.getElementById('cuerpoESF');
@@ -2787,7 +3082,6 @@ function calcularESF() {
     let tIng = 0, tGas = 0;
 
     catalogoCuentas.forEach(cuenta => {
-        // SOLO procesar cuentas que tengan ESF definido
         if (!cuenta.esf) return;
         if (cuenta.excluir317) return;
 
@@ -2814,7 +3108,6 @@ function calcularESF() {
         }
     });
 
-    // El resultado del ejercicio se agrega al patrimonio (bajo "UTILIDAD DEL EJERCICIO")
     const resultado = tIng - tGas;
     if (resultado !== 0) {
         const claveUtilidad = "UTILIDAD DEL EJERCICIO";
