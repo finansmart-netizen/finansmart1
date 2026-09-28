@@ -96,7 +96,7 @@ body { background: #f3f2f1; color: var(--excel-text); overflow: hidden; height: 
 table { border-collapse: collapse; width: 100%; font-size: 12px; font-family: 'Calibri', 'Segoe UI', sans-serif; }
 table th, table td { border: 1px solid var(--excel-border-dark); padding: 4px 8px; text-align: left; height: 22px; vertical-align: middle; }
 table th { background: var(--excel-header); color: #333; font-weight: 700; text-align: center; font-size: 11px; }
-table td.num, table th.num { text-align: right; }
+table td.num, table th.num { text-align: right; font-variant-numeric: tabular-nums; }
 table tr:hover td { background: #f9f9f9; }
 .excel-data-table tr.row-header th { background: var(--excel-green); color: white; font-weight: 700; text-align: center; border-color: var(--excel-green-dark); }
 .excel-data-table td.total { background: #fff4ce; font-weight: 700; }
@@ -117,7 +117,7 @@ table tr:hover td { background: #f9f9f9; }
 .kpi-card.purple { border-left-color: #7b1fa2; }
 .kpi-card.orange { border-left-color: var(--excel-orange); }
 .kpi-label { font-size: 10px; color: #666; text-transform: uppercase; font-weight: 700; margin-bottom: 4px; }
-.kpi-value { font-size: 20px; font-weight: 700; color: #1f1f1f; }
+.kpi-value { font-size: 20px; font-weight: 700; color: #1f1f1f; font-variant-numeric: tabular-nums; }
 .kpi-footer { font-size: 10px; color: #666; margin-top: 4px; }
 
 .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; margin-bottom: 14px; }
@@ -1055,13 +1055,25 @@ let plantillasCache = {};
 
 let tipoGastoSeleccionado = null;
 
-/* Módulos CxP y CxC */
-let cxpCache = [];   // Cuentas por Pagar (cuenta 4212)
-let cxcCache = [];   // Otras Cuentas por Cobrar (cuenta 1212)
+let cxpCache = [];
+let cxcCache = [];
 let cxpFiltroActual = '';
 let cxcFiltroActual = '';
 
 function log(...args) { console.log('[FinanSmart]', ...args); }
+
+/* ==========================================
+   FORMATEO DE NÚMEROS CON SEPARADOR DE MILES
+   ========================================== */
+function fmt(n) {
+    if (n === null || n === undefined || isNaN(n)) return '0.00';
+    return Number(n).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+function formatoNumero(num) { return fmt(num); }
+function fmtOrDash(n) {
+    if (n === null || n === undefined || isNaN(n) || n === 0) return '-';
+    return fmt(n);
+}
 
 function setDiag(msg, isError) {
     const el = document.getElementById('diagMsg');
@@ -1328,7 +1340,7 @@ function obtenerAsientosDelDOM() {
                             haber: parseFloat(partes[1]) || 0
                         };
                     } else {
-                        const v = parseFloat(texto);
+                        const v = parseFloat(texto.replace(/,/g, ''));
                         if (!isNaN(v)) {
                             asiento.cuentas[codigo] = v > 0 ? { debe: v, haber: 0 } : { debe: 0, haber: Math.abs(v) };
                         }
@@ -1364,9 +1376,9 @@ function restaurarAsientos(asientos) {
                 }
                 td.setAttribute('data-debe', debe.toFixed(2));
                 td.setAttribute('data-haber', haber.toFixed(2));
-                if (debe > 0 && haber > 0) td.textContent = debe.toFixed(2) + "/" + haber.toFixed(2);
-                else if (debe > 0) td.textContent = debe.toFixed(2);
-                else if (haber > 0) td.textContent = "-" + haber.toFixed(2);
+                if (debe > 0 && haber > 0) td.textContent = fmt(debe) + "/" + fmt(haber);
+                else if (debe > 0) td.textContent = fmt(debe);
+                else if (haber > 0) td.textContent = "-" + fmt(haber);
             }
             tr.appendChild(td);
         });
@@ -1465,7 +1477,7 @@ function abrirApp() {
     calcularCxP();
     calcularCxC();
 }
-    async function recargarTodoDesdeServidor() {
+async function recargarTodoDesdeServidor() {
     mostrarSync('Recargando...', 'syncing');
     const datos = await leerDatos();
     if (datos) {
@@ -2174,39 +2186,39 @@ function recalcularDesde(campoEditado) {
     const igv = document.getElementById('txtIGV');
     const total = document.getElementById('txtTotal');
 
-    const baseVal = parseFloat(base.value);
-    const igvVal = parseFloat(igv.value);
-    const totalVal = parseFloat(total.value);
+    const baseVal = parseFloat(base.value.replace(/,/g, ''));
+    const igvVal = parseFloat(igv.value.replace(/,/g, ''));
+    const totalVal = parseFloat(total.value.replace(/,/g, ''));
     const baseOk = !isNaN(baseVal) && base.value.trim() !== "";
     const igvOk = !isNaN(igvVal) && igv.value.trim() !== "";
     const totalOk = !isNaN(totalVal) && total.value.trim() !== "";
 
     if (campoEditado === 'base') {
         if (!baseOk) {
-            if (igvOk) { vIGV = igvVal; vBase = Math.round((igvVal / TASA_IGV) * 100) / 100; vTotal = vBase + vIGV; base.value = vBase.toFixed(2); total.value = vTotal.toFixed(2); }
-            else if (totalOk) { vTotal = totalVal; vBase = Math.round((totalVal / (1 + TASA_IGV)) * 100) / 100; vIGV = Math.round((totalVal - vBase) * 100) / 100; base.value = vBase.toFixed(2); igv.value = vIGV.toFixed(2); }
+            if (igvOk) { vIGV = igvVal; vBase = Math.round((igvVal / TASA_IGV) * 100) / 100; vTotal = vBase + vIGV; base.value = fmt(vBase); total.value = fmt(vTotal); }
+            else if (totalOk) { vTotal = totalVal; vBase = Math.round((totalVal / (1 + TASA_IGV)) * 100) / 100; vIGV = Math.round((totalVal - vBase) * 100) / 100; base.value = fmt(vBase); igv.value = fmt(vIGV); }
             else { vBase = vIGV = vTotal = 0; igv.value = ""; total.value = ""; }
         } else {
             vBase = baseVal; vIGV = Math.round(baseVal * TASA_IGV * 100) / 100; vTotal = Math.round((baseVal + vIGV) * 100) / 100;
-            igv.value = vIGV.toFixed(2); total.value = vTotal.toFixed(2);
+            igv.value = fmt(vIGV); total.value = fmt(vTotal);
         }
     } else if (campoEditado === 'igv') {
         if (!igvOk) {
-            if (baseOk) { vBase = baseVal; vIGV = Math.round(baseVal * TASA_IGV * 100) / 100; vTotal = Math.round((baseVal + vIGV) * 100) / 100; igv.value = vIGV.toFixed(2); total.value = vTotal.toFixed(2); }
-            else if (totalOk) { vTotal = totalVal; vBase = Math.round((totalVal / (1 + TASA_IGV)) * 100) / 100; vIGV = Math.round((totalVal - vBase) * 100) / 100; base.value = vBase.toFixed(2); igv.value = vIGV.toFixed(2); }
+            if (baseOk) { vBase = baseVal; vIGV = Math.round(baseVal * TASA_IGV * 100) / 100; vTotal = Math.round((baseVal + vIGV) * 100) / 100; igv.value = fmt(vIGV); total.value = fmt(vTotal); }
+            else if (totalOk) { vTotal = totalVal; vBase = Math.round((totalVal / (1 + TASA_IGV)) * 100) / 100; vIGV = Math.round((totalVal - vBase) * 100) / 100; base.value = fmt(vBase); igv.value = fmt(vIGV); }
             else { vBase = vIGV = vTotal = 0; base.value = ""; total.value = ""; }
         } else {
             vIGV = igvVal; vBase = Math.round((igvVal / TASA_IGV) * 100) / 100; vTotal = Math.round((vBase + vIGV) * 100) / 100;
-            base.value = vBase.toFixed(2); total.value = vTotal.toFixed(2);
+            base.value = fmt(vBase); total.value = fmt(vTotal);
         }
     } else if (campoEditado === 'total') {
         if (!totalOk) {
-            if (baseOk) { vBase = baseVal; vIGV = Math.round(baseVal * TASA_IGV * 100) / 100; vTotal = Math.round((baseVal + vIGV) * 100) / 100; igv.value = vIGV.toFixed(2); total.value = vTotal.toFixed(2); }
-            else if (igvOk) { vIGV = igvVal; vBase = Math.round((igvVal / TASA_IGV) * 100) / 100; vTotal = Math.round((vBase + vIGV) * 100) / 100; base.value = vBase.toFixed(2); total.value = vTotal.toFixed(2); }
+            if (baseOk) { vBase = baseVal; vIGV = Math.round(baseVal * TASA_IGV * 100) / 100; vTotal = Math.round((baseVal + vIGV) * 100) / 100; igv.value = fmt(vIGV); total.value = fmt(vTotal); }
+            else if (igvOk) { vIGV = igvVal; vBase = Math.round((igvVal / TASA_IGV) * 100) / 100; vTotal = Math.round((vBase + vIGV) * 100) / 100; base.value = fmt(vBase); total.value = fmt(vTotal); }
             else { vBase = vIGV = vTotal = 0; base.value = ""; igv.value = ""; }
         } else {
             vTotal = totalVal; vBase = Math.round((totalVal / (1 + TASA_IGV)) * 100) / 100; vIGV = Math.round((totalVal - vBase) * 100) / 100;
-            base.value = vBase.toFixed(2); igv.value = vIGV.toFixed(2);
+            base.value = fmt(vBase); igv.value = fmt(vIGV);
         }
     }
     calcularYPrevisualizar();
@@ -2217,31 +2229,31 @@ function recalcularDesdeScan(campoEditado) {
     const igv = document.getElementById('scanIGV');
     const total = document.getElementById('scanTotal');
 
-    const baseVal = parseFloat(base.value);
-    const igvVal = parseFloat(igv.value);
-    const totalVal = parseFloat(total.value);
+    const baseVal = parseFloat(base.value.replace(/,/g, ''));
+    const igvVal = parseFloat(igv.value.replace(/,/g, ''));
+    const totalVal = parseFloat(total.value.replace(/,/g, ''));
     const baseOk = !isNaN(baseVal) && base.value.trim() !== "";
     const igvOk = !isNaN(igvVal) && igv.value.trim() !== "";
     const totalOk = !isNaN(totalVal) && total.value.trim() !== "";
 
     if (campoEditado === 'base') {
         if (!baseOk) {
-            if (igvOk) { const b = Math.round((igvVal / TASA_IGV) * 100) / 100; base.value = b.toFixed(2); total.value = (b + igvVal).toFixed(2); }
-            else if (totalOk) { const b = Math.round((totalVal / (1 + TASA_IGV)) * 100) / 100; base.value = b.toFixed(2); igv.value = (totalVal - b).toFixed(2); }
+            if (igvOk) { const b = Math.round((igvVal / TASA_IGV) * 100) / 100; base.value = fmt(b); total.value = fmt(b + igvVal); }
+            else if (totalOk) { const b = Math.round((totalVal / (1 + TASA_IGV)) * 100) / 100; base.value = fmt(b); igv.value = fmt(totalVal - b); }
             else { igv.value = ""; total.value = ""; }
-        } else { const i = Math.round(baseVal * TASA_IGV * 100) / 100; igv.value = i.toFixed(2); total.value = (baseVal + i).toFixed(2); }
+        } else { const i = Math.round(baseVal * TASA_IGV * 100) / 100; igv.value = fmt(i); total.value = fmt(baseVal + i); }
     } else if (campoEditado === 'igv') {
         if (!igvOk) {
-            if (baseOk) { const i = Math.round(baseVal * TASA_IGV * 100) / 100; igv.value = i.toFixed(2); total.value = (baseVal + i).toFixed(2); }
-            else if (totalOk) { const b = Math.round((totalVal / (1 + TASA_IGV)) * 100) / 100; base.value = b.toFixed(2); igv.value = (totalVal - b).toFixed(2); }
+            if (baseOk) { const i = Math.round(baseVal * TASA_IGV * 100) / 100; igv.value = fmt(i); total.value = fmt(baseVal + i); }
+            else if (totalOk) { const b = Math.round((totalVal / (1 + TASA_IGV)) * 100) / 100; base.value = fmt(b); igv.value = fmt(totalVal - b); }
             else { base.value = ""; total.value = ""; }
-        } else { const b = Math.round((igvVal / TASA_IGV) * 100) / 100; base.value = b.toFixed(2); total.value = (b + igvVal).toFixed(2); }
+        } else { const b = Math.round((igvVal / TASA_IGV) * 100) / 100; base.value = fmt(b); total.value = fmt(b + igvVal); }
     } else if (campoEditado === 'total') {
         if (!totalOk) {
-            if (baseOk) { const i = Math.round(baseVal * TASA_IGV * 100) / 100; igv.value = i.toFixed(2); total.value = (baseVal + i).toFixed(2); }
-            else if (igvOk) { const b = Math.round((igvVal / TASA_IGV) * 100) / 100; base.value = b.toFixed(2); total.value = (b + igvVal).toFixed(2); }
+            if (baseOk) { const i = Math.round(baseVal * TASA_IGV * 100) / 100; igv.value = fmt(i); total.value = fmt(baseVal + i); }
+            else if (igvOk) { const b = Math.round((igvVal / TASA_IGV) * 100) / 100; base.value = fmt(b); total.value = fmt(b + igvVal); }
             else { base.value = ""; igv.value = ""; }
-        } else { const b = Math.round((totalVal / (1 + TASA_IGV)) * 100) / 100; base.value = b.toFixed(2); igv.value = (totalVal - b).toFixed(2); }
+        } else { const b = Math.round((totalVal / (1 + TASA_IGV)) * 100) / 100; base.value = fmt(b); igv.value = fmt(totalVal - b); }
     }
 }
 
@@ -2260,8 +2272,8 @@ function calcularYPrevisualizar() {
         tr.innerHTML = `
             <td style="font-weight:700; color:#217346;">${c.codigo}</td>
             <td>${c.desc}</td>
-            <td class="num">${c.tipo === 'debe' ? monto.toFixed(2) : ''}</td>
-            <td class="num">${c.tipo === 'haber' ? monto.toFixed(2) : ''}</td>
+            <td class="num">${c.tipo === 'debe' ? fmt(monto) : ''}</td>
+            <td class="num">${c.tipo === 'haber' ? fmt(monto) : ''}</td>
         `;
         tbody.appendChild(tr);
     });
@@ -2305,9 +2317,9 @@ function insertarAsiento() {
         if (acc && (acc.debe > 0 || acc.haber > 0)) {
             td.setAttribute('data-debe', acc.debe.toFixed(2));
             td.setAttribute('data-haber', acc.haber.toFixed(2));
-            if (acc.debe > 0 && acc.haber > 0) td.textContent = acc.debe.toFixed(2) + "/" + acc.haber.toFixed(2);
-            else if (acc.debe > 0) td.textContent = acc.debe.toFixed(2);
-            else td.textContent = "-" + acc.haber.toFixed(2);
+            if (acc.debe > 0 && acc.haber > 0) td.textContent = fmt(acc.debe) + "/" + fmt(acc.haber);
+            else if (acc.debe > 0) td.textContent = fmt(acc.debe);
+            else td.textContent = "-" + fmt(acc.haber);
         }
         tr.appendChild(td);
     });
@@ -2374,7 +2386,7 @@ function calcularDashboard() {
             if (s) dineroDisponible += (s.debe - s.haber);
         }
     });
-    document.getElementById('kpiDinero').textContent = 'S/ ' + formatoNumero(dineroDisponible);
+    document.getElementById('kpiDinero').textContent = 'S/ ' + fmt(dineroDisponible);
 
     let totalIngresos = 0, totalGastos = 0;
     catalogoCuentas.forEach(c => {
@@ -2384,7 +2396,7 @@ function calcularDashboard() {
         if (elem === "7") totalIngresos += (s.haber - s.debe);
         else if (elem === "6") totalGastos += (s.debe - s.haber);
     });
-    document.getElementById('kpiGanancia').textContent = 'S/ ' + formatoNumero(totalIngresos - totalGastos);
+    document.getElementById('kpiGanancia').textContent = 'S/ ' + fmt(totalIngresos - totalGastos);
 
     let porCobrar = 0, cuentasVencidas = 0;
     catalogoCuentas.forEach(c => {
@@ -2394,7 +2406,7 @@ function calcularDashboard() {
             if (s) { const monto = s.debe - s.haber; if (monto > 0) { porCobrar += monto; cuentasVencidas++; } }
         }
     });
-    document.getElementById('kpiPorCobrar').textContent = 'S/ ' + formatoNumero(porCobrar);
+    document.getElementById('kpiPorCobrar').textContent = 'S/ ' + fmt(porCobrar);
     document.getElementById('kpiPorCobrarPie').textContent = cuentasVencidas + ' cuentas';
 
     let porPagar = 0;
@@ -2405,12 +2417,12 @@ function calcularDashboard() {
             if (s) { const monto = s.haber - s.debe; if (monto > 0) porPagar += monto; }
         }
     });
-    document.getElementById('kpiPorPagar').textContent = 'S/ ' + formatoNumero(porPagar);
+    document.getElementById('kpiPorPagar').textContent = 'S/ ' + fmt(porPagar);
     if (dineroDisponible >= porPagar) {
         document.getElementById('kpiPorPagarPie').textContent = 'Cubierto con caja';
         document.getElementById('kpiPorPagarPie').style.color = '#107c10';
     } else {
-        document.getElementById('kpiPorPagarPie').textContent = 'Faltan S/ ' + formatoNumero(porPagar - dineroDisponible);
+        document.getElementById('kpiPorPagarPie').textContent = 'Faltan S/ ' + fmt(porPagar - dineroDisponible);
         document.getElementById('kpiPorPagarPie').style.color = '#a80000';
     }
 
@@ -2424,10 +2436,10 @@ function calcularDashboard() {
         else if (primerosDos === "69") costoVentas += (s.debe - s.haber);
         else if (elem === "6") gastosOperativos += (s.debe - s.haber);
     });
-    document.getElementById('resVentas').textContent = formatoNumero(ventas);
-    document.getElementById('resCostoVentas').textContent = formatoNumero(costoVentas);
-    document.getElementById('resGastos').textContent = formatoNumero(gastosOperativos);
-    document.getElementById('resGanancia').textContent = formatoNumero(ventas - costoVentas - gastosOperativos);
+    document.getElementById('resVentas').textContent = fmt(ventas);
+    document.getElementById('resCostoVentas').textContent = fmt(costoVentas);
+    document.getElementById('resGastos').textContent = fmt(gastosOperativos);
+    document.getElementById('resGanancia').textContent = fmt(ventas - costoVentas - gastosOperativos);
 
     let catPersonal = 0, catCompras = 0, catServicios = 0, catOtros = 0;
     catalogoCuentas.forEach(c => {
@@ -2467,8 +2479,6 @@ function calcularDashboard() {
         ].map(i => `<div class="item"><div class="dot" style="background-color: ${i.color};"></div><span>${i.nombre}</span></div>`).join('');
     }
 }
-
-function formatoNumero(num) { return num.toLocaleString('es-PE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
 
 function renderizarTablaConfig() {
     const tbody = document.querySelector('#tablaConfigLineas tbody');
@@ -2580,10 +2590,10 @@ function obtenerSaldos() {
                 if (texto === "" || texto === "-") continue;
                 if (texto.indexOf("/") !== -1) {
                     const partes = texto.split("/");
-                    saldos[codigoCuenta].debe += parseFloat(partes[0]) || 0;
-                    saldos[codigoCuenta].haber += parseFloat(partes[1]) || 0;
+                    saldos[codigoCuenta].debe += parseFloat(partes[0].replace(/,/g, '')) || 0;
+                    saldos[codigoCuenta].haber += parseFloat(partes[1].replace(/,/g, '')) || 0;
                 } else {
-                    const v = parseFloat(texto);
+                    const v = parseFloat(texto.replace(/,/g, ''));
                     if (!isNaN(v)) {
                         if (v > 0) saldos[codigoCuenta].debe += v;
                         else if (v < 0) saldos[codigoCuenta].haber += Math.abs(v);
@@ -2598,15 +2608,7 @@ function obtenerSaldos() {
 /* ==========================================
    MÓDULOS CUENTAS POR PAGAR (CxP) Y
    OTRAS CUENTAS POR COBRAR (CxC)
-   ==========================================
-   Reglas:
-   - 4212 (Facturas por Pagar) → CxP
-     · Si Haber de 4212 == Total del asiento → marca "TOTAL"
-     · Si Haber de 4212 < Total → marca "PARCIAL"
-   - 1212 (Facturas por Cobrar) → CxC
-     · Si Debe de 1212 == Total del asiento → marca "TOTAL"
-     · Si Debe de 1212 < Total → marca "PARCIAL"
-*/
+   ========================================== */
 const CUENTA_CXP = "4212";
 const CUENTA_CXC = "1212";
 
@@ -2651,7 +2653,6 @@ function recalcularModulosCxPxCxC() {
         if (r.cxp) cxpCache.push(r.cxp);
         if (r.cxc) cxcCache.push(r.cxc);
     });
-    // Refrescar vistas si están activas
     if (document.getElementById('mod-cxp')?.classList.contains('active')) calcularCxP();
     if (document.getElementById('mod-cxc')?.classList.contains('active')) calcularCxC();
 }
@@ -2686,8 +2687,8 @@ function calcularCxP() {
                 <td>${r.factura}</td>
                 <td>${r.glosa}</td>
                 <td style="font-family:monospace; font-weight:700;">${r.cuenta}</td>
-                <td class="num">${r.debe > 0 ? r.debe.toFixed(2) : '-'}</td>
-                <td class="num">${r.haber > 0 ? r.haber.toFixed(2) : '-'}</td>
+                <td class="num">${r.debe > 0 ? fmt(r.debe) : '-'}</td>
+                <td class="num">${r.haber > 0 ? fmt(r.haber) : '-'}</td>
                 <td style="text-align:center;">${badge}</td>
             `;
             tbody.appendChild(tr);
@@ -2697,7 +2698,7 @@ function calcularCxP() {
     const totalMonto = cxpCache.reduce((a, b) => a + b.haber, 0);
     const cantTotal = cxpCache.filter(x => x.tipo === 'TOTAL').length;
     const cantParcial = cxpCache.filter(x => x.tipo === 'PARCIAL').length;
-    const el1 = document.getElementById('cxpTotalMonto'); if (el1) el1.textContent = 'S/ ' + formatoNumero(totalMonto);
+    const el1 = document.getElementById('cxpTotalMonto'); if (el1) el1.textContent = 'S/ ' + fmt(totalMonto);
     const el2 = document.getElementById('cxpCantTotal'); if (el2) el2.textContent = cantTotal;
     const el3 = document.getElementById('cxpCantParcial'); if (el3) el3.textContent = cantParcial;
     const el4 = document.getElementById('cxpCantTotalReg'); if (el4) el4.textContent = cxpCache.length;
@@ -2740,8 +2741,8 @@ function calcularCxC() {
                 <td>${r.factura}</td>
                 <td>${r.glosa}</td>
                 <td style="font-family:monospace; font-weight:700;">${r.cuenta}</td>
-                <td class="num">${r.debe > 0 ? r.debe.toFixed(2) : '-'}</td>
-                <td class="num">${r.haber > 0 ? r.haber.toFixed(2) : '-'}</td>
+                <td class="num">${r.debe > 0 ? fmt(r.debe) : '-'}</td>
+                <td class="num">${r.haber > 0 ? fmt(r.haber) : '-'}</td>
                 <td style="text-align:center;">${badge}</td>
             `;
             tbody.appendChild(tr);
@@ -2751,7 +2752,7 @@ function calcularCxC() {
     const totalMonto = cxcCache.reduce((a, b) => a + b.debe, 0);
     const cantTotal = cxcCache.filter(x => x.tipo === 'TOTAL').length;
     const cantParcial = cxcCache.filter(x => x.tipo === 'PARCIAL').length;
-    const el1 = document.getElementById('cxcTotalMonto'); if (el1) el1.textContent = 'S/ ' + formatoNumero(totalMonto);
+    const el1 = document.getElementById('cxcTotalMonto'); if (el1) el1.textContent = 'S/ ' + fmt(totalMonto);
     const el2 = document.getElementById('cxcCantTotal'); if (el2) el2.textContent = cantTotal;
     const el3 = document.getElementById('cxcCantParcial'); if (el3) el3.textContent = cantParcial;
     const el4 = document.getElementById('cxcCantTotalReg'); if (el4) el4.textContent = cxcCache.length;
@@ -2918,9 +2919,9 @@ async function procesarArchivo(file) {
 
         document.getElementById('scanFactura').value = datos.factura || '';
         document.getElementById('scanFecha').value = datos.fecha || new Date().toISOString().slice(0,10);
-        document.getElementById('scanBase').value = datos.base != null ? datos.base.toFixed(2) : '';
-        document.getElementById('scanIGV').value = datos.igv != null ? datos.igv.toFixed(2) : '';
-        document.getElementById('scanTotal').value = datos.total != null ? datos.total.toFixed(2) : '';
+        document.getElementById('scanBase').value = datos.base != null ? fmt(datos.base) : '';
+        document.getElementById('scanIGV').value = datos.igv != null ? fmt(datos.igv) : '';
+        document.getElementById('scanTotal').value = datos.total != null ? fmt(datos.total) : '';
         document.getElementById('scanRUC').value = datos.ruc || '';
         document.getElementById('scanGlosa').value = datos.glosa || '';
 
@@ -2948,9 +2949,9 @@ async function procesarArchivo(file) {
 function aplicarDatosEscaneados() {
     const factura = document.getElementById('scanFactura').value.trim();
     const fecha = document.getElementById('scanFecha').value;
-    const base = parseFloat(document.getElementById('scanBase').value) || 0;
-    const igv = parseFloat(document.getElementById('scanIGV').value) || 0;
-    const total = parseFloat(document.getElementById('scanTotal').value) || 0;
+    const base = parseFloat(document.getElementById('scanBase').value.replace(/,/g, '')) || 0;
+    const igv = parseFloat(document.getElementById('scanIGV').value.replace(/,/g, '')) || 0;
+    const total = parseFloat(document.getElementById('scanTotal').value.replace(/,/g, '')) || 0;
     const glosa = document.getElementById('scanGlosa').value.trim();
 
     if (!tipoGastoSeleccionado) {
@@ -2961,9 +2962,9 @@ function aplicarDatosEscaneados() {
     document.getElementById('cboTipo').value = tipoGastoSeleccionado;
     document.getElementById('txtFactura').value = factura;
     if (fecha) document.getElementById('txtFechaOperacion').value = fecha;
-    document.getElementById('txtBase').value = base ? base.toFixed(2) : '';
-    document.getElementById('txtIGV').value = igv ? igv.toFixed(2) : '';
-    document.getElementById('txtTotal').value = total ? total.toFixed(2) : '';
+    document.getElementById('txtBase').value = base ? fmt(base) : '';
+    document.getElementById('txtIGV').value = igv ? fmt(igv) : '';
+    document.getElementById('txtTotal').value = total ? fmt(total) : '';
     document.getElementById('txtGlosa').value = glosa;
 
     vBase = base; vIGV = igv; vTotal = total;
@@ -3020,14 +3021,14 @@ function calcularBalance317() {
         tr.innerHTML = `
             <td style="font-family:monospace; font-weight:700;">${cuenta.codigo}</td><td>${cuenta.nombre}</td>
             <td>-</td><td>-</td>
-            <td class="num">${debe > 0 ? debe.toFixed(2) : '-'}</td>
-            <td class="num">${haber > 0 ? haber.toFixed(2) : '-'}</td>
-            <td class="num">${debe > 0 ? debe.toFixed(2) : '-'}</td>
-            <td class="num">${haber > 0 ? haber.toFixed(2) : '-'}</td>
-            <td class="num">${bgDeudor > 0 ? bgDeudor.toFixed(2) : '-'}</td>
-            <td class="num">${bgAcreedor > 0 ? bgAcreedor.toFixed(2) : '-'}</td>
-            <td class="num">${pNat > 0 ? pNat.toFixed(2) : '-'}</td>
-            <td class="num">${gNat > 0 ? gNat.toFixed(2) : '-'}</td>
+            <td class="num">${debe > 0 ? fmt(debe) : '-'}</td>
+            <td class="num">${haber > 0 ? fmt(haber) : '-'}</td>
+            <td class="num">${debe > 0 ? fmt(debe) : '-'}</td>
+            <td class="num">${haber > 0 ? fmt(haber) : '-'}</td>
+            <td class="num">${bgDeudor > 0 ? fmt(bgDeudor) : '-'}</td>
+            <td class="num">${bgAcreedor > 0 ? fmt(bgAcreedor) : '-'}</td>
+            <td class="num">${pNat > 0 ? fmt(pNat) : '-'}</td>
+            <td class="num">${gNat > 0 ? fmt(gNat) : '-'}</td>
         `;
         tbody.appendChild(tr);
     });
@@ -3040,14 +3041,14 @@ function calcularBalance317() {
         <td colspan="2" style="text-align:right; background:#fff4ce; font-weight:700;">TOTALES</td>
         <td style="background:#fff4ce; text-align:center;">-</td>
         <td style="background:#fff4ce; text-align:center;">-</td>
-        <td class="num total">${totalDebe.toFixed(2)}</td>
-        <td class="num total">${totalHaber.toFixed(2)}</td>
-        <td class="num total">${totalDeudor.toFixed(2)}</td>
-        <td class="num total">${totalAcreedor.toFixed(2)}</td>
-        <td class="num total" style="text-align:right;">${totalBGDeudor.toFixed(2)}</td>
-        <td class="num total" style="text-align:right;">${totalBGAcreedor.toFixed(2)}</td>
-        <td class="num total" style="text-align:right;">${totalPerdidasNat.toFixed(2)}</td>
-        <td class="num total" style="text-align:right;">${totalGananciasNat.toFixed(2)}</td>
+        <td class="num total">${fmt(totalDebe)}</td>
+        <td class="num total">${fmt(totalHaber)}</td>
+        <td class="num total">${fmt(totalDeudor)}</td>
+        <td class="num total">${fmt(totalAcreedor)}</td>
+        <td class="num total" style="text-align:right;">${fmt(totalBGDeudor)}</td>
+        <td class="num total" style="text-align:right;">${fmt(totalBGAcreedor)}</td>
+        <td class="num total" style="text-align:right;">${fmt(totalPerdidasNat)}</td>
+        <td class="num total" style="text-align:right;">${fmt(totalGananciasNat)}</td>
     `;
     tbody.appendChild(trTotal);
 
@@ -3060,9 +3061,9 @@ function calcularBalance317() {
         <td style="background:#e6f4ea;"></td>
         <td style="background:#e6f4ea;"></td>
         <td style="background:#e6f4ea;"></td>
-        <td class="num total" style="text-align:center; background:#e6f4ea; font-weight:700; ${difBG >= 0 ? 'color:#107c10;' : 'color:#a80000;'}">${difBG >= 0 ? difBG.toFixed(2) : Math.abs(difBG).toFixed(2)}${difBG >= 0 ? ' (D)' : ' (A)'}</td>
+        <td class="num total" style="text-align:center; background:#e6f4ea; font-weight:700; ${difBG >= 0 ? 'color:#107c10;' : 'color:#a80000;'}">${difBG >= 0 ? fmt(difBG) : fmt(Math.abs(difBG))}${difBG >= 0 ? ' (D)' : ' (A)'}</td>
         <td style="background:#e6f4ea;"></td>
-        <td class="num total" style="text-align:center; background:#e6f4ea; font-weight:700; ${difRN >= 0 ? 'color:#a80000;' : 'color:#107c10;'}">${difRN >= 0 ? difRN.toFixed(2) : Math.abs(difRN).toFixed(2)}${difRN >= 0 ? ' (P)' : ' (G)'}</td>
+        <td class="num total" style="text-align:center; background:#e6f4ea; font-weight:700; ${difRN >= 0 ? 'color:#a80000;' : 'color:#107c10;'}">${difRN >= 0 ? fmt(difRN) : fmt(Math.abs(difRN))}${difRN >= 0 ? ' (P)' : ' (G)'}</td>
         <td style="background:#e6f4ea;"></td>
     `;
     tbody.appendChild(trDif);
@@ -3140,9 +3141,9 @@ function calcularESF() {
         const tr = document.createElement('tr');
         tr.innerHTML = `
             <td style="padding-left:20px;">${a ? a.nombre : ''}</td>
-            <td class="num">${a ? formatoNumero(a.monto) : ''}</td>
+            <td class="num">${a ? fmt(a.monto) : ''}</td>
             <td style="padding-left:20px;">${d ? d.nombre : ''}</td>
-            <td class="num">${d ? formatoNumero(d.monto) : ''}</td>
+            <td class="num">${d ? fmt(d.monto) : ''}</td>
         `;
         tbody.appendChild(tr);
     }
@@ -3150,9 +3151,9 @@ function calcularESF() {
     const trT = document.createElement('tr');
     trT.innerHTML = `
         <td class="total-strong">TOTAL ACTIVO</td>
-        <td class="num total-strong">${formatoNumero(tA)}</td>
+        <td class="num total-strong">${fmt(tA)}</td>
         <td class="total-strong">TOTAL PASIVO Y PATRIMONIO</td>
-        <td class="num total-strong">${formatoNumero(tP + tPat)}</td>
+        <td class="num total-strong">${fmt(tP + tPat)}</td>
     `;
     tbody.appendChild(trT);
 }
@@ -3180,27 +3181,27 @@ function calcularER() {
     tbody.appendChild(trI);
     dIng.forEach(i => {
         const tr = document.createElement('tr');
-        tr.innerHTML = `<td style="padding-left:20px;">${i.codigo} ${i.nombre}</td><td class="num">${i.monto.toFixed(2)}</td>`;
+        tr.innerHTML = `<td style="padding-left:20px;">${i.codigo} ${i.nombre}</td><td class="num">${fmt(i.monto)}</td>`;
         tbody.appendChild(tr);
     });
     const trTI = document.createElement('tr');
-    trTI.innerHTML = `<td class="total" style="text-align:right;">TOTAL INGRESOS</td><td class="num total">${tIng.toFixed(2)}</td>`;
+    trTI.innerHTML = `<td class="total" style="text-align:right;">TOTAL INGRESOS</td><td class="num total">${fmt(tIng)}</td>`;
     tbody.appendChild(trTI);
     const trG = document.createElement('tr');
     trG.innerHTML = `<td colspan="2" style="background:#c0504d; color:white; font-weight:700;">GASTOS</td>`;
     tbody.appendChild(trG);
     dGas.forEach(g => {
         const tr = document.createElement('tr');
-        tr.innerHTML = `<td style="padding-left:20px;">${g.codigo} ${g.nombre}</td><td class="num">${g.monto.toFixed(2)}</td>`;
+        tr.innerHTML = `<td style="padding-left:20px;">${g.codigo} ${g.nombre}</td><td class="num">${fmt(g.monto)}</td>`;
         tbody.appendChild(tr);
     });
     const trTG = document.createElement('tr');
-    trTG.innerHTML = `<td class="total" style="text-align:right;">TOTAL GASTOS</td><td class="num total">${tGas.toFixed(2)}</td>`;
+    trTG.innerHTML = `<td class="total" style="text-align:right;">TOTAL GASTOS</td><td class="num total">${fmt(tGas)}</td>`;
     tbody.appendChild(trTG);
     const res = tIng - tGas;
     const esU = res >= 0;
     const trR = document.createElement('tr');
-    trR.innerHTML = `<td class="${esU ? 'utilidad' : 'total'}">${esU ? 'UTILIDAD' : 'PÉRDIDA'} DEL EJERCICIO</td><td class="num ${esU ? 'utilidad' : 'total'}">${Math.abs(res).toFixed(2)}</td>`;
+    trR.innerHTML = `<td class="${esU ? 'utilidad' : 'total'}">${esU ? 'UTILIDAD' : 'PÉRDIDA'} DEL EJERCICIO</td><td class="num ${esU ? 'utilidad' : 'total'}">${fmt(Math.abs(res))}</td>`;
     tbody.appendChild(trR);
 }
 
@@ -3280,4 +3281,4 @@ document.addEventListener('keydown', function(e) {
 });
 </script>
 </body>
-</html>
+</html>  
