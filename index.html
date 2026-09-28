@@ -757,6 +757,32 @@ table tr:hover td { background: #f9f9f9; }
                             🔒 <strong>MODO SOLO LECTURA</strong> — Las plantillas son administradas por el administrador.
                         </div>
                         <div id="configPanel" class="excel-panel-body">
+
+                            <!-- ================================ -->
+                            <!-- CARGA MASIVA DESDE TABLA (TSV)   -->
+                            <!-- ================================ -->
+                            <div class="excel-panel" style="border-left:4px solid #0078d4;">
+                                <div class="excel-panel-header">
+                                    <div>
+                                        <div class="excel-panel-title">📥 Cargar plantillas masivamente desde tabla</div>
+                                        <div class="excel-panel-sub">Pega desde Excel (columnas: Nombre | Código | Descripción | Tipo | Valor)</div>
+                                    </div>
+                                </div>
+                                <div class="excel-panel-body">
+                                    <textarea id="txtTablaPlantillas" rows="8" placeholder="Pega aquí las filas copiadas desde Excel. Ejemplo:
+PAGO SERVICIO SERVICIO DE TRANSPORTE DE CARGA	63111	Servicio de transporte de carga	DEBE	BASE
+PAGO SERVICIO SERVICIO DE TRANSPORTE DE CARGA	40111	IGV - Cuenta propia	DEBE	IGV
+PAGO SERVICIO SERVICIO DE TRANSPORTE DE CARGA	4212	Facturas por Pagar Comerciales - Terceros	HABER	TOTAL
+PAGO SERVICIO SERVICIO DE TRANSPORTE DE CARGA	4212	Facturas por Pagar Comerciales - Terceros	DEBE	TOTAL
+PAGO SERVICIO SERVICIO DE TRANSPORTE DE CARGA	1041	Cuentas corrientes operativas	HABER	TOTAL" style="width:100%; padding:8px; border:1px solid #d0d7de; border-radius:3px; font-family:monospace; font-size:11px; background:white; resize:vertical;"></textarea>
+                                    <div class="btn-row" style="margin-top:10px;">
+                                        <button class="btn btn-ghost" onclick="document.getElementById('txtTablaPlantillas').value=''; document.getElementById('tablaPlantillasStatus').style.display='none';">Limpiar cuadro</button>
+                                        <button class="btn btn-primary" onclick="cargarPlantillasDesdeTabla()">📥 Cargar plantillas desde tabla</button>
+                                    </div>
+                                    <div id="tablaPlantillasStatus" style="margin-top:10px; padding:10px; border-radius:3px; display:none; font-size:12px;"></div>
+                                </div>
+                            </div>
+
                             <div class="excel-form-row">
                                 <div class="excel-cell-label">Nombre de la nueva plantilla</div>
                                 <div class="excel-cell-input"><input type="text" id="txtNombrePlantilla" placeholder="Ej: Pago de Servicios"></div>
@@ -1336,8 +1362,8 @@ function obtenerAsientosDelDOM() {
                     if (texto.indexOf("/") !== -1) {
                         const partes = texto.split("/");
                         asiento.cuentas[codigo] = {
-                            debe: parseFloat(partes[0]) || 0,
-                            haber: parseFloat(partes[1]) || 0
+                            debe: parseFloat(partes[0].replace(/,/g, '')) || 0,
+                            haber: parseFloat(partes[1].replace(/,/g, '')) || 0
                         };
                     } else {
                         const v = parseFloat(texto.replace(/,/g, ''));
@@ -1703,9 +1729,6 @@ function formatearFecha(fechaISO) {
     return `${partes[2]}/${partes[1]}/${partes[0]}`;
 }
 
-/* ==========================================
-   PCGE CON COLUMNA ESF
-   ========================================== */
 const PCGE_RAW = [
     ["10","EFECTIVO Y EQUIVALENTES DE EFECTIVO","","1","A"],
     ["101","Caja","CAJA","1","A"],
@@ -2113,7 +2136,6 @@ const PCGE_RAW = [
     ["08","OTRAS CUENTAS DE ORDEN ACREEDORAS","","0","O"],
     ["09","CONTRAPARTIDA CUENTAS DE ORDEN ACREEDORAS","","0","O"]
 ];
-
 const catalogoCuentas = PCGE_RAW.map(item => {
     const [codigo, nombre, esf, elemento, tipo] = item;
     let naturaleza = "deudora", grupo = "ACTIVOS";
@@ -2477,6 +2499,107 @@ function calcularDashboard() {
             { nombre: 'Servicios', color: colores.servicios },
             { nombre: 'Otros', color: colores.otros }
         ].map(i => `<div class="item"><div class="dot" style="background-color: ${i.color};"></div><span>${i.nombre}</span></div>`).join('');
+    }
+}
+
+/* ==========================================
+   CARGA MASIVA DE PLANTILLAS DESDE TABLA (TSV)
+   Formato esperado por fila:
+     Nombre Plantilla | Código | Descripción | Tipo | Valor
+   Separado por TAB (copiado desde Excel) o por "|".
+   ========================================== */
+async function cargarPlantillasDesdeTabla() {
+    if (usuarioActual.rol !== 'admin') { alert('Solo el administrador puede cargar plantillas.'); return; }
+
+    const txt = document.getElementById('txtTablaPlantillas').value.trim();
+    if (!txt) { alert('Pega primero las filas de la tabla.'); return; }
+
+    const lineas = txt.split(/\r?\n/).map(l => l.trim()).filter(l => l !== '');
+    if (lineas.length === 0) { alert('No hay filas válidas.'); return; }
+
+    let sep = '\t';
+    if (lineas[0].indexOf('\t') === -1) {
+        if (lineas[0].indexOf('|') !== -1) sep = '|';
+        else if (lineas[0].indexOf(';') !== -1) sep = ';';
+    }
+
+    const grupos = {};
+    let filasLeidas = 0;
+    let filasInvalidas = 0;
+
+    lineas.forEach((linea, idx) => {
+        if (idx === 0 && /^(bot[oó]n|nombre)/i.test(linea)) return;
+
+        const partes = linea.split(sep).map(p => p.trim());
+        if (partes.length < 5) { filasInvalidas++; return; }
+
+        const [nombreRaw, codigoRaw, descRaw, tipoRaw, valorRaw] = partes;
+        const nombre = nombreRaw.toUpperCase().trim();
+        const codigo = codigoRaw.trim();
+        const desc = descRaw.trim();
+        const tipo = tipoRaw.toUpperCase().trim();
+        const valor = valorRaw.toUpperCase().trim();
+
+        if (!nombre || !codigo) { filasInvalidas++; return; }
+        if (tipo !== 'DEBE' && tipo !== 'HABER') { filasInvalidas++; return; }
+        if (!['BASE', 'IGV', 'TOTAL'].includes(valor)) { filasInvalidas++; return; }
+
+        if (!grupos[nombre]) grupos[nombre] = [];
+        grupos[nombre].push({
+            codigo,
+            desc,
+            tipo: tipo.toLowerCase(),
+            valor: valor.toLowerCase()
+        });
+        filasLeidas++;
+    });
+
+    const nombresGrupos = Object.keys(grupos);
+    if (nombresGrupos.length === 0) {
+        alert('No se detectaron plantillas válidas. Revisa el formato (Nombre | Código | Descripción | Tipo | Valor).');
+        return;
+    }
+
+    let creadas = 0;
+    let actualizadas = 0;
+    nombresGrupos.forEach(nombre => {
+        const lineasPlantilla = grupos[nombre];
+        let keyExistente = null;
+        for (const k in plantillasCache) {
+            if (plantillasCache[k].nombre === nombre) { keyExistente = k; break; }
+        }
+        const key = keyExistente || ("custom_" + Date.now() + "_" + Math.random().toString(36).slice(2, 7));
+        plantillasCache[key] = {
+            nombre: nombre,
+            custom: true,
+            lineas: lineasPlantilla
+        };
+        if (keyExistente) actualizadas++;
+        else creadas++;
+    });
+
+    mostrarSync('Guardando plantillas...', 'syncing');
+    const ok = await guardarTodoEnServidor();
+    if (ok) {
+        localStorage.setItem(CACHE_KEY, JSON.stringify({ usuarios: usuariosCache, plantillas: plantillasCache }));
+        cargarComboBoxPlantillas();
+        renderizarCardsTipo();
+        mostrarSync('Plantillas cargadas', 'success');
+
+        const status = document.getElementById('tablaPlantillasStatus');
+        status.style.display = 'block';
+        status.style.background = '#dff6dd';
+        status.style.color = '#107c10';
+        status.style.borderLeft = '3px solid #107c10';
+        status.innerHTML = `✅ Cargadas: <strong>${nombresGrupos.length}</strong> plantillas (${creadas} nuevas, ${actualizadas} actualizadas) · ${filasLeidas} filas válidas${filasInvalidas > 0 ? ` · ${filasInvalidas} filas ignoradas` : ''}`;
+    } else {
+        mostrarSync('Falló al guardar', 'error');
+        const status = document.getElementById('tablaPlantillasStatus');
+        status.style.display = 'block';
+        status.style.background = '#fde7e9';
+        status.style.color = '#a80000';
+        status.style.borderLeft = '3px solid #a80000';
+        status.innerHTML = '❌ No se pudieron guardar las plantillas. Revisa la consola.';
     }
 }
 
@@ -3069,9 +3192,6 @@ function calcularBalance317() {
     tbody.appendChild(trDif);
 }
 
-/* ==========================================
-   ESF — 100% BASADO EN LA COLUMNA ESF
-   ========================================== */
 function calcularESF() {
     const tbody = document.getElementById('cuerpoESF');
     tbody.innerHTML = "";
@@ -3158,9 +3278,6 @@ function calcularESF() {
     tbody.appendChild(trT);
 }
 
-/* ==========================================
-   ESTADO DE RESULTADOS
-   ========================================== */
 function calcularER() {
     const tbody = document.getElementById('cuerpoER');
     tbody.innerHTML = "";
@@ -3205,9 +3322,6 @@ function calcularER() {
     tbody.appendChild(trR);
 }
 
-/* ==========================================
-   PCGE (MUESTRA COLUMNA ESF)
-   ========================================== */
 function renderizarPCGE() {
     const tbody = document.getElementById('cuerpoPCGE');
     tbody.innerHTML = "";
@@ -3281,4 +3395,4 @@ document.addEventListener('keydown', function(e) {
 });
 </script>
 </body>
-</html>  
+</html>
