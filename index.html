@@ -1024,15 +1024,15 @@ table tr:hover td { background: #f9f9f9; }
                 </div>
                 <div class="field-item">
                     <label>Base imponible</label>
-                    <input type="text" id="scanBase" placeholder="0.00">
+                    <input type="text" id="scanBase" placeholder="0.00" oninput="recalcularDesdeScan('base')">
                 </div>
                 <div class="field-item">
                     <label>IGV (18%)</label>
-                    <input type="text" id="scanIGV" placeholder="0.00">
+                    <input type="text" id="scanIGV" placeholder="0.00" oninput="recalcularDesdeScan('igv')">
                 </div>
                 <div class="field-item">
                     <label>Total</label>
-                    <input type="text" id="scanTotal" placeholder="0.00">
+                    <input type="text" id="scanTotal" placeholder="0.00" oninput="recalcularDesdeScan('total')">
                 </div>
                 <div class="field-item">
                     <label>RUC proveedor (opcional)</label>
@@ -1063,6 +1063,7 @@ const API_URL = '/api/datos';
 const SESSION_KEY = 'finansmart_session_v26';
 const DATA_PREFIX = 'finansmart_data_';
 const CACHE_KEY = 'finansmart_cache_v26';
+const TASA_IGV = 0.18;
 
 let usuarioActual = null;
 let vBase = 0, vIGV = 0, vTotal = 0;
@@ -1971,29 +1972,163 @@ function cargarComboBoxPlantillas() {
     if (valorActual && plantillasCache[valorActual]) cbo.value = valorActual;
 }
 
+/* ==========================================
+   RECÁLCULO AUTOMÁTICO BASE / IGV / TOTAL
+   ========================================== */
 function recalcularDesde(campoEditado) {
     const base = document.getElementById('txtBase');
     const igv = document.getElementById('txtIGV');
     const total = document.getElementById('txtTotal');
-    const TASA_IGV = 0.18;
+
+    const baseVal = parseFloat(base.value);
+    const igvVal = parseFloat(igv.value);
+    const totalVal = parseFloat(total.value);
+    const baseOk = !isNaN(baseVal) && base.value.trim() !== "";
+    const igvOk = !isNaN(igvVal) && igv.value.trim() !== "";
+    const totalOk = !isNaN(totalVal) && total.value.trim() !== "";
+
     if (campoEditado === 'base') {
-        const b = parseFloat(base.value);
-        if (isNaN(b) || base.value.trim() === "") { vBase = vIGV = vTotal = 0; igv.value = ""; total.value = ""; }
-        else { vBase = b; vIGV = Math.round(b * TASA_IGV * 100) / 100; vTotal = b + vIGV; igv.value = vIGV.toFixed(2); total.value = vTotal.toFixed(2); }
+        if (!baseOk) {
+            // Si borró base, intentar recalcular desde IGV o Total
+            if (igvOk) {
+                vIGV = igvVal;
+                vBase = Math.round((igvVal / TASA_IGV) * 100) / 100;
+                vTotal = vBase + vIGV;
+                base.value = vBase.toFixed(2);
+                total.value = vTotal.toFixed(2);
+            } else if (totalOk) {
+                vTotal = totalVal;
+                vBase = Math.round((totalVal / (1 + TASA_IGV)) * 100) / 100;
+                vIGV = Math.round((totalVal - vBase) * 100) / 100;
+                base.value = vBase.toFixed(2);
+                igv.value = vIGV.toFixed(2);
+            } else {
+                vBase = vIGV = vTotal = 0;
+                igv.value = ""; total.value = "";
+            }
+        } else {
+            vBase = baseVal;
+            vIGV = Math.round(baseVal * TASA_IGV * 100) / 100;
+            vTotal = Math.round((baseVal + vIGV) * 100) / 100;
+            igv.value = vIGV.toFixed(2);
+            total.value = vTotal.toFixed(2);
+        }
     } else if (campoEditado === 'igv') {
-        const i = parseFloat(igv.value);
-        if (isNaN(i) || igv.value.trim() === "") {
-            if (base.value.trim() !== "" && !isNaN(parseFloat(base.value))) {
-                const b = parseFloat(base.value); vBase = b; vIGV = Math.round(b * TASA_IGV * 100) / 100; vTotal = b + vIGV;
-                igv.value = vIGV.toFixed(2); total.value = vTotal.toFixed(2);
-            } else { vBase = vIGV = vTotal = 0; total.value = ""; }
-        } else { vIGV = i; vBase = Math.round((i / TASA_IGV) * 100) / 100; vTotal = vBase + vIGV; base.value = vBase.toFixed(2); total.value = vTotal.toFixed(2); }
+        if (!igvOk) {
+            if (baseOk) {
+                vBase = baseVal;
+                vIGV = Math.round(baseVal * TASA_IGV * 100) / 100;
+                vTotal = Math.round((baseVal + vIGV) * 100) / 100;
+                igv.value = vIGV.toFixed(2);
+                total.value = vTotal.toFixed(2);
+            } else if (totalOk) {
+                vTotal = totalVal;
+                vBase = Math.round((totalVal / (1 + TASA_IGV)) * 100) / 100;
+                vIGV = Math.round((totalVal - vBase) * 100) / 100;
+                base.value = vBase.toFixed(2);
+                igv.value = vIGV.toFixed(2);
+            } else {
+                vBase = vIGV = vTotal = 0;
+                base.value = ""; total.value = "";
+            }
+        } else {
+            vIGV = igvVal;
+            vBase = Math.round((igvVal / TASA_IGV) * 100) / 100;
+            vTotal = Math.round((vBase + vIGV) * 100) / 100;
+            base.value = vBase.toFixed(2);
+            total.value = vTotal.toFixed(2);
+        }
     } else if (campoEditado === 'total') {
-        const t = parseFloat(total.value);
-        if (isNaN(t) || total.value.trim() === "") { vBase = vIGV = vTotal = 0; base.value = ""; igv.value = ""; }
-        else { vTotal = t; vBase = Math.round((t / (1 + TASA_IGV)) * 100) / 100; vIGV = Math.round((t - vBase) * 100) / 100; base.value = vBase.toFixed(2); igv.value = vIGV.toFixed(2); }
+        if (!totalOk) {
+            if (baseOk) {
+                vBase = baseVal;
+                vIGV = Math.round(baseVal * TASA_IGV * 100) / 100;
+                vTotal = Math.round((baseVal + vIGV) * 100) / 100;
+                igv.value = vIGV.toFixed(2);
+                total.value = vTotal.toFixed(2);
+            } else if (igvOk) {
+                vIGV = igvVal;
+                vBase = Math.round((igvVal / TASA_IGV) * 100) / 100;
+                vTotal = Math.round((vBase + vIGV) * 100) / 100;
+                base.value = vBase.toFixed(2);
+                total.value = vTotal.toFixed(2);
+            } else {
+                vBase = vIGV = vTotal = 0;
+                base.value = ""; igv.value = "";
+            }
+        } else {
+            vTotal = totalVal;
+            vBase = Math.round((totalVal / (1 + TASA_IGV)) * 100) / 100;
+            vIGV = Math.round((totalVal - vBase) * 100) / 100;
+            base.value = vBase.toFixed(2);
+            igv.value = vIGV.toFixed(2);
+        }
     }
     calcularYPrevisualizar();
+}
+
+/* Recálculo en el modal de escaneo */
+function recalcularDesdeScan(campoEditado) {
+    const base = document.getElementById('scanBase');
+    const igv = document.getElementById('scanIGV');
+    const total = document.getElementById('scanTotal');
+
+    const baseVal = parseFloat(base.value);
+    const igvVal = parseFloat(igv.value);
+    const totalVal = parseFloat(total.value);
+    const baseOk = !isNaN(baseVal) && base.value.trim() !== "";
+    const igvOk = !isNaN(igvVal) && igv.value.trim() !== "";
+    const totalOk = !isNaN(totalVal) && total.value.trim() !== "";
+
+    if (campoEditado === 'base') {
+        if (!baseOk) {
+            if (igvOk) {
+                const b = Math.round((igvVal / TASA_IGV) * 100) / 100;
+                base.value = b.toFixed(2);
+                total.value = (b + igvVal).toFixed(2);
+            } else if (totalOk) {
+                const b = Math.round((totalVal / (1 + TASA_IGV)) * 100) / 100;
+                base.value = b.toFixed(2);
+                igv.value = (totalVal - b).toFixed(2);
+            } else { igv.value = ""; total.value = ""; }
+        } else {
+            const i = Math.round(baseVal * TASA_IGV * 100) / 100;
+            igv.value = i.toFixed(2);
+            total.value = (baseVal + i).toFixed(2);
+        }
+    } else if (campoEditado === 'igv') {
+        if (!igvOk) {
+            if (baseOk) {
+                const i = Math.round(baseVal * TASA_IGV * 100) / 100;
+                igv.value = i.toFixed(2);
+                total.value = (baseVal + i).toFixed(2);
+            } else if (totalOk) {
+                const b = Math.round((totalVal / (1 + TASA_IGV)) * 100) / 100;
+                base.value = b.toFixed(2);
+                igv.value = (totalVal - b).toFixed(2);
+            } else { base.value = ""; total.value = ""; }
+        } else {
+            const b = Math.round((igvVal / TASA_IGV) * 100) / 100;
+            base.value = b.toFixed(2);
+            total.value = (b + igvVal).toFixed(2);
+        }
+    } else if (campoEditado === 'total') {
+        if (!totalOk) {
+            if (baseOk) {
+                const i = Math.round(baseVal * TASA_IGV * 100) / 100;
+                igv.value = i.toFixed(2);
+                total.value = (baseVal + i).toFixed(2);
+            } else if (igvOk) {
+                const b = Math.round((igvVal / TASA_IGV) * 100) / 100;
+                base.value = b.toFixed(2);
+                total.value = (b + igvVal).toFixed(2);
+            } else { base.value = ""; igv.value = ""; }
+        } else {
+            const b = Math.round((totalVal / (1 + TASA_IGV)) * 100) / 100;
+            base.value = b.toFixed(2);
+            igv.value = (totalVal - b).toFixed(2);
+        }
+    }
 }
 
 function calcularYPrevisualizar() {
@@ -2429,7 +2564,6 @@ function extraerDatosDeTexto(texto) {
     if (m) datos.ruc = m[0];
 
     // Montos: buscar Total, Subtotal, IGV
-    const numRe = /(\d{1,3}(?:[.,]\d{3})*(?:[.,]\d{2})|\d+[.,]\d{2})/g;
     const totalMatch = t.match(/(?:total|importe total|a pagar)[^\d]{0,20}(\d{1,3}(?:[.,]\d{3})*(?:[.,]\d{2})|\d+[.,]\d{2})/i);
     if (totalMatch) datos.total = parseFloat(totalMatch[1].replace(/[.,](?=\d{3})/g, '').replace(',', '.')) || parseFloat(totalMatch[1].replace(',', '.'));
 
@@ -2444,6 +2578,8 @@ function extraerDatosDeTexto(texto) {
     if (!datos.igv && datos.total && datos.base) datos.igv = +(datos.total - datos.base).toFixed(2);
     if (!datos.total && datos.base && datos.igv) datos.total = +(datos.base + datos.igv).toFixed(2);
     if (!datos.total && datos.base) { datos.igv = +(datos.base * 0.18).toFixed(2); datos.total = +(datos.base * 1.18).toFixed(2); }
+    if (!datos.base && datos.total) { datos.base = +(datos.total / 1.18).toFixed(2); datos.igv = +(datos.total - datos.base).toFixed(2); }
+    if (!datos.igv && datos.total) { datos.base = +(datos.total / 1.18).toFixed(2); datos.igv = +(datos.total - datos.base).toFixed(2); }
 
     // Glosa: línea que contenga "descripcion", "detalle", "concepto" o primera línea con texto
     const glosaMatch = t.match(/(?:descripci[oó]n|detalle|concepto|glosa)[:\s]+([^\n\r]{3,60})/i);
