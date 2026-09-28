@@ -229,160 +229,34 @@ table tr:hover td { background: #f9f9f9; }
     border-color: #185c37;
     transform: scale(1.01);
 }
-.scan-modal .drop-zone .icon {
-    font-size: 40px;
-    margin-bottom: 10px;
-    display: block;
-}
-.scan-modal .drop-zone .title {
-    font-size: 14px;
-    font-weight: 700;
-    color: #217346;
-    margin-bottom: 6px;
-}
-.scan-modal .drop-zone .hint {
-    font-size: 11px;
-    color: #666;
-}
-.scan-modal .buttons-row {
-    display: flex;
-    gap: 8px;
-    margin-bottom: 14px;
-}
-.scan-modal .buttons-row button {
-    flex: 1;
-    padding: 10px;
-    border: 2px solid #217346;
-    background: white;
-    color: #217346;
-    font-size: 13px;
-    font-weight: 600;
-    cursor: pointer;
-    border-radius: 3px;
-}
-.scan-modal .buttons-row button:hover {
-    background: #e6f4ea;
-}
-.scan-modal .status {
-    padding: 10px;
-    border-radius: 3px;
-    font-size: 12px;
-    margin-bottom: 12px;
-    display: none;
-    text-align: center;
-}
+.scan-modal .drop-zone .icon { font-size: 40px; margin-bottom: 10px; display: block; }
+.scan-modal .drop-zone .title { font-size: 14px; font-weight: 700; color: #217346; margin-bottom: 6px; }
+.scan-modal .drop-zone .hint { font-size: 11px; color: #666; }
+.scan-modal .buttons-row { display: flex; gap: 8px; margin-bottom: 14px; }
+.scan-modal .buttons-row button { flex: 1; padding: 10px; border: 2px solid #217346; background: white; color: #217346; font-size: 13px; font-weight: 600; cursor: pointer; border-radius: 3px; }
+.scan-modal .buttons-row button:hover { background: #e6f4ea; }
+.scan-modal .status { padding: 10px; border-radius: 3px; font-size: 12px; margin-bottom: 12px; display: none; text-align: center; }
 .scan-modal .status.show { display: block; }
 .scan-modal .status.loading { background: #e6f4ea; color: #185c37; }
 .scan-modal .status.success { background: #dff6dd; color: #107c10; }
 .scan-modal .status.error { background: #fde7e9; color: #a80000; }
-
-.scan-modal .preview-img {
-    max-height: 150px;
-    max-width: 100%;
-    border: 1px solid #d0d7de;
-    border-radius: 3px;
-    margin: 0 auto 14px;
-    display: block;
-}
-
-.scan-modal .fields-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-    margin-bottom: 14px;
-}
-.scan-modal .field-item {
-    display: flex;
-    flex-direction: column;
-}
-.scan-modal .field-item.full {
-    grid-column: 1 / -1;
-}
-.scan-modal .field-item label {
-    font-size: 10px;
-    font-weight: 700;
-    color: #666;
-    margin-bottom: 4px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-.scan-modal .field-item input {
-    padding: 8px 10px;
-    border: 1px solid #d0d7de;
-    border-radius: 3px;
-    font-size: 13px;
-    background: white;
-}
-.scan-modal .field-item input:focus {
-    outline: none;
-    border-color: #217346;
-    box-shadow: 0 0 0 2px rgba(33,115,70,0.2);
-}
-.scan-modal .field-item input.detected {
-    background: #e6f4ea;
-    border-color: #217346;
-    font-weight: 600;
-}
-
-.scan-modal .tip-box {
-    background: #fff4ce;
-    border-left: 3px solid #ff8c00;
-    padding: 8px 12px;
-    font-size: 11px;
-    color: #333;
-    border-radius: 2px;
-    margin-bottom: 14px;
-}
-
+.scan-modal .preview-img { max-height: 150px; max-width: 100%; border: 1px solid #d0d7de; border-radius: 3px; margin: 0 auto 14px; display: block; }
+.scan-modal .fields-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+.scan-modal .field-item { display: flex; flex-direction: column; }
+.scan-modal .field-item.full { grid-column: 1 / -1; }
+.scan-modal .field-item label { font-size: 10px; font-weight: 700; color: #666; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+.scan-modal .field-item input { padding: 8px 10px; border: 1px solid #d0d7de; border-radius: 3px; font-size: 13px; background: white; }
+.scan-modal .field-item input:focus { outline: none; border-color: #217346; box-shadow: 0 0 0 2px rgba(33,115,70,0.2); }
+.scan-modal .field-item input.detected { background: #e6f4ea; border-color: #217346; font-weight: 600; }
+.scan-modal .tip-box { background: #fff4ce; border-left: 3px solid #ff8c00; padding: 8px 12px; font-size: 11px; color: #333; border-radius: 2px; margin-bottom: 14px; }
 .scan-modal .tip-box strong { color: #b45309; }
-
-.scan-modal .section-title {
-    font-size: 12px;
-    font-weight: 700;
-    color: #217346;
-    margin-bottom: 10px;
-    padding-bottom: 6px;
-    border-bottom: 1px solid #d0d7de;
-}
-
-.scan-modal .cards-tipo {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-    gap: 8px;
-    margin-bottom: 16px;
-    max-height: 220px;
-    overflow-y: auto;
-    padding: 4px;
-}
-.scan-modal .card-tipo {
-    padding: 12px 8px;
-    border: 2px solid #d0d7de;
-    border-radius: 4px;
-    background: white;
-    cursor: pointer;
-    text-align: center;
-    transition: all 0.15s;
-}
-.scan-modal .card-tipo:hover {
-    border-color: #217346;
-    background: #f8fcf9;
-}
-.scan-modal .card-tipo.selected {
-    border-color: #217346;
-    background: #e6f4ea;
-    box-shadow: 0 0 0 2px rgba(33,115,70,0.2);
-}
-.scan-modal .card-tipo .card-icon {
-    font-size: 22px;
-    display: block;
-    margin-bottom: 6px;
-}
-.scan-modal .card-tipo .card-name {
-    font-size: 11px;
-    font-weight: 600;
-    color: #333;
-    line-height: 1.2;
-}
+.scan-modal .section-title { font-size: 12px; font-weight: 700; color: #217346; margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid #d0d7de; }
+.scan-modal .cards-tipo { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 8px; margin-bottom: 16px; max-height: 220px; overflow-y: auto; padding: 4px; }
+.scan-modal .card-tipo { padding: 12px 8px; border: 2px solid #d0d7de; border-radius: 4px; background: white; cursor: pointer; text-align: center; transition: all 0.15s; }
+.scan-modal .card-tipo:hover { border-color: #217346; background: #f8fcf9; }
+.scan-modal .card-tipo.selected { border-color: #217346; background: #e6f4ea; box-shadow: 0 0 0 2px rgba(33,115,70,0.2); }
+.scan-modal .card-tipo .card-icon { font-size: 22px; display: block; margin-bottom: 6px; }
+.scan-modal .card-tipo .card-name { font-size: 11px; font-weight: 600; color: #333; line-height: 1.2; }
 
 @media (max-width: 900px) {
     .excel-sidebar-left { width: 160px; }
@@ -556,7 +430,6 @@ table tr:hover td { background: #f9f9f9; }
                             <span class="sheet-tabs">Ingresos y Gastos</span>
                         </div>
                         <div class="excel-panel-body">
-                            <!-- BOTÓN ESCANEAR -->
                             <div style="margin-bottom:12px;">
                                 <button type="button" class="btn btn-primary" style="padding:10px 20px; font-size:13px;" onclick="abrirModalEscanear()">
                                     📄 Escanear factura o comprobante
@@ -732,7 +605,7 @@ table tr:hover td { background: #f9f9f9; }
                             <span class="sheet-tabs">PCGE Perú · 2019</span>
                         </div>
                         <div class="sheet-toolbar">
-                            <input type="text" id="txtBuscarPCGE" placeholder="Buscar por código o nombre..." oninput="filtrarPCGE()" style="padding:4px 8px; border:1px solid var(--excel-border-dark); width:280px;">
+                            <input type="text" id="txtBuscarPCGE" placeholder="Buscar por código, nombre o ESF..." oninput="filtrarPCGE()" style="padding:4px 8px; border:1px solid var(--excel-border-dark); width:280px;">
                             <select id="filtroElementoPCGE" onchange="filtrarPCGE()" style="padding:4px 8px; border:1px solid var(--excel-border-dark);">
                                 <option value="">Todos los elementos</option>
                                 <option value="1">Elemento 1 - Activo</option>
@@ -752,10 +625,11 @@ table tr:hover td { background: #f9f9f9; }
                             <table class="excel-data-table" id="tablaPCGE">
                                 <thead>
                                     <tr>
-                                        <th style="width:15%;">Código</th>
-                                        <th style="width:65%;">Descripción</th>
-                                        <th style="width:10%;">Elem.</th>
-                                        <th style="width:10%;">Cta.</th>
+                                        <th style="width:13%;">Código</th>
+                                        <th style="width:45%;">Descripción</th>
+                                        <th style="width:25%;">ESF</th>
+                                        <th style="width:9%;">Elem.</th>
+                                        <th style="width:8%;">Cta.</th>
                                     </tr>
                                 </thead>
                                 <tbody id="cuerpoPCGE"></tbody>
@@ -1072,7 +946,6 @@ let lineasConfigTemp = [];
 let usuariosCache = {};
 let plantillasCache = {};
 
-/* Estado del modal escanear */
 let tipoGastoSeleccionado = null;
 
 function log(...args) { console.log('[FinanSmart]', ...args); }
@@ -1308,9 +1181,6 @@ function cargarEstado() {
     } catch (e) { return false; }
 }
 
-/* ==========================================
-   GUARDAR ASIENTOS
-   ========================================== */
 function obtenerAsientosDelDOM() {
     const asientos = [];
     const filas = document.querySelectorAll('#cuerpoLibro tr');
@@ -1694,219 +1564,420 @@ function formatearFecha(fechaISO) {
     if (partes.length !== 3) return fechaISO;
     return `${partes[2]}/${partes[1]}/${partes[0]}`;
 }
-
+/* ==========================================
+   PCGE CON COLUMNA ESF
+   Formato: [codigo, nombre, esf, elemento, tipo]
+   ========================================== */
 const PCGE_RAW = [
-    ["10","EFECTIVO Y EQUIVALENTES DE EFECTIVO","1","A"],["101","Caja","1","A"],["102","Fondos fijos","1","A"],
-    ["103","Efectivo y cheques en tránsito","1","A"],["104","Cuentas corrientes en instituciones financieras","1","A"],
-    ["1041","Cuentas corrientes operativas","1","A"],["10411","Cuentas corrientes operativas ME","1","A"],
-    ["104111","Cuenta corriente operativa MN","1","A"],["105","Otros equivalentes de efectivo","1","A"],
-    ["12","CUENTAS POR COBRAR COMERCIALES - TERCEROS","1","A"],["121","Facturas, boletas y otros comprobantes por cobrar","1","A"],
-    ["1212","Emitidas en cartera","1","A"],["122","Anticipos de clientes","1","A"],["123","Letras por cobrar","1","A"],
-    ["16","CUENTAS POR COBRAR DIVERSAS - TERCEROS","1","A"],["161","Préstamos","1","A"],
-    ["162","Reclamaciones a terceros","1","A"],["163","Intereses, regalías y dividendos","1","A"],
-    ["164","Depósitos otorgados en garantía","1","A"],["165","Venta de activo inmovilizado","1","A"],
-    ["166","Activos por instrumentos financieros","1","A"],["167","Tributos por acreditar","1","A"],
-    ["169","Otras cuentas por cobrar diversas","1","A"],["17","CUENTAS POR COBRAR DIVERSAS - RELACIONADAS","1","A"],
-    ["18","SERVICIOS Y OTROS CONTRATADOS POR ANTICIPADO","1","A"],["19","ESTIMACIÓN DE CUENTAS DE COBRANZA DUDOSA","1","A"],
-    ["20","MERCADERÍAS","2","A"],["201","Mercaderías","2","A"],["2011","Mercaderías","2","A"],["20111","Costo","2","A"],
-    ["21","PRODUCTOS TERMINADOS","2","A"],["211","Productos terminados","2","A"],
-    ["22","SUBPRODUCTOS, DESECHOS Y DESPERDICIOS","2","A"],["23","PRODUCTOS EN PROCESO","2","A"],
-    ["24","MATERIAS PRIMAS","2","A"],["25","MATERIALES AUXILIARES, SUMINISTROS Y REPUESTOS","2","A"],
-    ["26","ENVASES Y EMBALAJES","2","A"],["27","ACTIVOS NO CORRIENTES MANTENIDOS PARA LA VENTA","2","A"],
-    ["28","INVENTARIOS POR RECIBIR","2","A"],["29","DESVALORIZACIÓN DE INVENTARIOS","2","A"],
-    ["30","INVERSIONES MOBILIARIAS","3","A"],["31","PROPIEDADES DE INVERSIÓN","3","A"],
-    ["32","ACTIVOS POR DERECHO DE USO","3","A"],["33","PROPIEDAD, PLANTA Y EQUIPO","3","A"],
-    ["331","Terrenos","3","A"],["332","Edificaciones","3","A"],["333","Maquinaria y equipo de explotación","3","A"],
-    ["334","Unidades de transporte","3","A"],["335","Muebles y enseres","3","A"],["336","Equipos diversos","3","A"],
-    ["337","Herramientas y unidades de reemplazo","3","A"],["338","Unidades por recibir","3","A"],["339","Obras en curso","3","A"],
-    ["34","INTANGIBLES","3","A"],["35","ACTIVOS BIOLÓGICOS","3","A"],["36","DESVALORIZACIÓN DE ACTIVO INMOVILIZADO","3","A"],
-    ["37","ACTIVO DIFERIDO","3","A"],["38","OTROS ACTIVOS","3","A"],["39","DEPRECIACIÓN Y AMORTIZACIÓN ACUMULADOS","3","A"],
-    ["40","TRIBUTOS, CONTRAPRESTACIONES Y APORTES AL SISTEMA PÚBLICO DE PENSIONES Y DE SALUD POR PAGAR","4","P"],
-    ["401","Gobierno nacional","4","P"],["4011","Impuesto general a las ventas","4","P"],
-    ["40111","IGV - Cuenta propia","4","P"],["40112","IGV - Servicios prestados por no domiciliados","4","P"],
-    ["40113","IGV - Régimen de percepciones","4","P"],["40114","IGV - Régimen de retenciones","4","P"],
-    ["40115","IGV - Importaciones","4","P"],["4012","Impuesto selectivo al consumo","4","P"],
-    ["4015","Derechos aduaneros","4","P"],["4017","Impuesto a la renta","4","P"],
-    ["40171","Renta de tercera categoría","4","P"],["40172","Renta de cuarta categoría","4","P"],
-    ["40173","Renta de quinta categoría","4","P"],["40174","Renta de no domiciliados","4","P"],
-    ["4018","Otros impuestos y contraprestaciones","4","P"],["402","Certificados tributarios","4","P"],
-    ["403","Instituciones públicas","4","P"],["4031","ESSALUD","4","P"],["4032","ONP","4","P"],
-    ["4033","Contribución al SENATI","4","P"],["4034","Contribución al SENCICO","4","P"],
-    ["405","Gobiernos regionales","4","P"],["406","Gobiernos locales","4","P"],
-    ["4061","Impuestos","4","P"],["4062","Contribuciones","4","P"],["4063","Tasas","4","P"],
-    ["409","Otros costos administrativos e intereses","4","P"],
-    ["41","REMUNERACIONES Y PARTICIPACIONES POR PAGAR","4","P"],
-    ["411","Remuneraciones por pagar","4","P"],["4111","Sueldos y salarios por pagar","4","P"],
-    ["4112","Comisiones por pagar","4","P"],["4113","Remuneraciones en especie por pagar","4","P"],
-    ["4114","Gratificaciones por pagar","4","P"],["4115","Vacaciones por pagar","4","P"],
-    ["413","Participaciones de los trabajadores por pagar","4","P"],
-    ["415","Beneficios sociales de los trabajadores por pagar","4","P"],
-    ["4151","Compensación por tiempo de servicios","4","P"],["4152","Adelanto de CTS","4","P"],
-    ["4153","Pensiones y jubilaciones","4","P"],["417","Administradoras de fondos de pensiones","4","P"],
-    ["419","Otras remuneraciones y participaciones por pagar","4","P"],
-    ["42","CUENTAS POR PAGAR COMERCIALES TERCEROS","4","P"],
-    ["421","Facturas, boletas y otros comprobantes por pagar","4","P"],["4211","No emitidas","4","P"],
-    ["4212","Facturas por Pagar Comerciales - Terceros","4","P"],["422","Anticipos a proveedores","4","P"],
-    ["423","Letras por pagar","4","P"],["424","Honorarios por pagar","4","P"],
-    ["43","CUENTAS POR PAGAR COMERCIALES RELACIONADAS","4","P"],
-    ["44","CUENTAS POR PAGAR A LOS ACCIONISTAS Y DIRECTORES","4","P"],
-    ["45","OBLIGACIONES FINANCIERAS","4","P"],["451","Préstamos de instituciones financieras","4","P"],
-    ["4511","Instituciones financieras","4","P"],["4512","Otras entidades","4","P"],
-    ["452","Contratos de arrendamiento financiero","4","P"],["453","Obligaciones emitidas","4","P"],
-    ["454","Otros instrumentos financieros por pagar","4","P"],["455","Costos de financiación por pagar","4","P"],
-    ["456","Préstamos con compromisos de recompra","4","P"],
-    ["46","CUENTAS POR PAGAR DIVERSAS - TERCEROS","4","P"],
-    ["461","Reclamaciones de terceros","4","P"],["464","Pasivos por instrumentos financieros","4","P"],
-    ["465","Pasivos por compra de activo inmovilizado","4","P"],["466","Participación de terceros","4","P"],
-    ["467","Depósitos recibidos en garantía","4","P"],["469","Otras cuentas por pagar diversas","4","P"],
-    ["47","CUENTAS POR PAGAR DIVERSAS - RELACIONADAS","4","P"],
-    ["471","Préstamos","4","P"],["472","Costos de financiación","4","P"],["473","Anticipos recibidos","4","P"],
-    ["474","Regalías","4","P"],["475","Dividendos","4","P"],["476","Depósitos recibidos en garantía","4","P"],
-    ["477","Pasivo por compra de activo inmovilizado","4","P"],["479","Otras cuentas por pagar diversas","4","P"],
-    ["48","PROVISIONES","4","P"],["481","Provisión para litigios","4","P"],
-    ["482","Provisión por desmantelamiento","4","P"],["483","Provisión para reestructuraciones","4","P"],
-    ["484","Provisión para protección y remediación ambiental","4","P"],
-    ["485","Provisión para gastos de responsabilidad social","4","P"],
-    ["486","Provisión para garantías","4","P"],["487","Provisión por activos por derecho de uso","4","P"],
-    ["489","Otras provisiones","4","P"],
-    ["49","PASIVO DIFERIDO","4","P"],["491","Impuesto a la renta diferido","4","P"],
-    ["492","Participaciones de los trabajadores diferidas","4","P"],
-    ["493","Intereses diferidos","4","P"],["494","Ganancia en venta con arrendamiento financiero paralelo","4","P"],
-    ["495","Subsidios recibidos diferidos","4","P"],["496","Ingresos diferidos","4","P"],["497","Costos diferidos","4","P"],
-    ["50","CAPITAL","5","PT"],["501","Capital social","5","PT"],["5011","Acciones","5","PT"],
-    ["5012","Participaciones","5","PT"],["502","Acciones en tesorería","5","PT"],
-    ["51","ACCIONES DE INVERSIÓN","5","PT"],["511","Acciones de inversión","5","PT"],
-    ["512","Acciones de inversión en tesorería","5","PT"],
-    ["52","CAPITAL ADICIONAL","5","PT"],["521","Primas (descuento) de acciones","5","PT"],
-    ["522","Capitalizaciones en trámite","5","PT"],["523","Reducciones de capital pendientes","5","PT"],
-    ["56","RESULTADOS NO REALIZADOS","5","PT"],
-    ["57","EXCEDENTE DE REVALUACIÓN","5","PT"],["571","Excedente de revaluación","5","PT"],
-    ["572","Excedente de revaluación - Acciones liberadas recibidas","5","PT"],
-    ["573","Participación en excedente de revaluación","5","PT"],
-    ["58","RESERVAS","5","PT"],["581","Reinversión","5","PT"],["582","Legal","5","PT"],
-    ["583","Contractuales","5","PT"],["584","Estatutarias","5","PT"],["585","Facultativas","5","PT"],["589","Otras reservas","5","PT"],
-    ["59","RESULTADOS ACUMULADOS","5","PT"],["591","Utilidades no distribuidas","5","PT"],
-    ["592","Pérdidas acumuladas","5","PT"],
-    ["60","COMPRAS","6","G"],["601","Mercaderías","6","G"],["6011","Mercaderías","6","G"],["60111","Compra de Mercadería","6","G"],
-    ["602","Materias primas","6","G"],["603","Materiales auxiliares, suministros y repuestos","6","G"],
-    ["604","Envases y embalajes","6","G"],["609","Costos vinculados con las compras","6","G"],
-    ["61","VARIACIÓN DE INVENTARIOS","6","G"],
-    ["62","GASTOS DE PERSONAL Y DIRECTORES","6","G"],["621","Remuneraciones","6","G"],
-    ["6211","Sueldos y salarios","6","G"],["6212","Comisiones","6","G"],["6213","Remuneraciones en especie","6","G"],
-    ["6214","Gratificaciones","6","G"],["6215","Vacaciones","6","G"],["622","Otras remuneraciones","6","G"],
-    ["623","Indemnizaciones al personal","6","G"],["624","Capacitación","6","G"],["625","Atención al personal","6","G"],
-    ["627","Seguridad, previsión social y otras contribuciones","6","G"],
-    ["6271","Régimen de prestaciones de salud","6","G"],["6272","Régimen de pensiones","6","G"],
-    ["6273","Seguro complementario de trabajo de riesgo","6","G"],["6274","Seguro de vida","6","G"],
-    ["6275","EPS y otros particulares","6","G"],["6277","Contribuciones al SENATI","6","G"],
-    ["628","Retribuciones al directorio","6","G"],["629","Beneficios sociales de los trabajadores","6","G"],
-    ["6291","Compensación por tiempo de servicio","6","G"],["6292","Pensiones y jubilaciones","6","G"],
-    ["6293","Otros beneficios post-empleo","6","G"],["6294","Participación en las utilidades","6","G"],
-    ["63","GASTOS DE SERVICIOS PRESTADOS POR TERCEROS","6","G"],
-    ["631","Transporte, correos y gastos de viaje","6","G"],["6311","Transporte","6","G"],
-    ["63111","Servicio de transporte de carga","6","G"],["63112","De pasajeros","6","G"],
-    ["6312","Correos","6","G"],["6313","Alojamiento","6","G"],["6314","Alimentación","6","G"],
-    ["6315","Otros gastos de viaje","6","G"],
-    ["632","Asesoría y consultoría","6","G"],["6321","Administrativa","6","G"],["6322","Legal y tributaria","6","G"],
-    ["6323","Auditoría y contable","6","G"],["6324","Mercadotecnia","6","G"],["6325","Medioambiental","6","G"],
-    ["6326","Investigación y desarrollo","6","G"],["6327","Producción","6","G"],["6329","Otros","6","G"],
-    ["633","Producción encargada a terceros","6","G"],["634","Mantenimiento y reparaciones","6","G"],
-    ["635","Alquileres","6","G"],["6351","Terrenos","6","G"],["6352","Edificaciones","6","G"],
-    ["6353","Maquinarias y equipos de explotación","6","G"],["6354","Equipo de transporte","6","G"],
-    ["6355","Muebles y enseres","6","G"],["6356","Equipos diversos","6","G"],
-    ["636","Servicios básicos","6","G"],["6361","Energía eléctrica","6","G"],["6362","Gas","6","G"],
-    ["6363","Agua","6","G"],["6364","Teléfono","6","G"],["6365","Internet","6","G"],
-    ["6366","Radio","6","G"],["6367","Cable","6","G"],
-    ["637","Publicidad, publicaciones, relaciones públicas","6","G"],["6371","Publicidad","6","G"],
-    ["6372","Publicaciones","6","G"],["6373","Relaciones públicas","6","G"],
-    ["638","Servicios de contratistas","6","G"],["639","Otros servicios prestados por terceros","6","G"],
-    ["6391","Gastos bancarios","6","G"],["6392","Gastos de laboratorio","6","G"],["6393","Seguridad - Vigilancia","6","G"],
-    ["64","GASTOS POR TRIBUTOS","6","G"],["641","Gobierno nacional","6","G"],
-    ["6411","IGV y selectivo al consumo","6","G"],["6412","ITF","6","G"],["6413","ITAN","6","G"],
-    ["6414","Juegos de casino y tragamonedas","6","G"],["6415","Regalías mineras","6","G"],
-    ["6416","Cánones","6","G"],["6419","Otros","6","G"],
-    ["642","Gobierno regional","6","G"],["643","Gobierno local","6","G"],
-    ["6431","Impuesto predial","6","G"],["6432","Arbitrios municipales","6","G"],
-    ["6433","Impuesto al patrimonio vehicular","6","G"],["6434","Licencia de funcionamiento","6","G"],["6439","Otros","6","G"],
-    ["644","Otros gastos por tributos","6","G"],["6442","Contribución al SENCICO","6","G"],["6443","Otros","6","G"],
-    ["645","Gastos en deuda tributaria","6","G"],["6451","Intereses","6","G"],["6452","Intereses - fraccionamiento","6","G"],
-    ["6453","Multas","6","G"],["6454","Costas y otros","6","G"],
-    ["65","OTROS GASTOS DE GESTIÓN","6","G"],["651","Seguros","6","G"],["652","Regalías","6","G"],
-    ["653","Suscripciones","6","G"],["654","Licencias y derechos de vigencia","6","G"],
-    ["655","Costo neto de enajenación de activos inmovilizados","6","G"],
-    ["656","Suministros","6","G"],["6561","Combustible","6","G"],["657","Activos Menores 1/4 UIT","6","G"],
-    ["658","Gestión medioambiental","6","G"],["659","Otros gastos de gestión","6","G"],
-    ["6591","Donaciones","6","G"],["6592","Sanciones administrativas","6","G"],
-    ["66","PÉRDIDA POR MEDICIÓN DE ACTIVOS NO FINANCIEROS","6","G"],
-    ["67","GASTOS FINANCIEROS","6","G"],["671","Gastos en operaciones de endeudamiento","6","G"],
-    ["672","Pérdida por instrumentos financieros derivados","6","G"],["673","Intereses por préstamos","6","G"],
-    ["674","Gastos en operaciones de factoraje (factoring)","6","G"],
-    ["675","Descuentos concedidos por pronto pago","6","G"],["676","Diferencia de cambio","6","G"],
-    ["677","Pérdida por medición de activos y pasivos financieros","6","G"],
-    ["678","Participación en resultados de entidades relacionadas","6","G"],
-    ["679","Otros gastos financieros","6","G"],
-    ["68","VALUACIÓN Y DETERIORO DE ACTIVOS Y PROVISIONES","6","G"],
-    ["681","Depreciación de propiedades de inversión","6","G"],["682","Depreciación de activos por derecho de uso","6","G"],
-    ["683","Depreciación de activos por derecho de uso - operativo","6","G"],
-    ["684","Depreciación de propiedad, planta y equipo","6","G"],
-    ["685","Depreciación de activos biológicos en producción","6","G"],
-    ["686","Amortización de intangibles","6","G"],["687","Valuación de activos","6","G"],
-    ["688","Deterioro del valor de los activos","6","G"],["689","Provisiones","6","G"],
-    ["69","COSTO DE VENTAS","6","G"],["691","Costo de Ventas - Mercaderías","6","G"],
-    ["6911","Costo de Ventas - Mercaderías","6","G"],["69111","Costo de Ventas - Mercaderías","6","G"],
-    ["692","Productos terminados","6","G"],["693","Servicios terminados","6","G"],
-    ["694","Subproductos, desechos y desperdicios","6","G"],
-    ["695","Gastos por desvalorización de inventarios","6","G"],
-    ["70","VENTAS","7","I"],["701","Mercaderías","7","I"],["7011","Mercaderías - exportación","7","I"],
-    ["70111","Terceros","7","I"],["70112","Relacionadas","7","I"],
-    ["7012","Mercaderías - venta local","7","I"],["70121","Terceros","7","I"],["70122","Relacionadas","7","I"],
-    ["702","Productos terminados","7","I"],["703","Servicios Terminados","7","I"],
-    ["704","Subproductos, desechos y desperdicios","7","I"],["709","Devoluciones sobre ventas","7","I"],
-    ["71","VARIACIÓN DE LA PRODUCCIÓN ALMACENADA","7","I"],["72","PRODUCCIÓN DE ACTIVO INMOVILIZADO","7","I"],
-    ["73","DESCUENTOS, REBAJAS Y BONIFICACIONES OBTENIDOS","7","I"],
-    ["74","DESCUENTOS, REBAJAS Y BONIFICACIONES CONCEDIDOS","7","I"],
-    ["75","OTROS INGRESOS DE GESTIÓN","7","I"],["751","Servicios en beneficio del personal","7","I"],
-    ["752","Comisiones y corretajes","7","I"],["753","Regalías","7","I"],["754","Alquileres","7","I"],
-    ["755","Recuperación de cuentas de valuación","7","I"],
-    ["756","Enajenación de activos inmovilizados","7","I"],
-    ["757","Recuperación de deterioro de cuentas","7","I"],
-    ["759","Otros ingresos de gestión","7","I"],["7591","Subsidios gubernamentales","7","I"],
-    ["7592","Reclamos al seguro","7","I"],["7593","Donaciones","7","I"],
-    ["7594","Devoluciones tributarias","7","I"],["7599","Otros ingresos de gestión","7","I"],
-    ["76","GANANCIA POR MEDICIÓN DE ACTIVOS NO FINANCIEROS","7","I"],
-    ["77","INGRESOS FINANCIEROS","7","I"],["771","Ganancia por instrumento financiero derivado","7","I"],
-    ["772","Rendimientos ganados","7","I"],["773","Dividendos","7","I"],
-    ["774","Ingresos en operaciones de factoraje","7","I"],
-    ["775","Descuentos obtenidos por pronto pago","7","I"],["776","Diferencia en cambio","7","I"],
-    ["777","Ganancia por medición de activos y pasivos financieros","7","I"],
-    ["778","Participación en resultados de entidades relacionadas","7","I"],
-    ["779","Otros ingresos financieros","7","I"],
-    ["78","CARGAS CUBIERTAS POR PROVISIONES","7","I"],
-    ["79","CARGAS IMPUTABLES A CUENTAS DE COSTOS Y GASTOS","7","I"],
-    ["80","MARGEN COMERCIAL","8","I"],["81","PRODUCCIÓN DEL EJERCICIO","8","I"],
-    ["82","VALOR AGREGADO","8","I"],["83","EXCEDENTE BRUTO DE EXPLOTACIÓN","8","I"],
-    ["84","RESULTADO DE EXPLOTACIÓN","8","I"],["85","RESULTADO ANTES DE PARTICIPACIONES","8","I"],
-    ["88","IMPUESTO A LA RENTA","8","I"],["89","DETERMINACIÓN DEL RESULTADO","8","I"],
-    ["90","COSTO DE PRODUCCIÓN","9","G"],["91","COSTO DEL SERVICIO","9","G"],
-    ["94","GASTOS ADMINISTRATIVOS","9","G"],["942","Gastos de personal y directores","9","G"],
-    ["943","Gastos de servicios prestados por terceros","9","G"],["944","Gastos por tributos","9","G"],
-    ["945","Otros gastos de gestión","9","G"],["948","Valuación y deterioro de activos","9","G"],
-    ["95","GASTOS DE VENTAS","9","G"],["952","Gastos de personal y directores","9","G"],
-    ["953","Gastos de servicios prestados por terceros","9","G"],["954","Gastos por tributos","9","G"],
-    ["955","Otros gastos de gestión","9","G"],["958","Valuación y deterioro de activos","9","G"],
-    ["97","GASTOS FINANCIEROS","9","G"],["971","Gastos en operaciones de endeudamiento","9","G"],
-    ["972","Pérdida en instrumentos financieros derivados","9","G"],["973","Intereses de préstamos","9","G"],
-    ["974","Gastos en operaciones de factoraje","9","G"],["975","Descuentos concedidos","9","G"],
-    ["976","Diferencia de cambio","9","G"],["977","Pérdida por medición de activos y pasivos","9","G"],
-    ["978","Participación en resultados","9","G"],["979","Otros gastos financieros","9","G"],
-    ["01","BIENES Y VALORES ENTREGADOS","0","O"],["02","DERECHOS SOBRE INSTRUMENTOS FINANCIEROS","0","O"],
-    ["03","OTRAS CUENTAS DE ORDEN DEUDORAS","0","O"],["04","CONTRAPARTIDA CUENTAS DE ORDEN DEUDORAS","0","O"],
-    ["06","BIENES Y VALORES RECIBIDOS","0","O"],["07","COMPROMISOS SOBRE INSTRUMENTOS FINANCIEROS","0","O"],
-    ["08","OTRAS CUENTAS DE ORDEN ACREEDORAS","0","O"],["09","CONTRAPARTIDA CUENTAS DE ORDEN ACREEDORAS","0","O"]
+    ["10","EFECTIVO Y EQUIVALENTES DE EFECTIVO","","1","A"],
+    ["101","Caja","CAJA","1","A"],
+    ["102","Fondos fijos","","1","A"],
+    ["103","Efectivo y cheques en tránsito","","1","A"],
+    ["104","Cuentas corrientes en instituciones financieras","BANCOS","1","A"],
+    ["1041","Cuentas corrientes operativas","BANCOS","1","A"],
+    ["104112","Cuentas corrientes operativas ME","BANCOS","1","A"],
+    ["104111","Cuenta corriente operativa MN","BANCOS","1","A"],
+    ["105","Otros equivalentes de efectivo","","1","A"],
+    ["12","CUENTAS POR COBRAR COMERCIALES - TERCEROS","CLIENTES","1","A"],
+    ["121","Facturas, boletas y otros comprobantes por cobrar","CLIENTES","1","A"],
+    ["1212","Emitidas en cartera","CLIENTES","1","A"],
+    ["122","Anticipos de clientes","ANTICIPOS Y AVANCES","1","A"],
+    ["123","Letras por cobrar","","1","A"],
+    ["16","CUENTAS POR COBRAR DIVERSAS - TERCEROS","","1","A"],
+    ["161","Préstamos","","1","A"],
+    ["162","Reclamaciones a terceros","","1","A"],
+    ["163","Intereses, regalías y dividendos","","1","A"],
+    ["164","Depósitos otorgados en garantía","","1","A"],
+    ["165","Venta de activo inmovilizado","","1","A"],
+    ["166","Activos por instrumentos financieros","","1","A"],
+    ["167","Tributos por acreditar","IGV IMPUESTO SOBRE LAS COMPRAS","1","A"],
+    ["169","Otras cuentas por cobrar diversas","","1","A"],
+    ["17","CUENTAS POR COBRAR DIVERSAS - RELACIONADAS","","1","A"],
+    ["18","SERVICIOS Y OTROS CONTRATADOS POR ANTICIPADO","","1","A"],
+    ["19","ESTIMACIÓN DE CUENTAS DE COBRANZA DUDOSA","","1","A"],
+    ["20","MERCADERÍAS","","2","A"],
+    ["201","Mercaderías","ALMACEN DE MERCADERIAS - PRODUCTOS","2","A"],
+    ["2011","Mercaderías","ALMACEN DE MERCADERIAS - PRODUCTOS","2","A"],
+    ["20111","Costo","ALMACEN DE MERCADERIAS - PRODUCTOS","2","A"],
+    ["21","PRODUCTOS TERMINADOS","","2","A"],
+    ["211","Productos terminados","","2","A"],
+    ["22","SUBPRODUCTOS, DESECHOS Y DESPERDICIOS","","2","A"],
+    ["23","PRODUCTOS EN PROCESO","","2","A"],
+    ["24","MATERIAS PRIMAS","","2","A"],
+    ["25","MATERIALES AUXILIARES, SUMINISTROS Y REPUESTOS","MATERIALES","2","A"],
+    ["26","ENVASES Y EMBALAJES","","2","A"],
+    ["27","ACTIVOS NO CORRIENTES MANTENIDOS PARA LA VENTA","","2","A"],
+    ["28","INVENTARIOS POR RECIBIR","","2","A"],
+    ["29","DESVALORIZACIÓN DE INVENTARIOS","","2","A"],
+    ["30","INVERSIONES MOBILIARIAS","","3","A"],
+    ["31","PROPIEDADES DE INVERSIÓN","","3","A"],
+    ["32","ACTIVOS POR DERECHO DE USO","","3","A"],
+    ["33","PROPIEDAD, PLANTA Y EQUIPO","","3","A"],
+    ["331","Terrenos","TERRENOS","3","A"],
+    ["332","Edificaciones","EDIFICACIONES","3","A"],
+    ["333","Maquinaria y equipo de explotación","MAQUINARIA Y EQUIPO","3","A"],
+    ["334","Unidades de transporte","FLOTA Y EQUIPO DE TRANSPORTE","3","A"],
+    ["335","Muebles y enseres","EQUIPOS DE COMPUTO Y COMUNICACIÓN","3","A"],
+    ["336","Equipos diversos","EQUIPOS DE OFICINA","3","A"],
+    ["337","Herramientas y unidades de reemplazo","","3","A"],
+    ["338","Unidades por recibir","","3","A"],
+    ["339","Depreciacion","DEPRECIACION ACUMULADA","3","A"],
+    ["34","INTANGIBLES","","3","A"],
+    ["35","ACTIVOS BIOLÓGICOS","","3","A"],
+    ["36","DESVALORIZACIÓN DE ACTIVO INMOVILIZADO","","3","A"],
+    ["37","ACTIVO DIFERIDO","","3","A"],
+    ["38","OTROS ACTIVOS","","3","A"],
+    ["39","DEPRECIACIÓN Y AMORTIZACIÓN ACUMULADOS","","3","A"],
+    ["40","TRIBUTOS, CONTRAPRESTACIONES Y APORTES AL SISTEMA PÚBLICO DE PENSIONES Y DE SALUD POR PAGAR","","4","P"],
+    ["401","Gobierno nacional","","4","P"],
+    ["4011","Impuesto general a las ventas","","4","P"],
+    ["40111","IGV - Cuenta propia","IMPUESTO SOBRE LAS VENTAS","4","P"],
+    ["40112","IGV - Servicios prestados por no domiciliados","","4","P"],
+    ["40113","IGV - Régimen de percepciones","","4","P"],
+    ["40114","IGV - Régimen de retenciones","","4","P"],
+    ["40115","IGV - Importaciones","","4","P"],
+    ["4012","Impuesto selectivo al consumo","","4","P"],
+    ["4015","Derechos aduaneros","","4","P"],
+    ["4017","Impuesto a la renta","","4","P"],
+    ["40171","Renta de tercera categoría","","4","P"],
+    ["40172","Renta de cuarta categoría","","4","P"],
+    ["40173","Renta de quinta categoría","","4","P"],
+    ["40174","Renta de no domiciliados","","4","P"],
+    ["4018","Otros impuestos y contraprestaciones","","4","P"],
+    ["402","Certificados tributarios","","4","P"],
+    ["403","Instituciones públicas","","4","P"],
+    ["4031","ESSALUD","APORTES PARA LA NOMINA","4","P"],
+    ["4032","ONP","","4","P"],
+    ["4033","Contribución al SENATI","","4","P"],
+    ["4034","Contribución al SENCICO","","4","P"],
+    ["405","Gobiernos regionales","","4","P"],
+    ["406","Gobiernos locales","","4","P"],
+    ["4061","Impuestos","","4","P"],
+    ["4062","Contribuciones","","4","P"],
+    ["4063","Tasas","","4","P"],
+    ["409","Otros costos administrativos e intereses","","4","P"],
+    ["41","REMUNERACIONES Y PARTICIPACIONES POR PAGAR","","4","P"],
+    ["411","Remuneraciones por pagar","SALARIOS","4","P"],
+    ["4111","Sueldos y salarios por pagar","SALARIOS","4","P"],
+    ["4112","Comisiones por pagar","","4","P"],
+    ["4113","Remuneraciones en especie por pagar","","4","P"],
+    ["4114","Gratificaciones por pagar","","4","P"],
+    ["4115","Vacaciones por pagar","","4","P"],
+    ["413","Participaciones de los trabajadores por pagar","","4","P"],
+    ["415","Beneficios sociales de los trabajadores por pagar","PRESTACIONES SOCIALES","4","P"],
+    ["4151","Compensación por tiempo de servicios","PRESTACIONES SOCIALES","4","P"],
+    ["4152","Adelanto de CTS","PRESTACIONES SOCIALES","4","P"],
+    ["4153","Pensiones y jubilaciones","","4","P"],
+    ["417","Administradoras de fondos de pensiones","","4","P"],
+    ["419","Otras remuneraciones y participaciones por pagar","","4","P"],
+    ["42","CUENTAS POR PAGAR COMERCIALES TERCEROS","","4","P"],
+    ["421","Facturas, boletas y otros comprobantes por pagar","PROVEEDORES NACIONALES - CUENTAS POR PAGAR","4","P"],
+    ["4211","No emitidas","PROVEEDORES NACIONALES - CUENTAS POR PAGAR","4","P"],
+    ["4212","Facturas por Pagar Comerciales - Terceros","PROVEEDORES NACIONALES - CUENTAS POR PAGAR","4","P"],
+    ["422","Anticipos a proveedores","AVANCES Y ANTICIPOS RECIBIDOS","4","P"],
+    ["423","Letras por pagar","","4","P"],
+    ["424","Honorarios por pagar","","4","P"],
+    ["43","CUENTAS POR PAGAR COMERCIALES RELACIONADAS","PROVEEDORES NACIONALES - CUENTAS POR PAGAR RELACIONADOS","4","P"],
+    ["44","CUENTAS POR PAGAR A LOS ACCIONISTAS Y DIRECTORES","","4","P"],
+    ["45","OBLIGACIONES FINANCIERAS","PAGARES - TARJETAS - PRESTAMOS BANCARIOS","4","P"],
+    ["451","Préstamos de instituciones financieras","PAGARES - TARJETAS - PRESTAMOS BANCARIOS","4","P"],
+    ["4511","Instituciones financieras","PAGARES - TARJETAS - PRESTAMOS BANCARIOS","4","P"],
+    ["4512","Otras entidades","","4","P"],
+    ["452","Contratos de arrendamiento financiero","","4","P"],
+    ["453","Obligaciones emitidas","","4","P"],
+    ["454","Otros instrumentos financieros por pagar","","4","P"],
+    ["455","Costos de financiación por pagar","","4","P"],
+    ["456","Préstamos con compromisos de recompra","","4","P"],
+    ["46","CUENTAS POR PAGAR DIVERSAS - TERCEROS","","4","P"],
+    ["461","Reclamaciones de terceros","","4","P"],
+    ["464","Pasivos por instrumentos financieros","","4","P"],
+    ["465","Pasivos por compra de activo inmovilizado","","4","P"],
+    ["466","Participación de terceros","","4","P"],
+    ["467","Depósitos recibidos en garantía","","4","P"],
+    ["469","Otras cuentas por pagar diversas","","4","P"],
+    ["47","CUENTAS POR PAGAR DIVERSAS - RELACIONADAS","","4","P"],
+    ["471","Préstamos","","4","P"],
+    ["472","Costos de financiación","","4","P"],
+    ["473","Anticipos recibidos","","4","P"],
+    ["474","Regalías","","4","P"],
+    ["475","Dividendos","","4","P"],
+    ["476","Depósitos recibidos en garantía","","4","P"],
+    ["477","Pasivo por compra de activo inmovilizado","","4","P"],
+    ["479","Otras cuentas por pagar diversas","","4","P"],
+    ["48","PROVISIONES","","4","P"],
+    ["481","Provisión para litigios","","4","P"],
+    ["482","Provisión por desmantelamiento","","4","P"],
+    ["483","Provisión para reestructuraciones","","4","P"],
+    ["484","Provisión para protección y remediación ambiental","","4","P"],
+    ["485","Provisión para gastos de responsabilidad social","","4","P"],
+    ["486","Provisión para garantías","","4","P"],
+    ["487","Provisión por activos por derecho de uso","","4","P"],
+    ["489","Otras provisiones","","4","P"],
+    ["49","PASIVO DIFERIDO","","4","P"],
+    ["491","Impuesto a la renta diferido","","4","P"],
+    ["492","Participaciones de los trabajadores diferidas","","4","P"],
+    ["493","Intereses diferidos","","4","P"],
+    ["494","Ganancia en venta con arrendamiento financiero paralelo","","4","P"],
+    ["495","Subsidios recibidos diferidos","","4","P"],
+    ["496","Ingresos diferidos","","4","P"],
+    ["497","Costos diferidos","","4","P"],
+    ["50","CAPITAL","CAPITAL","5","PT"],
+    ["501","Capital social","CAPITAL","5","PT"],
+    ["5011","Acciones","","5","PT"],
+    ["5012","Participaciones","","5","PT"],
+    ["502","Acciones en tesorería","","5","PT"],
+    ["51","ACCIONES DE INVERSIÓN","","5","PT"],
+    ["511","Acciones de inversión","","5","PT"],
+    ["512","Acciones de inversión en tesorería","","5","PT"],
+    ["52","CAPITAL ADICIONAL","","5","PT"],
+    ["521","Primas (descuento) de acciones","","5","PT"],
+    ["522","Capitalizaciones en trámite","","5","PT"],
+    ["523","Reducciones de capital pendientes","","5","PT"],
+    ["56","RESULTADOS NO REALIZADOS","","5","PT"],
+    ["57","EXCEDENTE DE REVALUACIÓN","","5","PT"],
+    ["571","Excedente de revaluación","","5","PT"],
+    ["572","Excedente de revaluación - Acciones liberadas recibidas","","5","PT"],
+    ["573","Participación en excedente de revaluación","","5","PT"],
+    ["58","RESERVAS","","5","PT"],
+    ["581","Reinversión","","5","PT"],
+    ["582","Legal","RESERVA LEGAL","5","PT"],
+    ["583","Contractuales","","5","PT"],
+    ["584","Estatutarias","","5","PT"],
+    ["585","Facultativas","","5","PT"],
+    ["589","Otras reservas","","5","PT"],
+    ["59","RESULTADOS ACUMULADOS","","5","PT"],
+    ["591","Utilidades no distribuidas","UTILIDAD DEL EJERCICIO","5","PT"],
+    ["592","Pérdidas acumuladas","UTILIDAD DEL EJERCICIO","5","PT"],
+    ["60","COMPRAS","","6","G"],
+    ["601","Mercaderías","","6","G"],
+    ["6011","Mercaderías","","6","G"],
+    ["60111","Compra de Mercadería","","6","G"],
+    ["602","Materias primas","","6","G"],
+    ["603","Materiales auxiliares, suministros y repuestos","","6","G"],
+    ["604","Envases y embalajes","","6","G"],
+    ["609","Costos vinculados con las compras","","6","G"],
+    ["61","VARIACIÓN DE INVENTARIOS","","6","G"],
+    ["62","GASTOS DE PERSONAL Y DIRECTORES","","6","G"],
+    ["621","Remuneraciones","","6","G"],
+    ["6211","Sueldos y salarios","","6","G"],
+    ["6212","Comisiones","","6","G"],
+    ["6213","Remuneraciones en especie","","6","G"],
+    ["6214","Gratificaciones","","6","G"],
+    ["6215","Vacaciones","","6","G"],
+    ["622","Otras remuneraciones","","6","G"],
+    ["623","Indemnizaciones al personal","","6","G"],
+    ["624","Capacitación","","6","G"],
+    ["625","Atención al personal","","6","G"],
+    ["627","Seguridad, previsión social y otras contribuciones","","6","G"],
+    ["6271","Régimen de prestaciones de salud","","6","G"],
+    ["6272","Régimen de pensiones","","6","G"],
+    ["6273","Seguro complementario de trabajo de riesgo","","6","G"],
+    ["6274","Seguro de vida","","6","G"],
+    ["6275","EPS y otros particulares","","6","G"],
+    ["6277","Contribuciones al SENATI","","6","G"],
+    ["628","Retribuciones al directorio","","6","G"],
+    ["629","Beneficios sociales de los trabajadores","","6","G"],
+    ["6291","Compensación por tiempo de servicio","","6","G"],
+    ["6292","Pensiones y jubilaciones","","6","G"],
+    ["6293","Otros beneficios post-empleo","","6","G"],
+    ["6294","Participación en las utilidades","","6","G"],
+    ["63","GASTOS DE SERVICIOS PRESTADOS POR TERCEROS","","6","G"],
+    ["631","Transporte, correos y gastos de viaje","","6","G"],
+    ["6311","Transporte","","6","G"],
+    ["63111","Servicio de transporte de carga","","6","G"],
+    ["63112","De pasajeros","","6","G"],
+    ["6312","Correos","","6","G"],
+    ["6313","Alojamiento","","6","G"],
+    ["6314","Alimentación","","6","G"],
+    ["6315","Otros gastos de viaje","","6","G"],
+    ["632","Asesoría y consultoría","","6","G"],
+    ["6321","Administrativa","","6","G"],
+    ["6322","Legal y tributaria","","6","G"],
+    ["6323","Auditoría y contable","","6","G"],
+    ["6324","Mercadotecnia","","6","G"],
+    ["6325","Medioambiental","","6","G"],
+    ["6326","Investigación y desarrollo","","6","G"],
+    ["6327","Producción","","6","G"],
+    ["6329","Otros","","6","G"],
+    ["633","Producción encargada a terceros","","6","G"],
+    ["634","Mantenimiento y reparaciones","","6","G"],
+    ["635","Alquileres","","6","G"],
+    ["6351","Terrenos","","6","G"],
+    ["6352","Edificaciones","","6","G"],
+    ["6353","Maquinarias y equipos de explotación","","6","G"],
+    ["6354","Equipo de transporte","","6","G"],
+    ["6355","Muebles y enseres","","6","G"],
+    ["6356","Equipos diversos","","6","G"],
+    ["636","Servicios básicos","","6","G"],
+    ["6361","Energía eléctrica","","6","G"],
+    ["6362","Gas","","6","G"],
+    ["6363","Agua","","6","G"],
+    ["6364","Teléfono","","6","G"],
+    ["6365","Internet","","6","G"],
+    ["6366","Radio","","6","G"],
+    ["6367","Cable","","6","G"],
+    ["637","Publicidad, publicaciones, relaciones públicas","","6","G"],
+    ["6371","Publicidad","","6","G"],
+    ["6372","Publicaciones","","6","G"],
+    ["6373","Relaciones públicas","","6","G"],
+    ["638","Servicios de contratistas","","6","G"],
+    ["639","Otros servicios prestados por terceros","","6","G"],
+    ["6391","Gastos bancarios","","6","G"],
+    ["6392","Gastos de laboratorio","","6","G"],
+    ["6393","Seguridad - Vigilancia","","6","G"],
+    ["64","GASTOS POR TRIBUTOS","","6","G"],
+    ["641","Gobierno nacional","","6","G"],
+    ["6411","IGV y selectivo al consumo","","6","G"],
+    ["6412","ITF","","6","G"],
+    ["6413","ITAN","","6","G"],
+    ["6414","Juegos de casino y tragamonedas","","6","G"],
+    ["6415","Regalías mineras","","6","G"],
+    ["6416","Cánones","","6","G"],
+    ["6419","Otros","","6","G"],
+    ["642","Gobierno regional","","6","G"],
+    ["643","Gobierno local","","6","G"],
+    ["6431","Impuesto predial","","6","G"],
+    ["6432","Arbitrios municipales","","6","G"],
+    ["6433","Impuesto al patrimonio vehicular","","6","G"],
+    ["6434","Licencia de funcionamiento","","6","G"],
+    ["6439","Otros","","6","G"],
+    ["644","Otros gastos por tributos","","6","G"],
+    ["6442","Contribución al SENCICO","","6","G"],
+    ["6443","Otros","","6","G"],
+    ["645","Gastos en deuda tributaria","","6","G"],
+    ["6451","Intereses","","6","G"],
+    ["6452","Intereses - fraccionamiento","","6","G"],
+    ["6453","Multas","","6","G"],
+    ["6454","Costas y otros","","6","G"],
+    ["65","OTROS GASTOS DE GESTIÓN","","6","G"],
+    ["651","Seguros","","6","G"],
+    ["652","Regalías","","6","G"],
+    ["653","Suscripciones","","6","G"],
+    ["654","Licencias y derechos de vigencia","","6","G"],
+    ["655","Costo neto de enajenación de activos inmovilizados","","6","G"],
+    ["656","Suministros","","6","G"],
+    ["6561","Combustible","","6","G"],
+    ["657","Activos Menores 1/4 UIT","","6","G"],
+    ["658","Gestión medioambiental","","6","G"],
+    ["659","Otros gastos de gestión","","6","G"],
+    ["6591","Donaciones","","6","G"],
+    ["6592","Sanciones administrativas","","6","G"],
+    ["66","PÉRDIDA POR MEDICIÓN DE ACTIVOS NO FINANCIEROS","","6","G"],
+    ["67","GASTOS FINANCIEROS","","6","G"],
+    ["671","Gastos en operaciones de endeudamiento","","6","G"],
+    ["672","Pérdida por instrumentos financieros derivados","","6","G"],
+    ["673","Intereses por préstamos","","6","G"],
+    ["674","Gastos en operaciones de factoraje (factoring)","","6","G"],
+    ["675","Descuentos concedidos por pronto pago","","6","G"],
+    ["676","Diferencia de cambio","","6","G"],
+    ["677","Pérdida por medición de activos y pasivos financieros","","6","G"],
+    ["678","Participación en resultados de entidades relacionadas","","6","G"],
+    ["679","Otros gastos financieros","","6","G"],
+    ["68","VALUACIÓN Y DETERIORO DE ACTIVOS Y PROVISIONES","","6","G"],
+    ["681","Depreciación de propiedades de inversión","","6","G"],
+    ["682","Depreciación de activos por derecho de uso","","6","G"],
+    ["683","Depreciación de activos por derecho de uso - operativo","","6","G"],
+    ["684","Depreciación de propiedad, planta y equipo","","6","G"],
+    ["685","Depreciación de activos biológicos en producción","","6","G"],
+    ["686","Amortización de intangibles","","6","G"],
+    ["687","Valuación de activos","","6","G"],
+    ["688","Deterioro del valor de los activos","","6","G"],
+    ["689","Provisiones","","6","G"],
+    ["69","COSTO DE VENTAS","","6","G"],
+    ["691","Costo de Ventas - Mercaderías","","6","G"],
+    ["6911","Costo de Ventas - Mercaderías","","6","G"],
+    ["69111","Costo de Ventas - Mercaderías","","6","G"],
+    ["692","Productos terminados","","6","G"],
+    ["693","Servicios terminados","","6","G"],
+    ["694","Subproductos, desechos y desperdicios","","6","G"],
+    ["695","Gastos por desvalorización de inventarios","","6","G"],
+    ["70","VENTAS","","7","I"],
+    ["701","Mercaderías","","7","I"],
+    ["7011","Mercaderías - exportación","","7","I"],
+    ["70111","Terceros","","7","I"],
+    ["70112","Relacionadas","","7","I"],
+    ["7012","Mercaderías - venta local","","7","I"],
+    ["70121","Terceros","","7","I"],
+    ["70122","Relacionadas","","7","I"],
+    ["702","Productos terminados","","7","I"],
+    ["703","Servicios Terminados","","7","I"],
+    ["704","Subproductos, desechos y desperdicios","","7","I"],
+    ["709","Devoluciones sobre ventas","","7","I"],
+    ["71","VARIACIÓN DE LA PRODUCCIÓN ALMACENADA","","7","I"],
+    ["72","PRODUCCIÓN DE ACTIVO INMOVILIZADO","","7","I"],
+    ["73","DESCUENTOS, REBAJAS Y BONIFICACIONES OBTENIDOS","","7","I"],
+    ["74","DESCUENTOS, REBAJAS Y BONIFICACIONES CONCEDIDOS","","7","I"],
+    ["75","OTROS INGRESOS DE GESTIÓN","","7","I"],
+    ["751","Servicios en beneficio del personal","","7","I"],
+    ["752","Comisiones y corretajes","","7","I"],
+    ["753","Regalías","","7","I"],
+    ["754","Alquileres","","7","I"],
+    ["755","Recuperación de cuentas de valuación","","7","I"],
+    ["756","Enajenación de activos inmovilizados","","7","I"],
+    ["757","Recuperación de deterioro de cuentas","","7","I"],
+    ["759","Otros ingresos de gestión","","7","I"],
+    ["7591","Subsidios gubernamentales","","7","I"],
+    ["7592","Reclamos al seguro","","7","I"],
+    ["7593","Donaciones","","7","I"],
+    ["7594","Devoluciones tributarias","","7","I"],
+    ["7599","Otros ingresos de gestión","","7","I"],
+    ["76","GANANCIA POR MEDICIÓN DE ACTIVOS NO FINANCIEROS","","7","I"],
+    ["77","INGRESOS FINANCIEROS","","7","I"],
+    ["771","Ganancia por instrumento financiero derivado","","7","I"],
+    ["772","Rendimientos ganados","","7","I"],
+    ["773","Dividendos","","7","I"],
+    ["774","Ingresos en operaciones de factoraje","","7","I"],
+    ["775","Descuentos obtenidos por pronto pago","","7","I"],
+    ["776","Diferencia en cambio","","7","I"],
+    ["777","Ganancia por medición de activos y pasivos financieros","","7","I"],
+    ["778","Participación en resultados de entidades relacionadas","","7","I"],
+    ["779","Otros ingresos financieros","","7","I"],
+    ["78","CARGAS CUBIERTAS POR PROVISIONES","","7","I"],
+    ["79","CARGAS IMPUTABLES A CUENTAS DE COSTOS Y GASTOS","","7","I"],
+    ["80","MARGEN COMERCIAL","","8","I"],
+    ["81","PRODUCCIÓN DEL EJERCICIO","","8","I"],
+    ["82","VALOR AGREGADO","","8","I"],
+    ["83","EXCEDENTE BRUTO DE EXPLOTACIÓN","","8","I"],
+    ["84","RESULTADO DE EXPLOTACIÓN","","8","I"],
+    ["85","RESULTADO ANTES DE PARTICIPACIONES","","8","I"],
+    ["88","IMPUESTO A LA RENTA","","8","I"],
+    ["89","DETERMINACIÓN DEL RESULTADO","","8","I"],
+    ["90","COSTO DE PRODUCCIÓN","","9","G"],
+    ["91","COSTO DEL SERVICIO","","9","G"],
+    ["94","GASTOS ADMINISTRATIVOS","","9","G"],
+    ["942","Gastos de personal y directores","","9","G"],
+    ["943","Gastos de servicios prestados por terceros","","9","G"],
+    ["944","Gastos por tributos","","9","G"],
+    ["945","Otros gastos de gestión","","9","G"],
+    ["948","Valuación y deterioro de activos","","9","G"],
+    ["95","GASTOS DE VENTAS","","9","G"],
+    ["952","Gastos de personal y directores","","9","G"],
+    ["953","Gastos de servicios prestados por terceros","","9","G"],
+    ["954","Gastos por tributos","","9","G"],
+    ["955","Otros gastos de gestión","","9","G"],
+    ["958","Valuación y deterioro de activos","","9","G"],
+    ["97","GASTOS FINANCIEROS","","9","G"],
+    ["971","Gastos en operaciones de endeudamiento","","9","G"],
+    ["972","Pérdida en instrumentos financieros derivados","","9","G"],
+    ["973","Intereses de préstamos","","9","G"],
+    ["974","Gastos en operaciones de factoraje","","9","G"],
+    ["975","Descuentos concedidos","","9","G"],
+    ["976","Diferencia de cambio","","9","G"],
+    ["977","Pérdida por medición de activos y pasivos","","9","G"],
+    ["978","Participación en resultados","","9","G"],
+    ["979","Otros gastos financieros","","9","G"],
+    ["01","BIENES Y VALORES ENTREGADOS","","0","O"],
+    ["02","DERECHOS SOBRE INSTRUMENTOS FINANCIEROS","","0","O"],
+    ["03","OTRAS CUENTAS DE ORDEN DEUDORAS","","0","O"],
+    ["04","CONTRAPARTIDA CUENTAS DE ORDEN DEUDORAS","","0","O"],
+    ["06","BIENES Y VALORES RECIBIDOS","","0","O"],
+    ["07","COMPROMISOS SOBRE INSTRUMENTOS FINANCIEROS","","0","O"],
+    ["08","OTRAS CUENTAS DE ORDEN ACREEDORAS","","0","O"],
+    ["09","CONTRAPARTIDA CUENTAS DE ORDEN ACREEDORAS","","0","O"]
 ];
 
 const catalogoCuentas = PCGE_RAW.map(item => {
-    const [codigo, nombre, elemento, tipo] = item;
+    const [codigo, nombre, esf, elemento, tipo] = item;
     let naturaleza = "deudora", grupo = "ACTIVOS";
     if (tipo === "P") { naturaleza = "acreedora"; grupo = "PASIVOS"; }
     else if (tipo === "PT") { naturaleza = "acreedora"; grupo = "PATRIMONIO"; }
@@ -1922,7 +1993,7 @@ const catalogoCuentas = PCGE_RAW.map(item => {
     else if (primerDigito === "9") { categoria317 = "RESULTADOS_FUNCION"; }
     else if (primerDigito === "8") { categoria317 = "GESTION"; excluir317 = true; }
     else if (primerDigito === "0") { categoria317 = "ORDEN"; excluir317 = true; }
-    return { codigo, nombre, grupo, naturaleza, elemento, tipo, categoria317, excluir317 };
+    return { codigo, nombre, esf: (esf || "").trim(), grupo, naturaleza, elemento, tipo, categoria317, excluir317 };
 });
 
 function inicializarLibroDiario() {
@@ -1972,9 +2043,6 @@ function cargarComboBoxPlantillas() {
     if (valorActual && plantillasCache[valorActual]) cbo.value = valorActual;
 }
 
-/* ==========================================
-   RECÁLCULO AUTOMÁTICO BASE / IGV / TOTAL
-   ========================================== */
 function recalcularDesde(campoEditado) {
     const base = document.getElementById('txtBase');
     const igv = document.getElementById('txtIGV');
@@ -1989,85 +2057,35 @@ function recalcularDesde(campoEditado) {
 
     if (campoEditado === 'base') {
         if (!baseOk) {
-            // Si borró base, intentar recalcular desde IGV o Total
-            if (igvOk) {
-                vIGV = igvVal;
-                vBase = Math.round((igvVal / TASA_IGV) * 100) / 100;
-                vTotal = vBase + vIGV;
-                base.value = vBase.toFixed(2);
-                total.value = vTotal.toFixed(2);
-            } else if (totalOk) {
-                vTotal = totalVal;
-                vBase = Math.round((totalVal / (1 + TASA_IGV)) * 100) / 100;
-                vIGV = Math.round((totalVal - vBase) * 100) / 100;
-                base.value = vBase.toFixed(2);
-                igv.value = vIGV.toFixed(2);
-            } else {
-                vBase = vIGV = vTotal = 0;
-                igv.value = ""; total.value = "";
-            }
+            if (igvOk) { vIGV = igvVal; vBase = Math.round((igvVal / TASA_IGV) * 100) / 100; vTotal = vBase + vIGV; base.value = vBase.toFixed(2); total.value = vTotal.toFixed(2); }
+            else if (totalOk) { vTotal = totalVal; vBase = Math.round((totalVal / (1 + TASA_IGV)) * 100) / 100; vIGV = Math.round((totalVal - vBase) * 100) / 100; base.value = vBase.toFixed(2); igv.value = vIGV.toFixed(2); }
+            else { vBase = vIGV = vTotal = 0; igv.value = ""; total.value = ""; }
         } else {
-            vBase = baseVal;
-            vIGV = Math.round(baseVal * TASA_IGV * 100) / 100;
-            vTotal = Math.round((baseVal + vIGV) * 100) / 100;
-            igv.value = vIGV.toFixed(2);
-            total.value = vTotal.toFixed(2);
+            vBase = baseVal; vIGV = Math.round(baseVal * TASA_IGV * 100) / 100; vTotal = Math.round((baseVal + vIGV) * 100) / 100;
+            igv.value = vIGV.toFixed(2); total.value = vTotal.toFixed(2);
         }
     } else if (campoEditado === 'igv') {
         if (!igvOk) {
-            if (baseOk) {
-                vBase = baseVal;
-                vIGV = Math.round(baseVal * TASA_IGV * 100) / 100;
-                vTotal = Math.round((baseVal + vIGV) * 100) / 100;
-                igv.value = vIGV.toFixed(2);
-                total.value = vTotal.toFixed(2);
-            } else if (totalOk) {
-                vTotal = totalVal;
-                vBase = Math.round((totalVal / (1 + TASA_IGV)) * 100) / 100;
-                vIGV = Math.round((totalVal - vBase) * 100) / 100;
-                base.value = vBase.toFixed(2);
-                igv.value = vIGV.toFixed(2);
-            } else {
-                vBase = vIGV = vTotal = 0;
-                base.value = ""; total.value = "";
-            }
+            if (baseOk) { vBase = baseVal; vIGV = Math.round(baseVal * TASA_IGV * 100) / 100; vTotal = Math.round((baseVal + vIGV) * 100) / 100; igv.value = vIGV.toFixed(2); total.value = vTotal.toFixed(2); }
+            else if (totalOk) { vTotal = totalVal; vBase = Math.round((totalVal / (1 + TASA_IGV)) * 100) / 100; vIGV = Math.round((totalVal - vBase) * 100) / 100; base.value = vBase.toFixed(2); igv.value = vIGV.toFixed(2); }
+            else { vBase = vIGV = vTotal = 0; base.value = ""; total.value = ""; }
         } else {
-            vIGV = igvVal;
-            vBase = Math.round((igvVal / TASA_IGV) * 100) / 100;
-            vTotal = Math.round((vBase + vIGV) * 100) / 100;
-            base.value = vBase.toFixed(2);
-            total.value = vTotal.toFixed(2);
+            vIGV = igvVal; vBase = Math.round((igvVal / TASA_IGV) * 100) / 100; vTotal = Math.round((vBase + vIGV) * 100) / 100;
+            base.value = vBase.toFixed(2); total.value = vTotal.toFixed(2);
         }
     } else if (campoEditado === 'total') {
         if (!totalOk) {
-            if (baseOk) {
-                vBase = baseVal;
-                vIGV = Math.round(baseVal * TASA_IGV * 100) / 100;
-                vTotal = Math.round((baseVal + vIGV) * 100) / 100;
-                igv.value = vIGV.toFixed(2);
-                total.value = vTotal.toFixed(2);
-            } else if (igvOk) {
-                vIGV = igvVal;
-                vBase = Math.round((igvVal / TASA_IGV) * 100) / 100;
-                vTotal = Math.round((vBase + vIGV) * 100) / 100;
-                base.value = vBase.toFixed(2);
-                total.value = vTotal.toFixed(2);
-            } else {
-                vBase = vIGV = vTotal = 0;
-                base.value = ""; igv.value = "";
-            }
+            if (baseOk) { vBase = baseVal; vIGV = Math.round(baseVal * TASA_IGV * 100) / 100; vTotal = Math.round((baseVal + vIGV) * 100) / 100; igv.value = vIGV.toFixed(2); total.value = vTotal.toFixed(2); }
+            else if (igvOk) { vIGV = igvVal; vBase = Math.round((igvVal / TASA_IGV) * 100) / 100; vTotal = Math.round((vBase + vIGV) * 100) / 100; base.value = vBase.toFixed(2); total.value = vTotal.toFixed(2); }
+            else { vBase = vIGV = vTotal = 0; base.value = ""; igv.value = ""; }
         } else {
-            vTotal = totalVal;
-            vBase = Math.round((totalVal / (1 + TASA_IGV)) * 100) / 100;
-            vIGV = Math.round((totalVal - vBase) * 100) / 100;
-            base.value = vBase.toFixed(2);
-            igv.value = vIGV.toFixed(2);
+            vTotal = totalVal; vBase = Math.round((totalVal / (1 + TASA_IGV)) * 100) / 100; vIGV = Math.round((totalVal - vBase) * 100) / 100;
+            base.value = vBase.toFixed(2); igv.value = vIGV.toFixed(2);
         }
     }
     calcularYPrevisualizar();
 }
 
-/* Recálculo en el modal de escaneo */
 function recalcularDesdeScan(campoEditado) {
     const base = document.getElementById('scanBase');
     const igv = document.getElementById('scanIGV');
@@ -2082,52 +2100,22 @@ function recalcularDesdeScan(campoEditado) {
 
     if (campoEditado === 'base') {
         if (!baseOk) {
-            if (igvOk) {
-                const b = Math.round((igvVal / TASA_IGV) * 100) / 100;
-                base.value = b.toFixed(2);
-                total.value = (b + igvVal).toFixed(2);
-            } else if (totalOk) {
-                const b = Math.round((totalVal / (1 + TASA_IGV)) * 100) / 100;
-                base.value = b.toFixed(2);
-                igv.value = (totalVal - b).toFixed(2);
-            } else { igv.value = ""; total.value = ""; }
-        } else {
-            const i = Math.round(baseVal * TASA_IGV * 100) / 100;
-            igv.value = i.toFixed(2);
-            total.value = (baseVal + i).toFixed(2);
-        }
+            if (igvOk) { const b = Math.round((igvVal / TASA_IGV) * 100) / 100; base.value = b.toFixed(2); total.value = (b + igvVal).toFixed(2); }
+            else if (totalOk) { const b = Math.round((totalVal / (1 + TASA_IGV)) * 100) / 100; base.value = b.toFixed(2); igv.value = (totalVal - b).toFixed(2); }
+            else { igv.value = ""; total.value = ""; }
+        } else { const i = Math.round(baseVal * TASA_IGV * 100) / 100; igv.value = i.toFixed(2); total.value = (baseVal + i).toFixed(2); }
     } else if (campoEditado === 'igv') {
         if (!igvOk) {
-            if (baseOk) {
-                const i = Math.round(baseVal * TASA_IGV * 100) / 100;
-                igv.value = i.toFixed(2);
-                total.value = (baseVal + i).toFixed(2);
-            } else if (totalOk) {
-                const b = Math.round((totalVal / (1 + TASA_IGV)) * 100) / 100;
-                base.value = b.toFixed(2);
-                igv.value = (totalVal - b).toFixed(2);
-            } else { base.value = ""; total.value = ""; }
-        } else {
-            const b = Math.round((igvVal / TASA_IGV) * 100) / 100;
-            base.value = b.toFixed(2);
-            total.value = (b + igvVal).toFixed(2);
-        }
+            if (baseOk) { const i = Math.round(baseVal * TASA_IGV * 100) / 100; igv.value = i.toFixed(2); total.value = (baseVal + i).toFixed(2); }
+            else if (totalOk) { const b = Math.round((totalVal / (1 + TASA_IGV)) * 100) / 100; base.value = b.toFixed(2); igv.value = (totalVal - b).toFixed(2); }
+            else { base.value = ""; total.value = ""; }
+        } else { const b = Math.round((igvVal / TASA_IGV) * 100) / 100; base.value = b.toFixed(2); total.value = (b + igvVal).toFixed(2); }
     } else if (campoEditado === 'total') {
         if (!totalOk) {
-            if (baseOk) {
-                const i = Math.round(baseVal * TASA_IGV * 100) / 100;
-                igv.value = i.toFixed(2);
-                total.value = (baseVal + i).toFixed(2);
-            } else if (igvOk) {
-                const b = Math.round((igvVal / TASA_IGV) * 100) / 100;
-                base.value = b.toFixed(2);
-                total.value = (b + igvVal).toFixed(2);
-            } else { base.value = ""; igv.value = ""; }
-        } else {
-            const b = Math.round((totalVal / (1 + TASA_IGV)) * 100) / 100;
-            base.value = b.toFixed(2);
-            igv.value = (totalVal - b).toFixed(2);
-        }
+            if (baseOk) { const i = Math.round(baseVal * TASA_IGV * 100) / 100; igv.value = i.toFixed(2); total.value = (baseVal + i).toFixed(2); }
+            else if (igvOk) { const b = Math.round((igvVal / TASA_IGV) * 100) / 100; base.value = b.toFixed(2); total.value = (b + igvVal).toFixed(2); }
+            else { base.value = ""; igv.value = ""; }
+        } else { const b = Math.round((totalVal / (1 + TASA_IGV)) * 100) / 100; base.value = b.toFixed(2); igv.value = (totalVal - b).toFixed(2); }
     }
 }
 
@@ -2509,11 +2497,7 @@ function renderizarCardsTipo() {
     const cont = document.getElementById('cardsTipo');
     if (!cont) return;
     cont.innerHTML = '';
-    const iconos = {
-        venta_credito: '💳', venta_contado: '💰',
-        compra_credito: '📝', compra_contado: '🛒',
-        costo_venta: '📦'
-    };
+    const iconos = { venta_credito: '💳', venta_contado: '💰', compra_credito: '📝', compra_contado: '🛒', costo_venta: '📦' };
     for (const key in plantillasCache) {
         const p = plantillasCache[key];
         const div = document.createElement('div');
@@ -2547,11 +2531,9 @@ function extraerDatosDeTexto(texto) {
     const datos = {};
     const t = texto.replace(/\s+/g, ' ');
 
-    // N° factura (formatos: E001-005, 001-0001234, F001-123)
     let m = t.match(/\b([A-Z]\d{3}-\d+)\b/i) || t.match(/\b(\d{3}-\d{4,})\b/);
     if (m) datos.factura = m[1].toUpperCase();
 
-    // Fecha (dd/mm/yyyy, dd-mm-yyyy, yyyy-mm-dd)
     m = t.match(/\b(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{2,4})\b/);
     if (m) {
         let [, d, mo, y] = m;
@@ -2559,11 +2541,9 @@ function extraerDatosDeTexto(texto) {
         datos.fecha = `${y}-${mo.padStart(2,'0')}-${d.padStart(2,'0')}`;
     }
 
-    // RUC (11 dígitos)
     m = t.match(/\b(10|20|15|17)\d{9}\b/);
     if (m) datos.ruc = m[0];
 
-    // Montos: buscar Total, Subtotal, IGV
     const totalMatch = t.match(/(?:total|importe total|a pagar)[^\d]{0,20}(\d{1,3}(?:[.,]\d{3})*(?:[.,]\d{2})|\d+[.,]\d{2})/i);
     if (totalMatch) datos.total = parseFloat(totalMatch[1].replace(/[.,](?=\d{3})/g, '').replace(',', '.')) || parseFloat(totalMatch[1].replace(',', '.'));
 
@@ -2573,7 +2553,6 @@ function extraerDatosDeTexto(texto) {
     const subMatch = t.match(/(?:subtotal|base imponible|valor venta|op\. gravadas)[^\d]{0,20}(\d{1,3}(?:[.,]\d{3})*(?:[.,]\d{2})|\d+[.,]\d{2})/i);
     if (subMatch) datos.base = parseFloat(subMatch[1].replace(/[.,](?=\d{3})/g, '').replace(',', '.')) || parseFloat(subMatch[1].replace(',', '.'));
 
-    // Si no hay base pero hay total e igv
     if (!datos.base && datos.total && datos.igv) datos.base = +(datos.total - datos.igv).toFixed(2);
     if (!datos.igv && datos.total && datos.base) datos.igv = +(datos.total - datos.base).toFixed(2);
     if (!datos.total && datos.base && datos.igv) datos.total = +(datos.base + datos.igv).toFixed(2);
@@ -2581,7 +2560,6 @@ function extraerDatosDeTexto(texto) {
     if (!datos.base && datos.total) { datos.base = +(datos.total / 1.18).toFixed(2); datos.igv = +(datos.total - datos.base).toFixed(2); }
     if (!datos.igv && datos.total) { datos.base = +(datos.total / 1.18).toFixed(2); datos.igv = +(datos.total - datos.base).toFixed(2); }
 
-    // Glosa: línea que contenga "descripcion", "detalle", "concepto" o primera línea con texto
     const glosaMatch = t.match(/(?:descripci[oó]n|detalle|concepto|glosa)[:\s]+([^\n\r]{3,60})/i);
     if (glosaMatch) datos.glosa = glosaMatch[1].trim();
 
@@ -2614,7 +2592,6 @@ async function procesarArchivo(file) {
                 texto += content.items.map(it => it.str).join(' ') + '\n';
             }
             textoExtraido = texto;
-            // Render primera página como preview
             const page = await pdf.getPage(1);
             const viewport = page.getViewport({ scale: 1 });
             const canvas = document.createElement('canvas');
@@ -2624,7 +2601,6 @@ async function procesarArchivo(file) {
             preview.src = canvas.toDataURL();
             preview.style.display = 'block';
         } else {
-            // Imagen: mostrar preview y OCR
             mostrarStatusScan('🖼️ Procesando imagen...', 'loading');
             preview.src = URL.createObjectURL(file);
             preview.style.display = 'block';
@@ -2643,7 +2619,6 @@ async function procesarArchivo(file) {
         const datos = extraerDatosDeTexto(textoExtraido);
         const tipoDetectado = detectarTipoDesdeTexto(textoExtraido);
 
-        // Rellenar campos
         document.getElementById('scanFactura').value = datos.factura || '';
         document.getElementById('scanFecha').value = datos.fecha || new Date().toISOString().slice(0,10);
         document.getElementById('scanBase').value = datos.base != null ? datos.base.toFixed(2) : '';
@@ -2652,13 +2627,11 @@ async function procesarArchivo(file) {
         document.getElementById('scanRUC').value = datos.ruc || '';
         document.getElementById('scanGlosa').value = datos.glosa || '';
 
-        // Marcar detectados
         ['scanFactura','scanFecha','scanBase','scanIGV','scanTotal','scanRUC','scanGlosa'].forEach(id => {
             const el = document.getElementById(id);
             el.classList.toggle('detected', !!el.value);
         });
 
-        // Tipo de gasto
         renderizarCardsTipo();
         if (tipoDetectado && plantillasCache[tipoDetectado]) {
             seleccionarCardTipo(tipoDetectado);
@@ -2702,7 +2675,6 @@ function aplicarDatosEscaneados() {
     mostrarSync('Datos aplicados al formulario', 'success');
 }
 
-// Eventos de escaneo
 document.addEventListener('DOMContentLoaded', () => {
     const input = document.getElementById('scanFileInput');
     const cam = document.getElementById('scanCameraInput');
@@ -2719,6 +2691,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
+/* ==========================================
+   BALANCE 3.17
+   ========================================== */
 function calcularBalance317() {
     const tbody = document.getElementById('cuerpoBalance317');
     tbody.innerHTML = "";
@@ -2796,81 +2771,102 @@ function calcularBalance317() {
     tbody.appendChild(trDif);
 }
 
+/* ==========================================
+   ESF — 100% BASADO EN LA COLUMNA ESF
+   Solo aparecen las cuentas que tienen ESF definido.
+   Las que comparten el mismo ESF se agrupan y suman.
+   ========================================== */
 function calcularESF() {
     const tbody = document.getElementById('cuerpoESF');
     tbody.innerHTML = "";
     const saldos = obtenerSaldos();
-    const activoCorriente = [], activoNoCorriente = [], pasivoCorriente = [], pasivoNoCorriente = [], patrimonio = [];
-    let tAC = 0, tANC = 0, tPC = 0, tPNC = 0, tPat = 0, tIng = 0, tGas = 0;
+
+    const activoMap = {};
+    const pasivoMap = {};
+    const patrimonioMap = {};
+    let tIng = 0, tGas = 0;
+
     catalogoCuentas.forEach(cuenta => {
+        // SOLO procesar cuentas que tengan ESF definido
+        if (!cuenta.esf) return;
+        if (cuenta.excluir317) return;
+
         const s = saldos[cuenta.codigo];
-        if (!s || cuenta.excluir317) return;
+        if (!s) return;
         const debe = s.debe, haber = s.haber;
         if (debe === 0 && haber === 0) return;
+
         const elem = cuenta.codigo.charAt(0);
-        const saldoNeto = debe - haber;
+        const clave = cuenta.esf;
+
         if (["1", "2", "3"].includes(elem)) {
-            if (elem === "3") { activoNoCorriente.push({ codigo: cuenta.codigo, nombre: cuenta.nombre, monto: saldoNeto }); tANC += saldoNeto; }
-            else { activoCorriente.push({ codigo: cuenta.codigo, nombre: cuenta.nombre, monto: saldoNeto }); tAC += saldoNeto; }
+            const saldoNeto = debe - haber;
+            activoMap[clave] = (activoMap[clave] || 0) + saldoNeto;
         } else if (elem === "4") {
             const mp = haber - debe;
-            if (cuenta.codigo.substring(0, 2) === "49") { pasivoNoCorriente.push({ codigo: cuenta.codigo, nombre: cuenta.nombre, monto: mp }); tPNC += mp; }
-            else { pasivoCorriente.push({ codigo: cuenta.codigo, nombre: cuenta.nombre, monto: mp }); tPC += mp; }
+            pasivoMap[clave] = (pasivoMap[clave] || 0) + mp;
         } else if (elem === "5") {
-            patrimonio.push({ codigo: cuenta.codigo, nombre: cuenta.nombre, monto: haber - debe }); tPat += (haber - debe);
-        } else if (elem === "7") tIng += haber - debe;
-        else if (elem === "6") tGas += debe - haber;
+            patrimonioMap[clave] = (patrimonioMap[clave] || 0) + (haber - debe);
+        } else if (elem === "7") {
+            tIng += haber - debe;
+        } else if (elem === "6") {
+            tGas += debe - haber;
+        }
     });
-    tPat += (tIng - tGas);
+
+    // El resultado del ejercicio se agrega al patrimonio (bajo "UTILIDAD DEL EJERCICIO")
+    const resultado = tIng - tGas;
+    if (resultado !== 0) {
+        const claveUtilidad = "UTILIDAD DEL EJERCICIO";
+        patrimonioMap[claveUtilidad] = (patrimonioMap[claveUtilidad] || 0) + resultado;
+    }
+
+    const activoArr = Object.keys(activoMap).map(k => ({ nombre: k, monto: activoMap[k] }));
+    const pasivoArr = Object.keys(pasivoMap).map(k => ({ nombre: k, monto: pasivoMap[k] }));
+    const patArr = Object.keys(patrimonioMap).map(k => ({ nombre: k, monto: patrimonioMap[k] }));
+
+    const tA = activoArr.reduce((a, b) => a + b.monto, 0);
+    const tP = pasivoArr.reduce((a, b) => a + b.monto, 0);
+    const tPat = patArr.reduce((a, b) => a + b.monto, 0);
+
     const trH = document.createElement('tr');
-    trH.innerHTML = `<td style="background:#217346; color:white; font-weight:700;">ACTIVO</td><td style="background:#217346; color:white;"></td><td style="background:#217346; color:white; font-weight:700;">PASIVO Y PATRIMONIO</td><td style="background:#217346; color:white;"></td>`;
+    trH.innerHTML = `
+        <td style="background:#217346; color:white; font-weight:700;">ACTIVO</td>
+        <td style="background:#217346; color:white;" class="num">Importe</td>
+        <td style="background:#217346; color:white; font-weight:700;">PASIVO Y PATRIMONIO</td>
+        <td style="background:#217346; color:white;" class="num">Importe</td>
+    `;
     tbody.appendChild(trH);
-    const trAC = document.createElement('tr');
-    trAC.innerHTML = `<td colspan="2" style="background:#e6f4ea; font-weight:700;">ACTIVO CORRIENTE</td><td colspan="2" style="background:#e6f4ea; font-weight:700;">PASIVO CORRIENTE</td>`;
-    tbody.appendChild(trAC);
-    const maxC = Math.max(activoCorriente.length, pasivoCorriente.length);
-    for (let i = 0; i < maxC; i++) {
+
+    const derechaArr = [...pasivoArr, ...patArr];
+    const max = Math.max(activoArr.length, derechaArr.length);
+
+    for (let i = 0; i < max; i++) {
+        const a = activoArr[i];
+        const d = derechaArr[i];
         const tr = document.createElement('tr');
-        const a = activoCorriente[i], p = pasivoCorriente[i];
-        tr.innerHTML = `<td style="padding-left:20px;">${a ? a.codigo + ' ' + a.nombre : ''}</td><td class="num">${a ? a.monto.toFixed(2) : ''}</td><td style="padding-left:20px;">${p ? p.codigo + ' ' + p.nombre : ''}</td><td class="num">${p ? p.monto.toFixed(2) : ''}</td>`;
+        tr.innerHTML = `
+            <td style="padding-left:20px;">${a ? a.nombre : ''}</td>
+            <td class="num">${a ? formatoNumero(a.monto) : ''}</td>
+            <td style="padding-left:20px;">${d ? d.nombre : ''}</td>
+            <td class="num">${d ? formatoNumero(d.monto) : ''}</td>
+        `;
         tbody.appendChild(tr);
     }
-    const trTAC = document.createElement('tr');
-    trTAC.innerHTML = `<td class="total">TOTAL ACTIVO CORRIENTE</td><td class="num total">${tAC.toFixed(2)}</td><td class="total">TOTAL PASIVO CORRIENTE</td><td class="num total">${tPC.toFixed(2)}</td>`;
-    tbody.appendChild(trTAC);
-    const trANC = document.createElement('tr');
-    trANC.innerHTML = `<td colspan="2" style="background:#e6f4ea; font-weight:700;">ACTIVO NO CORRIENTE</td><td colspan="2" style="background:#e6f4ea; font-weight:700;">PASIVO NO CORRIENTE</td>`;
-    tbody.appendChild(trANC);
-    const maxNC = Math.max(activoNoCorriente.length, pasivoNoCorriente.length);
-    for (let i = 0; i < maxNC; i++) {
-        const tr = document.createElement('tr');
-        const a = activoNoCorriente[i], p = pasivoNoCorriente[i];
-        tr.innerHTML = `<td style="padding-left:20px;">${a ? a.codigo + ' ' + a.nombre : ''}</td><td class="num">${a ? a.monto.toFixed(2) : ''}</td><td style="padding-left:20px;">${p ? p.codigo + ' ' + p.nombre : ''}</td><td class="num">${p ? p.monto.toFixed(2) : ''}</td>`;
-        tbody.appendChild(tr);
-    }
-    const trTANC = document.createElement('tr');
-    trTANC.innerHTML = `<td class="total">TOTAL ACTIVO NO CORRIENTE</td><td class="num total">${tANC.toFixed(2)}</td><td class="total">TOTAL PASIVO NO CORRIENTE</td><td class="num total">${tPNC.toFixed(2)}</td>`;
-    tbody.appendChild(trTANC);
-    const tA = tAC + tANC, tP = tPC + tPNC;
-    const trTA = document.createElement('tr');
-    trTA.innerHTML = `<td class="total-strong">TOTAL ACTIVO</td><td class="num total-strong">${tA.toFixed(2)}</td><td class="total-strong">TOTAL PASIVO</td><td class="num total-strong">${tP.toFixed(2)}</td>`;
-    tbody.appendChild(trTA);
-    const trP = document.createElement('tr');
-    trP.innerHTML = `<td colspan="2" style="background:#e6f4ea; font-weight:700;">PATRIMONIO</td><td colspan="2" style="background:#e6f4ea;"></td>`;
-    tbody.appendChild(trP);
-    patrimonio.forEach(p => {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `<td></td><td></td><td style="padding-left:20px;">${p.codigo} ${p.nombre}</td><td class="num">${p.monto.toFixed(2)}</td>`;
-        tbody.appendChild(tr);
-    });
-    const trTP = document.createElement('tr');
-    trTP.innerHTML = `<td class="total">TOTAL PATRIMONIO</td><td class="num total">${tPat.toFixed(2)}</td><td class="total">TOTAL PATRIMONIO</td><td class="num total">${tPat.toFixed(2)}</td>`;
-    tbody.appendChild(trTP);
-    const trTF = document.createElement('tr');
-    trTF.innerHTML = `<td class="total-strong">TOTAL ACTIVO</td><td class="num total-strong">${tA.toFixed(2)}</td><td class="total-strong">TOTAL PASIVO Y PATRIMONIO</td><td class="num total-strong">${(tP + tPat).toFixed(2)}</td>`;
-    tbody.appendChild(trTF);
+
+    const trT = document.createElement('tr');
+    trT.innerHTML = `
+        <td class="total-strong">TOTAL ACTIVO</td>
+        <td class="num total-strong">${formatoNumero(tA)}</td>
+        <td class="total-strong">TOTAL PASIVO Y PATRIMONIO</td>
+        <td class="num total-strong">${formatoNumero(tP + tPat)}</td>
+    `;
+    tbody.appendChild(trT);
 }
 
+/* ==========================================
+   ESTADO DE RESULTADOS
+   ========================================== */
 function calcularER() {
     const tbody = document.getElementById('cuerpoER');
     tbody.innerHTML = "";
@@ -2915,6 +2911,9 @@ function calcularER() {
     tbody.appendChild(trR);
 }
 
+/* ==========================================
+   PCGE (MUESTRA COLUMNA ESF)
+   ========================================== */
 function renderizarPCGE() {
     const tbody = document.getElementById('cuerpoPCGE');
     tbody.innerHTML = "";
@@ -2922,7 +2921,7 @@ function renderizarPCGE() {
     const filtroElem = document.getElementById('filtroElementoPCGE')?.value || "";
     let contador = 0;
     catalogoCuentas.forEach(cuenta => {
-        if (filtro && !cuenta.codigo.toLowerCase().includes(filtro) && !cuenta.nombre.toLowerCase().includes(filtro)) return;
+        if (filtro && !cuenta.codigo.toLowerCase().includes(filtro) && !cuenta.nombre.toLowerCase().includes(filtro) && !(cuenta.esf || "").toLowerCase().includes(filtro)) return;
         if (filtroElem && cuenta.elemento !== filtroElem) return;
         contador++;
         let bg = '';
@@ -2932,6 +2931,7 @@ function renderizarPCGE() {
         tr.innerHTML = `
             <td style="font-family:monospace; font-weight:700; ${bg}">${cuenta.codigo}</td>
             <td style="${bg}">${cuenta.nombre}</td>
+            <td style="${bg} font-size:11px; color:#217346; font-weight:600;">${cuenta.esf || ''}</td>
             <td style="text-align:center; ${bg}">${cuenta.elemento}</td>
             <td style="text-align:center; ${bg}">${cuenta.tipo}</td>
         `;
