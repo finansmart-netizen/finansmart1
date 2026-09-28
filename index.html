@@ -106,7 +106,6 @@ table tr:hover td { background: #f9f9f9; }
 .excel-form-row { display: grid; gap: 0; margin-bottom: 0; grid-template-columns: repeat(2, 1fr); border: 1px solid var(--excel-border-dark); border-bottom: none; }
 .excel-form-row:last-of-type { border-bottom: 1px solid var(--excel-border-dark); }
 .excel-form-row-3 { grid-template-columns: repeat(3, 1fr); }
-.excel-form-row-4 { grid-template-columns: repeat(4, 1fr); }
 .excel-cell-label { background: var(--excel-header); padding: 8px 12px; font-weight: 700; font-size: 11px; color: #333; border-right: 1px solid var(--excel-border-dark); display: flex; align-items: center; }
 .excel-cell-input { padding: 4px; }
 .excel-cell-input input, .excel-cell-input select { width: 100%; padding: 6px 8px; border: none; font-size: 12px; background: white; color: #1f1f1f; }
@@ -211,32 +210,186 @@ table tr:hover td { background: #f9f9f9; }
 .theme-name { font-size: 11px; font-weight: 700; color: #333; }
 .theme-desc { font-size: 10px; color: #666; }
 
-/* Inventario */
-.inv-kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; margin-bottom: 14px; }
-.inv-kpi { background: white; border: 1px solid var(--excel-border-dark); border-left: 4px solid var(--excel-green); padding: 12px; }
-.inv-kpi.entrada { border-left-color: #0078d4; }
-.inv-kpi.salida { border-left-color: #c0504d; }
-.inv-kpi.venta { border-left-color: #ff8c00; }
-.inv-kpi.final { border-left-color: #217346; background: #e6f4ea; }
-.inv-kpi-label { font-size: 10px; color: #666; text-transform: uppercase; font-weight: 700; margin-bottom: 4px; }
-.inv-kpi-value { font-size: 20px; font-weight: 700; color: #1f1f1f; }
+/* ==========================================
+   MODAL ESCANEAR DOCUMENTO
+   ========================================== */
+.scan-modal { max-width: 620px; }
+.scan-modal .drop-zone {
+    border: 3px dashed #217346;
+    border-radius: 6px;
+    padding: 30px 20px;
+    text-align: center;
+    background: #f8fcf9;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-bottom: 14px;
+}
+.scan-modal .drop-zone:hover, .scan-modal .drop-zone.dragover {
+    background: #e6f4ea;
+    border-color: #185c37;
+    transform: scale(1.01);
+}
+.scan-modal .drop-zone .icon {
+    font-size: 40px;
+    margin-bottom: 10px;
+    display: block;
+}
+.scan-modal .drop-zone .title {
+    font-size: 14px;
+    font-weight: 700;
+    color: #217346;
+    margin-bottom: 6px;
+}
+.scan-modal .drop-zone .hint {
+    font-size: 11px;
+    color: #666;
+}
+.scan-modal .buttons-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 14px;
+}
+.scan-modal .buttons-row button {
+    flex: 1;
+    padding: 10px;
+    border: 2px solid #217346;
+    background: white;
+    color: #217346;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    border-radius: 3px;
+}
+.scan-modal .buttons-row button:hover {
+    background: #e6f4ea;
+}
+.scan-modal .status {
+    padding: 10px;
+    border-radius: 3px;
+    font-size: 12px;
+    margin-bottom: 12px;
+    display: none;
+    text-align: center;
+}
+.scan-modal .status.show { display: block; }
+.scan-modal .status.loading { background: #e6f4ea; color: #185c37; }
+.scan-modal .status.success { background: #dff6dd; color: #107c10; }
+.scan-modal .status.error { background: #fde7e9; color: #a80000; }
 
-.prod-lista { max-height: 200px; overflow-y: auto; border: 1px solid var(--excel-border-dark); background: white; }
-.prod-lista table { width: 100%; }
-.prod-lista table th { position: sticky; top: 0; z-index: 2; }
-.prod-lista .vacio { text-align: center; color: #999; padding: 12px; font-size: 11px; }
+.scan-modal .preview-img {
+    max-height: 150px;
+    max-width: 100%;
+    border: 1px solid #d0d7de;
+    border-radius: 3px;
+    margin: 0 auto 14px;
+    display: block;
+}
 
-.badge-tipo { padding: 2px 8px; border-radius: 10px; font-size: 10px; font-weight: 700; }
-.badge-entrada { background: #e6f0fb; color: #0078d4; }
-.badge-salida { background: #fde7e9; color: #c0504d; }
-.badge-venta { background: #fff4ce; color: #b06a00; }
+.scan-modal .fields-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 14px;
+}
+.scan-modal .field-item {
+    display: flex;
+    flex-direction: column;
+}
+.scan-modal .field-item.full {
+    grid-column: 1 / -1;
+}
+.scan-modal .field-item label {
+    font-size: 10px;
+    font-weight: 700;
+    color: #666;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+.scan-modal .field-item input {
+    padding: 8px 10px;
+    border: 1px solid #d0d7de;
+    border-radius: 3px;
+    font-size: 13px;
+    background: white;
+}
+.scan-modal .field-item input:focus {
+    outline: none;
+    border-color: #217346;
+    box-shadow: 0 0 0 2px rgba(33,115,70,0.2);
+}
+.scan-modal .field-item input.detected {
+    background: #e6f4ea;
+    border-color: #217346;
+    font-weight: 600;
+}
+
+.scan-modal .tip-box {
+    background: #fff4ce;
+    border-left: 3px solid #ff8c00;
+    padding: 8px 12px;
+    font-size: 11px;
+    color: #333;
+    border-radius: 2px;
+    margin-bottom: 14px;
+}
+
+.scan-modal .tip-box strong { color: #b45309; }
+
+.scan-modal .section-title {
+    font-size: 12px;
+    font-weight: 700;
+    color: #217346;
+    margin-bottom: 10px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid #d0d7de;
+}
+
+.scan-modal .cards-tipo {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 8px;
+    margin-bottom: 16px;
+    max-height: 220px;
+    overflow-y: auto;
+    padding: 4px;
+}
+.scan-modal .card-tipo {
+    padding: 12px 8px;
+    border: 2px solid #d0d7de;
+    border-radius: 4px;
+    background: white;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.15s;
+}
+.scan-modal .card-tipo:hover {
+    border-color: #217346;
+    background: #f8fcf9;
+}
+.scan-modal .card-tipo.selected {
+    border-color: #217346;
+    background: #e6f4ea;
+    box-shadow: 0 0 0 2px rgba(33,115,70,0.2);
+}
+.scan-modal .card-tipo .card-icon {
+    font-size: 22px;
+    display: block;
+    margin-bottom: 6px;
+}
+.scan-modal .card-tipo .card-name {
+    font-size: 11px;
+    font-weight: 600;
+    color: #333;
+    line-height: 1.2;
+}
 
 @media (max-width: 900px) {
     .excel-sidebar-left { width: 160px; }
     .excel-form-row { grid-template-columns: 1fr; }
     .excel-form-row-3 { grid-template-columns: 1fr; }
-    .excel-form-row-4 { grid-template-columns: 1fr; }
     .theme-selector { grid-template-columns: 1fr; }
+    .scan-modal .fields-grid { grid-template-columns: 1fr; }
 }
 
 ::-webkit-scrollbar { width: 12px; height: 12px; }
@@ -294,7 +447,6 @@ table tr:hover td { background: #f9f9f9; }
             <div class="ribbon-tab active" onclick="irModulo('dashboard', event)">Inicio</div>
             <div class="ribbon-tab" onclick="irModulo('asientos', event)">Movimiento</div>
             <div class="ribbon-tab" onclick="irModulo('libro', event)">Registro de Gastos e Ingresos</div>
-            <div class="ribbon-tab" onclick="irModulo('inventario', event)">Inventario</div>
             <div class="ribbon-tab" onclick="irModulo('balance', event)">Balance 3.17</div>
             <div class="ribbon-tab" onclick="irModulo('esf', event)">Estado Financiero</div>
             <div class="ribbon-tab" onclick="irModulo('er', event)">Resultados</div>
@@ -320,7 +472,6 @@ table tr:hover td { background: #f9f9f9; }
                 <div class="sidebar-item active" onclick="irModulo('dashboard', event)"><span class="sidebar-icon">📊</span> Dashboard</div>
                 <div class="sidebar-item" onclick="irModulo('asientos', event)"><span class="sidebar-icon">📝</span> Movimiento</div>
                 <div class="sidebar-item" onclick="irModulo('libro', event)"><span class="sidebar-icon">📖</span> Registro de Gastos e Ingresos</div>
-                <div class="sidebar-item" onclick="irModulo('inventario', event)"><span class="sidebar-icon">📦</span> Inventario</div>
                 <div class="sidebar-group">Reportes</div>
                 <div class="sidebar-item" onclick="irModulo('balance', event)"><span class="sidebar-icon">📋</span> Balance 3.17</div>
                 <div class="sidebar-item" onclick="irModulo('esf', event)"><span class="sidebar-icon">💰</span> Estado Financiero</div>
@@ -405,6 +556,13 @@ table tr:hover td { background: #f9f9f9; }
                             <span class="sheet-tabs">Ingresos y Gastos</span>
                         </div>
                         <div class="excel-panel-body">
+                            <!-- BOTÓN ESCANEAR -->
+                            <div style="margin-bottom:12px;">
+                                <button type="button" class="btn btn-primary" style="padding:10px 20px; font-size:13px;" onclick="abrirModalEscanear()">
+                                    📄 Escanear factura o comprobante
+                                </button>
+                            </div>
+
                             <div class="excel-form-row" style="grid-template-columns:1fr 3fr;">
                                 <div class="excel-cell-label">Tipo de operación</div>
                                 <div class="excel-cell-input" style="display:flex; gap:6px;">
@@ -483,166 +641,6 @@ table tr:hover td { background: #f9f9f9; }
                                 </thead>
                                 <tbody id="cuerpoLibro"></tbody>
                             </table>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- INVENTARIO -->
-                <section class="module" id="mod-inventario">
-                    <div class="excel-sheet">
-                        <div class="sheet-title">
-                            <span>Inventario</span>
-                            <span class="sheet-tabs">Productos y Movimientos</span>
-                        </div>
-                        <div class="excel-panel-body">
-
-                            <!-- KPIs -->
-                            <div class="inv-kpi-grid">
-                                <div class="inv-kpi entrada">
-                                    <div class="inv-kpi-label">Entradas</div>
-                                    <div class="inv-kpi-value" id="invEntradas">S/ 0.00</div>
-                                </div>
-                                <div class="inv-kpi salida">
-                                    <div class="inv-kpi-label">Salidas</div>
-                                    <div class="inv-kpi-value" id="invSalidas">S/ 0.00</div>
-                                </div>
-                                <div class="inv-kpi venta">
-                                    <div class="inv-kpi-label">Ventas</div>
-                                    <div class="inv-kpi-value" id="invVentas">S/ 0.00</div>
-                                </div>
-                                <div class="inv-kpi final">
-                                    <div class="inv-kpi-label">Final (E − S + V)</div>
-                                    <div class="inv-kpi-value" id="invFinal">S/ 0.00</div>
-                                </div>
-                            </div>
-
-                            <!-- Registro de Producto -->
-                            <div class="excel-panel">
-                                <div class="excel-panel-header">
-                                    <div>
-                                        <div class="excel-panel-title">📦 Registrar Producto</div>
-                                        <div class="excel-panel-sub">Crea un código con descripción, cantidad y precio unitario</div>
-                                    </div>
-                                </div>
-                                <div class="excel-panel-body">
-                                    <div class="excel-form-row excel-form-row-4">
-                                        <div class="excel-cell-label">Código</div>
-                                        <div class="excel-cell-label">Descripción</div>
-                                        <div class="excel-cell-label">Cantidad</div>
-                                        <div class="excel-cell-label">Precio Unitario</div>
-                                    </div>
-                                    <div class="excel-form-row excel-form-row-4">
-                                        <div class="excel-cell-input"><input type="text" id="prodCodigo" placeholder="Ej: P001"></div>
-                                        <div class="excel-cell-input"><input type="text" id="prodDesc" placeholder="Ej: Cuaderno"></div>
-                                        <div class="excel-cell-input"><input type="number" id="prodCantidad" placeholder="0" min="0" step="1" oninput="calcularSubtotalProducto()"></div>
-                                        <div class="excel-cell-input"><input type="number" id="prodPrecio" placeholder="0.00" min="0" step="0.01" oninput="calcularSubtotalProducto()"></div>
-                                    </div>
-                                    <div class="excel-form-row">
-                                        <div class="excel-cell-label" style="background:#e6f4ea; color:#185c37;">Subtotal (Cantidad × Precio)</div>
-                                        <div class="excel-cell-input"><input type="text" id="prodSubtotal" placeholder="0.00" readonly style="background:#f3f3f3; font-weight:700; color:#185c37;"></div>
-                                    </div>
-                                    <div class="btn-row">
-                                        <button class="btn btn-ghost" onclick="limpiarFormularioProducto()">Limpiar</button>
-                                        <button class="btn btn-success" onclick="registrarProducto()">Guardar Producto</button>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Lista de productos -->
-                            <div class="excel-panel">
-                                <div class="excel-panel-header">
-                                    <div>
-                                        <div class="excel-panel-title">📋 Catálogo de Productos</div>
-                                        <div class="excel-panel-sub">Productos registrados disponibles para movimientos</div>
-                                    </div>
-                                </div>
-                                <div class="prod-lista">
-                                    <table class="excel-data-table" id="tablaProductos">
-                                        <thead>
-                                            <tr>
-                                                <th style="width:12%;">Código</th>
-                                                <th style="width:38%;">Descripción</th>
-                                                <th class="num" style="width:12%;">Cantidad</th>
-                                                <th class="num" style="width:16%;">Precio Unit.</th>
-                                                <th class="num" style="width:16%;">Subtotal</th>
-                                                <th style="width:6%;">✕</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="cuerpoProductos"></tbody>
-                                    </table>
-                                </div>
-                            </div>
-
-                            <!-- Movimiento de Inventario -->
-                            <div class="excel-panel">
-                                <div class="excel-panel-header">
-                                    <div>
-                                        <div class="excel-panel-title">🔄 Registrar Movimiento</div>
-                                        <div class="excel-panel-sub">Selecciona tipo de operación para habilitar el registro</div>
-                                    </div>
-                                </div>
-                                <div class="excel-panel-body">
-                                    <div class="excel-form-row excel-form-row-4">
-                                        <div class="excel-cell-label">Tipo de Operación</div>
-                                        <div class="excel-cell-label">Código</div>
-                                        <div class="excel-cell-label">Cantidad</div>
-                                        <div class="excel-cell-label">Subtotal</div>
-                                    </div>
-                                    <div class="excel-form-row excel-form-row-4">
-                                        <div class="excel-cell-input">
-                                            <select id="movTipo" onchange="habilitarRegistroMovimiento()">
-                                                <option value="" disabled selected>-- Seleccione --</option>
-                                                <option value="entrada">Entrada</option>
-                                                <option value="salida">Salida</option>
-                                                <option value="venta">Venta</option>
-                                            </select>
-                                        </div>
-                                        <div class="excel-cell-input">
-                                            <select id="movCodigo" onchange="calcularSubtotalMovimiento()" disabled>
-                                                <option value="" disabled selected>-- Seleccione producto --</option>
-                                            </select>
-                                        </div>
-                                        <div class="excel-cell-input">
-                                            <input type="number" id="movCantidad" placeholder="0" min="1" step="1" oninput="calcularSubtotalMovimiento()" disabled>
-                                        </div>
-                                        <div class="excel-cell-input">
-                                            <input type="text" id="movSubtotal" placeholder="0.00" readonly style="background:#f3f3f3; font-weight:700;" disabled>
-                                        </div>
-                                    </div>
-                                    <div class="btn-row">
-                                        <button class="btn btn-ghost" onclick="limpiarFormularioMovimiento()">Limpiar</button>
-                                        <button class="btn btn-success" id="btnRegistrarMovimiento" onclick="registrarMovimiento()" disabled>Registrar</button>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Historial de movimientos -->
-                            <div class="excel-panel">
-                                <div class="excel-panel-header">
-                                    <div>
-                                        <div class="excel-panel-title">📜 Historial de Movimientos de Inventario</div>
-                                        <div class="excel-panel-sub">Descripción, tipo, cantidad, precio unitario y subtotal</div>
-                                    </div>
-                                    <button class="btn" onclick="calcularInventario()">Actualizar</button>
-                                </div>
-                                <div style="overflow:auto; max-height:400px;">
-                                    <table class="excel-data-table" id="tablaInventario">
-                                        <thead>
-                                            <tr>
-                                                <th style="width:6%;">N°</th>
-                                                <th style="width:10%;">Tipo</th>
-                                                <th style="width:30%;">Descripción</th>
-                                                <th class="num" style="width:10%;">Cantidad</th>
-                                                <th class="num" style="width:14%;">Precio Unit.</th>
-                                                <th class="num" style="width:14%;">Subtotal</th>
-                                                <th style="width:6%;">✕</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="cuerpoInventario"></tbody>
-                                    </table>
-                                </div>
-                            </div>
-
                         </div>
                     </div>
                 </section>
@@ -943,7 +941,6 @@ table tr:hover td { background: #f9f9f9; }
             <div class="sheet-tab active" onclick="irModulo('dashboard', event)">Dashboard</div>
             <div class="sheet-tab" onclick="irModulo('asientos', event)">Movimiento</div>
             <div class="sheet-tab" onclick="irModulo('libro', event)">Gastos e Ingresos</div>
-            <div class="sheet-tab" onclick="irModulo('inventario', event)">Inventario</div>
             <div class="sheet-tab" onclick="irModulo('balance', event)">Balance 3.17</div>
             <div class="sheet-tab" onclick="irModulo('esf', event)">ESF</div>
             <div class="sheet-tab" onclick="irModulo('er', event)">Resultados</div>
@@ -987,6 +984,80 @@ table tr:hover td { background: #f9f9f9; }
     </div>
 </div>
 
+<!-- MODAL ESCANEAR DOCUMENTO -->
+<div class="modal-overlay" id="modalEscanear">
+    <div class="modal scan-modal">
+        <h2>📄 Escanear factura o comprobante</h2>
+
+        <div id="scanStatus" class="status"></div>
+
+        <div id="scanDropZone" class="drop-zone" onclick="document.getElementById('scanFileInput').click()">
+            <span class="icon">📄</span>
+            <div class="title">Sube tu PDF, JPG o PNG</div>
+            <div class="hint">Arrastra el archivo aquí o haz clic para seleccionar</div>
+        </div>
+
+        <input type="file" id="scanFileInput" accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/*" style="display:none;">
+
+        <div class="buttons-row">
+            <button type="button" onclick="document.getElementById('scanFileInput').click()">📁 Elegir archivo</button>
+            <button type="button" onclick="document.getElementById('scanCameraInput').click()">📷 Tomar foto</button>
+        </div>
+        <input type="file" id="scanCameraInput" accept="image/*" capture="environment" style="display:none;">
+
+        <div class="tip-box">
+            💡 <strong>Tip:</strong> Los PDFs se leen con mejor precisión que las fotos. Si tienes la factura electrónica en PDF, súbela directamente.
+        </div>
+
+        <img id="scanPreview" class="preview-img" style="display:none;">
+
+        <div id="scanFieldsContainer" style="display:none;">
+            <div class="section-title">✅ Datos detectados (revisa y corrige)</div>
+            <div class="fields-grid">
+                <div class="field-item">
+                    <label>N° Factura</label>
+                    <input type="text" id="scanFactura" placeholder="E001-005">
+                </div>
+                <div class="field-item">
+                    <label>Fecha</label>
+                    <input type="date" id="scanFecha">
+                </div>
+                <div class="field-item">
+                    <label>Base imponible</label>
+                    <input type="text" id="scanBase" placeholder="0.00">
+                </div>
+                <div class="field-item">
+                    <label>IGV (18%)</label>
+                    <input type="text" id="scanIGV" placeholder="0.00">
+                </div>
+                <div class="field-item">
+                    <label>Total</label>
+                    <input type="text" id="scanTotal" placeholder="0.00">
+                </div>
+                <div class="field-item">
+                    <label>RUC proveedor (opcional)</label>
+                    <input type="text" id="scanRUC" placeholder="20123456789">
+                </div>
+                <div class="field-item full">
+                    <label>Glosa / Descripción</label>
+                    <input type="text" id="scanGlosa" placeholder="Ej: Servicio de luz del mes">
+                </div>
+            </div>
+
+            <div class="section-title">🎯 ¿Qué tipo de gasto es?</div>
+            <div class="cards-tipo" id="cardsTipo"></div>
+        </div>
+
+        <div class="modal-footer">
+            <button class="btn btn-ghost" onclick="cerrarModalEscanear()">Cancelar</button>
+            <button class="btn btn-success" id="scanBtnAplicar" onclick="aplicarDatosEscaneados()" style="display:none;">✅ Aplicar al formulario</button>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tesseract.js/5.0.4/tesseract.min.js"></script>
+
 <script>
 const API_URL = '/api/datos';
 const SESSION_KEY = 'finansmart_session_v26';
@@ -1000,9 +1071,8 @@ let lineasConfigTemp = [];
 let usuariosCache = {};
 let plantillasCache = {};
 
-/* Inventario */
-let productosCache = {};   // { codigo: { codigo, desc, cantidad, precio, subtotal } }
-let movimientosInvCache = []; // [{ tipo, codigo, desc, cantidad, precio, subtotal }]
+/* Estado del modal escanear */
+let tipoGastoSeleccionado = null;
 
 function log(...args) { console.log('[FinanSmart]', ...args); }
 
@@ -1221,9 +1291,7 @@ function guardarEstado() {
     localStorage.setItem(getDataKey(), JSON.stringify({
         version: 4, timestamp: new Date().toISOString(),
         correlativo: correlativo,
-        asientos: obtenerAsientosDelDOM(),
-        productos: productosCache,
-        movimientosInv: movimientosInvCache
+        asientos: obtenerAsientosDelDOM()
     }));
 }
 
@@ -1235,8 +1303,6 @@ function cargarEstado() {
         const estado = JSON.parse(raw);
         if (estado.correlativo) correlativo = estado.correlativo;
         if (estado.asientos && estado.asientos.length > 0) restaurarAsientos(estado.asientos);
-        if (estado.productos) productosCache = estado.productos;
-        if (estado.movimientosInv) movimientosInvCache = estado.movimientosInv;
         return true;
     } catch (e) { return false; }
 }
@@ -1325,9 +1391,9 @@ function restaurarAsientos(asientos) {
 }
 
 function resetearDatosUsuario() {
-    if (!confirm('¿Borrar TODOS tus asientos, productos y movimientos?')) return;
+    if (!confirm('¿Borrar TODOS tus asientos?')) return;
     if (!confirm('ÚLTIMA ADVERTENCIA.')) return;
-    localStorage.setItem(getDataKey(), JSON.stringify({ version: 4, timestamp: new Date().toISOString(), correlativo: 1, asientos: [], productos: {}, movimientosInv: [] }));
+    localStorage.setItem(getDataKey(), JSON.stringify({ version: 4, timestamp: new Date().toISOString(), correlativo: 1, asientos: [] }));
     location.reload();
 }
 
@@ -1406,10 +1472,7 @@ function abrirApp() {
     cargarEstado();
     calcularDashboard();
     cargarComboBoxPlantillas();
-    renderizarProductos();
-    renderizarMovimientosInv();
-    actualizarKpisInventario();
-    cargarComboBoxProductos();
+    renderizarCardsTipo();
 }
 
 async function recargarTodoDesdeServidor() {
@@ -1421,6 +1484,7 @@ async function recargarTodoDesdeServidor() {
         localStorage.setItem(CACHE_KEY, JSON.stringify({ usuarios: usuariosCache, plantillas: plantillasCache }));
         cargarComboBoxPlantillas();
         renderizarUsuariosAdmin();
+        renderizarCardsTipo();
         mostrarSync('Actualizado', 'success');
     } else {
         mostrarSync('Error', 'error');
@@ -1574,11 +1638,10 @@ function irModulo(nombre, event) {
         if (m.getAttribute('onclick') && m.getAttribute('onclick').includes("'" + nombre + "'")) m.classList.add('active');
     });
 
-    const titulos = { dashboard: 'Dashboard', asientos: 'Movimiento', libro: 'Registro de Gastos e Ingresos', inventario: 'Inventario', balance: 'Balance 3.17', esf: 'Estado Financiero', er: 'Resultados', pcge: 'Plan Contable', config: 'Plantillas', datos: 'Mis Datos', usuarios: 'Usuarios' };
+    const titulos = { dashboard: 'Dashboard', asientos: 'Movimiento', libro: 'Registro de Gastos e Ingresos', balance: 'Balance 3.17', esf: 'Estado Financiero', er: 'Resultados', pcge: 'Plan Contable', config: 'Plantillas', datos: 'Mis Datos', usuarios: 'Usuarios' };
     document.getElementById('tituloModuloActual').textContent = titulos[nombre] || nombre;
 
     if (nombre === 'dashboard') calcularDashboard();
-    if (nombre === 'inventario') { renderizarProductos(); renderizarMovimientosInv(); actualizarKpisInventario(); cargarComboBoxProductos(); }
     if (nombre === 'balance') calcularBalance317();
     if (nombre === 'esf') calcularESF();
     if (nombre === 'er') calcularER();
@@ -1590,6 +1653,7 @@ function irModulo(nombre, event) {
     }
     if (nombre === 'usuarios') renderizarUsuariosAdmin();
     if (nombre === 'config') inicializarConfigModulo();
+    if (nombre === 'asientos') renderizarCardsTipo();
 }
 
 function inicializarConfigModulo() {
@@ -2042,6 +2106,7 @@ async function eliminarPlantillaSeleccionada() {
         localStorage.setItem(CACHE_KEY, JSON.stringify({ usuarios: usuariosCache, plantillas: plantillasCache }));
         cbo.value = '';
         cargarComboBoxPlantillas();
+        renderizarCardsTipo();
         limpiarFormulario();
         mostrarSync('Plantilla eliminada', 'success');
     } else {
@@ -2223,6 +2288,7 @@ async function guardarPlantilla() {
     if (ok) {
         localStorage.setItem(CACHE_KEY, JSON.stringify({ usuarios: usuariosCache, plantillas: plantillasCache }));
         cargarComboBoxPlantillas();
+        renderizarCardsTipo();
         mostrarSync('Plantilla guardada', 'success');
         alert(`Plantilla "${nombre}" guardada.`);
         limpiarConfig();
@@ -2279,229 +2345,243 @@ function obtenerSaldos() {
 }
 
 /* ==========================================
-   INVENTARIO: Productos y Movimientos
+   ESCANEAR DOCUMENTO
    ========================================== */
-
-function calcularSubtotalProducto() {
-    const cant = parseFloat(document.getElementById('prodCantidad').value) || 0;
-    const prec = parseFloat(document.getElementById('prodPrecio').value) || 0;
-    const sub = cant * prec;
-    document.getElementById('prodSubtotal').value = sub > 0 ? sub.toFixed(2) : '';
+function abrirModalEscanear() {
+    tipoGastoSeleccionado = null;
+    document.getElementById('scanStatus').className = 'status';
+    document.getElementById('scanStatus').textContent = '';
+    document.getElementById('scanDropZone').style.display = 'block';
+    document.getElementById('scanFieldsContainer').style.display = 'none';
+    document.getElementById('scanBtnAplicar').style.display = 'none';
+    document.getElementById('scanPreview').style.display = 'none';
+    document.getElementById('scanFileInput').value = '';
+    document.getElementById('scanCameraInput').value = '';
+    document.getElementById('modalEscanear').classList.add('show');
 }
 
-function limpiarFormularioProducto() {
-    document.getElementById('prodCodigo').value = '';
-    document.getElementById('prodDesc').value = '';
-    document.getElementById('prodCantidad').value = '';
-    document.getElementById('prodPrecio').value = '';
-    document.getElementById('prodSubtotal').value = '';
+function cerrarModalEscanear() {
+    document.getElementById('modalEscanear').classList.remove('show');
 }
 
-function registrarProducto() {
-    const codigo = document.getElementById('prodCodigo').value.trim().toUpperCase();
-    const desc = document.getElementById('prodDesc').value.trim();
-    const cant = parseFloat(document.getElementById('prodCantidad').value) || 0;
-    const prec = parseFloat(document.getElementById('prodPrecio').value) || 0;
-    if (!codigo) { alert('Ingrese el código'); return; }
-    if (!desc) { alert('Ingrese la descripción'); return; }
-    if (cant <= 0) { alert('Ingrese una cantidad válida'); return; }
-    if (prec <= 0) { alert('Ingrese un precio unitario válido'); return; }
-    if (productosCache[codigo]) { alert('Ese código ya existe'); return; }
-
-    const subtotal = cant * prec;
-    productosCache[codigo] = { codigo, desc, cantidad: cant, precio: prec, subtotal };
-    renderizarProductos();
-    cargarComboBoxProductos();
-    limpiarFormularioProducto();
-    guardarEstado();
-    mostrarSync('Producto guardado', 'success');
+function mostrarStatusScan(msg, tipo) {
+    const el = document.getElementById('scanStatus');
+    el.textContent = msg;
+    el.className = 'status show ' + (tipo || 'loading');
 }
 
-function renderizarProductos() {
-    const tbody = document.getElementById('cuerpoProductos');
-    if (!tbody) return;
-    tbody.innerHTML = '';
-    const codigos = Object.keys(productosCache);
-    if (codigos.length === 0) {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `<td colspan="6" style="text-align:center; color:#999; padding:12px;">No hay productos registrados</td>`;
-        tbody.appendChild(tr);
-        return;
-    }
-    codigos.forEach(cod => {
-        const p = productosCache[cod];
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-            <td style="font-weight:700; color:#217346;">${p.codigo}</td>
-            <td>${p.desc}</td>
-            <td class="num">${p.cantidad}</td>
-            <td class="num">${p.precio.toFixed(2)}</td>
-            <td class="num">${p.subtotal.toFixed(2)}</td>
-            <td style="text-align:center;">
-                <button class="btn-delete-row" onclick="eliminarProducto('${p.codigo}')">✕</button>
-            </td>
-        `;
-        tbody.appendChild(tr);
-    });
-}
-
-function eliminarProducto(codigo) {
-    if (!confirm(`¿Eliminar el producto "${codigo}"?`)) return;
-    delete productosCache[codigo];
-    renderizarProductos();
-    cargarComboBoxProductos();
-    guardarEstado();
-}
-
-function cargarComboBoxProductos() {
-    const cbo = document.getElementById('movCodigo');
-    if (!cbo) return;
-    cbo.innerHTML = '<option value="" disabled selected>-- Seleccione producto --</option>';
-    Object.keys(productosCache).forEach(cod => {
-        const p = productosCache[cod];
-        const opt = document.createElement('option');
-        opt.value = cod;
-        opt.textContent = `${p.codigo} - ${p.desc}`;
-        cbo.appendChild(opt);
-    });
-}
-
-function habilitarRegistroMovimiento() {
-    const tipo = document.getElementById('movTipo').value;
-    const habilitar = tipo !== '';
-    document.getElementById('movCodigo').disabled = !habilitar;
-    document.getElementById('movCantidad').disabled = !habilitar;
-    document.getElementById('movSubtotal').disabled = !habilitar;
-    document.getElementById('btnRegistrarMovimiento').disabled = !habilitar;
-    calcularSubtotalMovimiento();
-}
-
-function calcularSubtotalMovimiento() {
-    const cod = document.getElementById('movCodigo').value;
-    const cant = parseFloat(document.getElementById('movCantidad').value) || 0;
-    const subInput = document.getElementById('movSubtotal');
-    if (!cod || !productosCache[cod] || cant <= 0) {
-        subInput.value = '';
-        return;
-    }
-    const precio = productosCache[cod].precio;
-    const sub = cant * precio;
-    subInput.value = sub.toFixed(2);
-}
-
-function limpiarFormularioMovimiento() {
-    document.getElementById('movTipo').value = '';
-    document.getElementById('movCodigo').value = '';
-    document.getElementById('movCantidad').value = '';
-    document.getElementById('movSubtotal').value = '';
-    habilitarRegistroMovimiento();
-}
-
-function registrarMovimiento() {
-    const tipo = document.getElementById('movTipo').value;
-    const cod = document.getElementById('movCodigo').value;
-    const cant = parseFloat(document.getElementById('movCantidad').value) || 0;
-    if (!tipo) { alert('Seleccione el tipo de operación'); return; }
-    if (!cod || !productosCache[cod]) { alert('Seleccione un producto válido'); return; }
-    if (cant <= 0) { alert('Ingrese una cantidad válida'); return; }
-
-    const prod = productosCache[cod];
-    const subtotal = cant * prod.precio;
-    const mov = {
-        tipo,
-        codigo: prod.codigo,
-        desc: prod.desc,
-        cantidad: cant,
-        precio: prod.precio,
-        subtotal,
-        fecha: new Date().toISOString()
+function renderizarCardsTipo() {
+    const cont = document.getElementById('cardsTipo');
+    if (!cont) return;
+    cont.innerHTML = '';
+    const iconos = {
+        venta_credito: '💳', venta_contado: '💰',
+        compra_credito: '📝', compra_contado: '🛒',
+        costo_venta: '📦'
     };
-    movimientosInvCache.push(mov);
-
-    // En venta solo jala código y cantidad, y envía su multiplicación al subtotal.
-    // En entrada/salida también registra el movimiento.
-    renderizarMovimientosInv();
-    actualizarKpisInventario();
-    limpiarFormularioMovimiento();
-    guardarEstado();
-    mostrarSync('Movimiento registrado', 'success');
+    for (const key in plantillasCache) {
+        const p = plantillasCache[key];
+        const div = document.createElement('div');
+        div.className = 'card-tipo' + (tipoGastoSeleccionado === key ? ' selected' : '');
+        div.dataset.key = key;
+        div.onclick = () => seleccionarCardTipo(key);
+        const icono = iconos[key] || (p.custom ? '⚙️' : '📄');
+        div.innerHTML = `<span class="card-icon">${icono}</span><div class="card-name">${p.nombre}</div>`;
+        cont.appendChild(div);
+    }
 }
 
-function renderizarMovimientosInv() {
-    const tbody = document.getElementById('cuerpoInventario');
-    if (!tbody) return;
-    tbody.innerHTML = '';
-    if (movimientosInvCache.length === 0) {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `<td colspan="7" style="text-align:center; color:#999; padding:20px;">No hay movimientos registrados</td>`;
-        tbody.appendChild(tr);
+function seleccionarCardTipo(key) {
+    tipoGastoSeleccionado = key;
+    document.querySelectorAll('#cardsTipo .card-tipo').forEach(c => {
+        c.classList.toggle('selected', c.dataset.key === key);
+    });
+}
+
+function detectarTipoDesdeTexto(texto) {
+    const t = texto.toLowerCase();
+    if (/venta.*(cr[eé]dito|factura)|factura.*venta/.test(t)) return 'venta_credito';
+    if (/venta.*(contado|efectivo|boleta)|boleta.*venta/.test(t)) return 'venta_contado';
+    if (/compra.*(cr[eé]dito)/.test(t)) return 'compra_credito';
+    if (/compra.*(contado|efectivo)/.test(t)) return 'compra_contado';
+    if (/costo.*venta/.test(t)) return 'costo_venta';
+    return null;
+}
+
+function extraerDatosDeTexto(texto) {
+    const datos = {};
+    const t = texto.replace(/\s+/g, ' ');
+
+    // N° factura (formatos: E001-005, 001-0001234, F001-123)
+    let m = t.match(/\b([A-Z]\d{3}-\d+)\b/i) || t.match(/\b(\d{3}-\d{4,})\b/);
+    if (m) datos.factura = m[1].toUpperCase();
+
+    // Fecha (dd/mm/yyyy, dd-mm-yyyy, yyyy-mm-dd)
+    m = t.match(/\b(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{2,4})\b/);
+    if (m) {
+        let [, d, mo, y] = m;
+        if (y.length === 2) y = '20' + y;
+        datos.fecha = `${y}-${mo.padStart(2,'0')}-${d.padStart(2,'0')}`;
+    }
+
+    // RUC (11 dígitos)
+    m = t.match(/\b(10|20|15|17)\d{9}\b/);
+    if (m) datos.ruc = m[0];
+
+    // Montos: buscar Total, Subtotal, IGV
+    const numRe = /(\d{1,3}(?:[.,]\d{3})*(?:[.,]\d{2})|\d+[.,]\d{2})/g;
+    const totalMatch = t.match(/(?:total|importe total|a pagar)[^\d]{0,20}(\d{1,3}(?:[.,]\d{3})*(?:[.,]\d{2})|\d+[.,]\d{2})/i);
+    if (totalMatch) datos.total = parseFloat(totalMatch[1].replace(/[.,](?=\d{3})/g, '').replace(',', '.')) || parseFloat(totalMatch[1].replace(',', '.'));
+
+    const igvMatch = t.match(/(?:igv|i\.g\.v|impuesto)[^\d]{0,20}(\d{1,3}(?:[.,]\d{3})*(?:[.,]\d{2})|\d+[.,]\d{2})/i);
+    if (igvMatch) datos.igv = parseFloat(igvMatch[1].replace(/[.,](?=\d{3})/g, '').replace(',', '.')) || parseFloat(igvMatch[1].replace(',', '.'));
+
+    const subMatch = t.match(/(?:subtotal|base imponible|valor venta|op\. gravadas)[^\d]{0,20}(\d{1,3}(?:[.,]\d{3})*(?:[.,]\d{2})|\d+[.,]\d{2})/i);
+    if (subMatch) datos.base = parseFloat(subMatch[1].replace(/[.,](?=\d{3})/g, '').replace(',', '.')) || parseFloat(subMatch[1].replace(',', '.'));
+
+    // Si no hay base pero hay total e igv
+    if (!datos.base && datos.total && datos.igv) datos.base = +(datos.total - datos.igv).toFixed(2);
+    if (!datos.igv && datos.total && datos.base) datos.igv = +(datos.total - datos.base).toFixed(2);
+    if (!datos.total && datos.base && datos.igv) datos.total = +(datos.base + datos.igv).toFixed(2);
+    if (!datos.total && datos.base) { datos.igv = +(datos.base * 0.18).toFixed(2); datos.total = +(datos.base * 1.18).toFixed(2); }
+
+    // Glosa: línea que contenga "descripcion", "detalle", "concepto" o primera línea con texto
+    const glosaMatch = t.match(/(?:descripci[oó]n|detalle|concepto|glosa)[:\s]+([^\n\r]{3,60})/i);
+    if (glosaMatch) datos.glosa = glosaMatch[1].trim();
+
+    return datos;
+}
+
+async function procesarArchivo(file) {
+    if (!file) return;
+    const dropZone = document.getElementById('scanDropZone');
+    const preview = document.getElementById('scanPreview');
+    const fields = document.getElementById('scanFieldsContainer');
+    const btnAplicar = document.getElementById('scanBtnAplicar');
+
+    dropZone.style.display = 'none';
+    fields.style.display = 'none';
+    btnAplicar.style.display = 'none';
+
+    const esPDF = file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf');
+    let textoExtraido = '';
+
+    try {
+        if (esPDF) {
+            mostrarStatusScan('📄 Leyendo PDF...', 'loading');
+            const buffer = await file.arrayBuffer();
+            const pdf = await pdfjsLib.getDocument({ data: buffer }).promise;
+            let texto = '';
+            for (let i = 1; i <= pdf.numPages; i++) {
+                const page = await pdf.getPage(i);
+                const content = await page.getTextContent();
+                texto += content.items.map(it => it.str).join(' ') + '\n';
+            }
+            textoExtraido = texto;
+            // Render primera página como preview
+            const page = await pdf.getPage(1);
+            const viewport = page.getViewport({ scale: 1 });
+            const canvas = document.createElement('canvas');
+            canvas.width = viewport.width;
+            canvas.height = viewport.height;
+            await page.render({ canvasContext: canvas.getContext('2d'), viewport }).promise;
+            preview.src = canvas.toDataURL();
+            preview.style.display = 'block';
+        } else {
+            // Imagen: mostrar preview y OCR
+            mostrarStatusScan('🖼️ Procesando imagen...', 'loading');
+            preview.src = URL.createObjectURL(file);
+            preview.style.display = 'block';
+            const { data: { text } } = await Tesseract.recognize(file, 'spa', {
+                logger: m => {
+                    if (m.status === 'recognizing text') {
+                        mostrarStatusScan(`🔍 Reconociendo texto... ${Math.round(m.progress * 100)}%`, 'loading');
+                    }
+                }
+            });
+            textoExtraido = text;
+        }
+
+        mostrarStatusScan('✅ Documento leído. Revisa los datos.', 'success');
+
+        const datos = extraerDatosDeTexto(textoExtraido);
+        const tipoDetectado = detectarTipoDesdeTexto(textoExtraido);
+
+        // Rellenar campos
+        document.getElementById('scanFactura').value = datos.factura || '';
+        document.getElementById('scanFecha').value = datos.fecha || new Date().toISOString().slice(0,10);
+        document.getElementById('scanBase').value = datos.base != null ? datos.base.toFixed(2) : '';
+        document.getElementById('scanIGV').value = datos.igv != null ? datos.igv.toFixed(2) : '';
+        document.getElementById('scanTotal').value = datos.total != null ? datos.total.toFixed(2) : '';
+        document.getElementById('scanRUC').value = datos.ruc || '';
+        document.getElementById('scanGlosa').value = datos.glosa || '';
+
+        // Marcar detectados
+        ['scanFactura','scanFecha','scanBase','scanIGV','scanTotal','scanRUC','scanGlosa'].forEach(id => {
+            const el = document.getElementById(id);
+            el.classList.toggle('detected', !!el.value);
+        });
+
+        // Tipo de gasto
+        renderizarCardsTipo();
+        if (tipoDetectado && plantillasCache[tipoDetectado]) {
+            seleccionarCardTipo(tipoDetectado);
+        } else {
+            tipoGastoSeleccionado = null;
+        }
+
+        fields.style.display = 'block';
+        btnAplicar.style.display = 'inline-block';
+    } catch (e) {
+        console.error(e);
+        mostrarStatusScan('❌ Error: ' + e.message, 'error');
+        dropZone.style.display = 'block';
+    }
+}
+
+function aplicarDatosEscaneados() {
+    const factura = document.getElementById('scanFactura').value.trim();
+    const fecha = document.getElementById('scanFecha').value;
+    const base = parseFloat(document.getElementById('scanBase').value) || 0;
+    const igv = parseFloat(document.getElementById('scanIGV').value) || 0;
+    const total = parseFloat(document.getElementById('scanTotal').value) || 0;
+    const glosa = document.getElementById('scanGlosa').value.trim();
+
+    if (!tipoGastoSeleccionado) {
+        alert('Selecciona el tipo de operación (tarjeta).');
         return;
     }
-    movimientosInvCache.forEach((m, idx) => {
-        const badge = m.tipo === 'entrada' ? '<span class="badge-tipo badge-entrada">ENTRADA</span>'
-                    : m.tipo === 'salida' ? '<span class="badge-tipo badge-salida">SALIDA</span>'
-                    : '<span class="badge-tipo badge-venta">VENTA</span>';
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-            <td>${idx + 1}</td>
-            <td>${badge}</td>
-            <td>${m.codigo} - ${m.desc}</td>
-            <td class="num">${m.cantidad}</td>
-            <td class="num">${m.precio.toFixed(2)}</td>
-            <td class="num">${m.subtotal.toFixed(2)}</td>
-            <td style="text-align:center;">
-                <button class="btn-delete-row" onclick="eliminarMovimientoInv(${idx})">✕</button>
-            </td>
-        `;
-        tbody.appendChild(tr);
-    });
+
+    document.getElementById('cboTipo').value = tipoGastoSeleccionado;
+    document.getElementById('txtFactura').value = factura;
+    if (fecha) document.getElementById('txtFechaOperacion').value = fecha;
+    document.getElementById('txtBase').value = base ? base.toFixed(2) : '';
+    document.getElementById('txtIGV').value = igv ? igv.toFixed(2) : '';
+    document.getElementById('txtTotal').value = total ? total.toFixed(2) : '';
+    document.getElementById('txtGlosa').value = glosa;
+
+    vBase = base; vIGV = igv; vTotal = total;
+    calcularYPrevisualizar();
+    cerrarModalEscanear();
+    mostrarSync('Datos aplicados al formulario', 'success');
 }
 
-function eliminarMovimientoInv(idx) {
-    if (!confirm('¿Eliminar este movimiento?')) return;
-    movimientosInvCache.splice(idx, 1);
-    renderizarMovimientosInv();
-    actualizarKpisInventario();
-    guardarEstado();
-}
-
-function actualizarKpisInventario() {
-    let entradas = 0, salidas = 0, ventas = 0;
-    movimientosInvCache.forEach(m => {
-        if (m.tipo === 'entrada') entradas += m.subtotal;
-        else if (m.tipo === 'salida') salidas += m.subtotal;
-        else if (m.tipo === 'venta') ventas += m.subtotal;
-    });
-    document.getElementById('invEntradas').textContent = 'S/ ' + formatoNumero(entradas);
-    document.getElementById('invSalidas').textContent = 'S/ ' + formatoNumero(salidas);
-    document.getElementById('invVentas').textContent = 'S/ ' + formatoNumero(ventas);
-    document.getElementById('invFinal').textContent = 'S/ ' + formatoNumero(entradas - salidas + ventas);
-}
-
-function calcularInventario() {
-    renderizarProductos();
-    renderizarMovimientosInv();
-    actualizarKpisInventario();
-}
-
-function actualizarInfoDatos() {
-    if (!usuarioActual) return;
-    document.getElementById('infoUsuario').textContent = usuarioActual.username;
-    document.getElementById('infoCreado').textContent = new Date(usuarioActual.creado).toLocaleDateString('es-PE');
-    document.getElementById('infoAsientos').textContent = document.querySelectorAll('#cuerpoLibro tr').length;
-    let count = 0;
-    for (const key in plantillasCache) count++;
-    document.getElementById('infoPlantillas').textContent = count;
-    document.getElementById('infoCorrelativo').textContent = correlativo;
-    try {
-        const raw = localStorage.getItem(getDataKey());
-        const bytes = raw ? new Blob([raw]).size : 0;
-        let espacio = bytes + ' B';
-        if (bytes > 1024 * 1024) espacio = (bytes / (1024 * 1024)).toFixed(2) + ' MB';
-        else if (bytes > 1024) espacio = (bytes / 1024).toFixed(2) + ' KB';
-        document.getElementById('infoEspacio').textContent = espacio;
-    } catch (e) { document.getElementById('infoEspacio').textContent = '--'; }
-}
+// Eventos de escaneo
+document.addEventListener('DOMContentLoaded', () => {
+    const input = document.getElementById('scanFileInput');
+    const cam = document.getElementById('scanCameraInput');
+    const drop = document.getElementById('scanDropZone');
+    if (input) input.addEventListener('change', e => { if (e.target.files[0]) procesarArchivo(e.target.files[0]); });
+    if (cam) cam.addEventListener('change', e => { if (e.target.files[0]) procesarArchivo(e.target.files[0]); });
+    if (drop) {
+        drop.addEventListener('dragover', e => { e.preventDefault(); drop.classList.add('dragover'); });
+        drop.addEventListener('dragleave', () => drop.classList.remove('dragover'));
+        drop.addEventListener('drop', e => {
+            e.preventDefault(); drop.classList.remove('dragover');
+            if (e.dataTransfer.files[0]) procesarArchivo(e.dataTransfer.files[0]);
+        });
+    }
+});
 
 function calcularBalance317() {
     const tbody = document.getElementById('cuerpoBalance317');
@@ -2727,8 +2807,30 @@ function renderizarPCGE() {
 
 function filtrarPCGE() { renderizarPCGE(); }
 
+function actualizarInfoDatos() {
+    if (!usuarioActual) return;
+    document.getElementById('infoUsuario').textContent = usuarioActual.username;
+    document.getElementById('infoCreado').textContent = new Date(usuarioActual.creado).toLocaleDateString('es-PE');
+    document.getElementById('infoAsientos').textContent = document.querySelectorAll('#cuerpoLibro tr').length;
+    let count = 0;
+    for (const key in plantillasCache) count++;
+    document.getElementById('infoPlantillas').textContent = count;
+    document.getElementById('infoCorrelativo').textContent = correlativo;
+    try {
+        const raw = localStorage.getItem(getDataKey());
+        const bytes = raw ? new Blob([raw]).size : 0;
+        let espacio = bytes + ' B';
+        if (bytes > 1024 * 1024) espacio = (bytes / (1024 * 1024)).toFixed(2) + ' MB';
+        else if (bytes > 1024) espacio = (bytes / 1024).toFixed(2) + ' KB';
+        document.getElementById('infoEspacio').textContent = espacio;
+    } catch (e) { document.getElementById('infoEspacio').textContent = '--'; }
+}
+
 window.onload = async function() {
     log('Iniciando...');
+    if (typeof pdfjsLib !== 'undefined') {
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+    }
     await cargarDatosDelServidor();
     const sessionUser = sessionStorage.getItem(SESSION_KEY);
     if (sessionUser) {
