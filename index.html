@@ -996,52 +996,102 @@ async function cambiarTema(tema) { if (!usuarioActual) return; aplicarTema(tema)
 function inicializarFechaOperacion() { const hoy = new Date(); const yyyy = hoy.getFullYear(); const mm = String(hoy.getMonth() + 1).padStart(2, '0'); const dd = String(hoy.getDate()).padStart(2, '0'); document.getElementById('txtFechaOperacion').value = `${yyyy}-${mm}-${dd}`; }
 function formatearFecha(fechaISO) { if (!fechaISO) return ''; const partes = fechaISO.split('-'); if (partes.length !== 3) return fechaISO; return `${partes[2]}/${partes[1]}/${partes[0]}`; }
 
+/* ============================================================
+   CARGA MASIVA DE PLANTILLAS (MEJORADA SEGÚN FORMATO IMAGEN)
+   ============================================================ */
 async function cargarPlantillasDesdeTabla() {
     if (usuarioActual.rol !== 'admin') { alert('Solo el administrador.'); return; }
     const txt = document.getElementById('txtTablaPlantillas').value.trim();
     if (!txt) { alert('Pega primero las filas de la tabla.'); return; }
+
+    // Dividir por saltos de línea y limpiar
     const lineas = txt.split(/\r?\n/).map(l => l.trim()).filter(l => l !== '');
     if (lineas.length === 0) { alert('No hay filas válidas.'); return; }
+
+    // Detectar separador (TAB, | o ;)
     let sep = '\t';
-    if (lineas[0].indexOf('\t') === -1) { if (lineas[0].indexOf('|') !== -1) sep = '|'; else if (lineas[0].indexOf(';') !== -1) sep = ';'; }
-    const grupos = {}; let filasLeidas = 0, filasInvalidas = 0;
+    const primera = lineas[0];
+    if (primera.indexOf('\t') === -1) {
+        if (primera.indexOf('|') !== -1) sep = '|';
+        else if (primera.indexOf(';') !== -1) sep = ';';
+    }
+
+    const grupos = {}; // { nombrePlantilla: [lineas...] }
+    let filasLeidas = 0, filasInvalidas = 0;
+
     lineas.forEach((linea, idx) => {
+        // Ignorar encabezado (primera fila si contiene "boton" o "nombre")
         if (idx === 0 && /^(bot[oó]n|nombre)/i.test(linea)) return;
+
         const partes = linea.split(sep).map(p => p.trim());
         if (partes.length < 5) { filasInvalidas++; return; }
+
         const [nombreRaw, codigoRaw, descRaw, tipoRaw, valorRaw] = partes;
-        const nombre = nombreRaw.toUpperCase().trim(), codigo = codigoRaw.trim(), desc = descRaw.trim();
-        const tipo = tipoRaw.toUpperCase().trim(), valor = valorRaw.toUpperCase().trim();
+        const nombre = nombreRaw.toUpperCase().trim();
+        const codigo = codigoRaw.trim();
+        const desc = descRaw.trim();
+        const tipo = tipoRaw.toUpperCase().trim();
+        const valor = valorRaw.toUpperCase().trim();
+
+        // Validaciones
         if (!nombre || !codigo) { filasInvalidas++; return; }
         if (tipo !== 'DEBE' && tipo !== 'HABER') { filasInvalidas++; return; }
         if (!['BASE','IGV','TOTAL'].includes(valor)) { filasInvalidas++; return; }
+
+        // Agrupar por nombre de plantilla
         if (!grupos[nombre]) grupos[nombre] = [];
-        grupos[nombre].push({ codigo, desc, tipo: tipo.toLowerCase(), valor: valor.toLowerCase() });
+        grupos[nombre].push({
+            codigo,
+            desc,
+            tipo: tipo.toLowerCase(),
+            valor: valor.toLowerCase()
+        });
         filasLeidas++;
     });
+
     const nombresGrupos = Object.keys(grupos);
-    if (nombresGrupos.length === 0) { alert('No se detectaron plantillas válidas.'); return; }
+    if (nombresGrupos.length === 0) {
+        alert('No se detectaron plantillas válidas. Revisa el formato (5 columnas: Nombre | Código | Descripción | Tipo | Valor).');
+        return;
+    }
+
     let creadas = 0, actualizadas = 0;
+
     nombresGrupos.forEach(nombre => {
         const lineasPlantilla = grupos[nombre];
+        // Buscar si ya existe una plantilla con ese nombre
         let keyExistente = null;
-        for (const k in plantillasCache) { if (plantillasCache[k].nombre === nombre) { keyExistente = k; break; } }
+        for (const k in plantillasCache) {
+            if (plantillasCache[k].nombre === nombre) { keyExistente = k; break; }
+        }
         const key = keyExistente || ("custom_" + Date.now() + "_" + Math.random().toString(36).slice(2, 7));
-        plantillasCache[key] = { nombre: nombre, custom: true, lineas: lineasPlantilla };
-        if (keyExistente) actualizadas++; else creadas++;
+        plantillasCache[key] = {
+            nombre: nombre,
+            custom: true,
+            lineas: lineasPlantilla
+        };
+        if (keyExistente) actualizadas++;
+        else creadas++;
     });
+
     const ok = await guardarTodoEnServidor();
     if (ok) {
         localStorage.setItem(CACHE_KEY, JSON.stringify({ usuarios: usuariosCache, plantillas: plantillasCache }));
-        cargarComboBoxPlantillas(); renderizarCardsTipo();
+        cargarComboBoxPlantillas();
+        renderizarCardsTipo();
+
         const status = document.getElementById('tablaPlantillasStatus');
-        status.style.display = 'block'; status.style.background = '#dff6dd'; status.style.color = '#107c10';
+        status.style.display = 'block';
+        status.style.background = '#dff6dd';
+        status.style.color = '#107c10';
         status.innerHTML = `✅ Cargadas: <strong>${nombresGrupos.length}</strong> plantillas (${creadas} nuevas, ${actualizadas} actualizadas) · ${filasLeidas} filas válidas${filasInvalidas > 0 ? ` · ${filasInvalidas} filas ignoradas` : ''}`;
-        alert(`✅ ${nombresGrupos.length} plantillas cargadas. Ya están en el combo de Movimiento.`);
+        alert(`✅ ${nombresGrupos.length} plantillas cargadas. Ya están disponibles en el combo de Movimiento.`);
     } else {
         const status = document.getElementById('tablaPlantillasStatus');
-        status.style.display = 'block'; status.style.background = '#fde7e9'; status.style.color = '#a80000';
-        status.innerHTML = '❌ No se pudieron guardar.';
+        status.style.display = 'block';
+        status.style.background = '#fde7e9';
+        status.style.color = '#a80000';
+        status.innerHTML = '❌ No se pudieron guardar. Revisa la consola.';
     }
 }
 
