@@ -509,25 +509,36 @@ footer{padding:30px 0;background:#070707;color:#777;font-size:13px}
 .live-rating{
   display:flex;
   align-items:center;
-  justify-content:flex-end;
-  gap:8px;
-  margin-bottom:10px;
-  padding-right:4px;
+  justify-content:center;
+  gap:10px;
+  margin-bottom:56px;
+  padding:0 2px;
 }
 .live-rating-outside{
   width:100%;
 }
 .live-rating .stars{
   color:#ffd21c;
-  font-size:18px;
-  letter-spacing:2px;
+  font-size:34px;
+  letter-spacing:6px;
   line-height:1;
-  text-shadow:0 0 10px rgba(255,210,28,.25);
+  text-shadow:0 0 14px rgba(255,210,28,.35);
 }
 .live-rating span:last-child{
   color:#aaa;
   font-size:10px;
   font-weight:700;
+}
+.live-rating span.premium-label{
+  padding:4px 9px;
+  border-radius:16px;
+  background:#ffd21c;
+  color:#000;
+  font-size:9px;
+  font-weight:900;
+  text-transform:uppercase;
+  letter-spacing:.5px;
+  white-space:nowrap;
 }
 
 </style>
@@ -559,7 +570,7 @@ footer{padding:30px 0;background:#070707;color:#777;font-size:13px}
     <div>
       <div class="live-rating live-rating-outside">
         <div class="stars">★★★★★</div>
-        <span>5.0</span>
+        <span class="premium-label">Servicio Premium</span>
       </div>
       <div class="dashboard map-dashboard">
       <div class="dash-top">
