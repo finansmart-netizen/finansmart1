@@ -136,7 +136,6 @@ h2{font-size:clamp(32px,4vw,50px);line-height:1.1;letter-spacing:-1.5px;margin-b
 .price-box li::before{content:"✓";font-weight:900;color:#c29a00;margin-right:10px}
 footer{padding:30px 0;background:#070707;color:#777;font-size:13px}
 .footer{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
-
 .map-dashboard{padding:14px}
 .map{
   height:390px;border-radius:13px;position:relative;overflow:hidden;
@@ -195,7 +194,6 @@ footer{padding:30px 0;background:#070707;color:#777;font-size:13px}
 .tracking-info div{background:#191919;border-radius:9px;padding:11px 12px}
 .tracking-info small{display:block;color:#777;font-size:9px}
 .tracking-info strong{font-size:15px;display:block;margin-top:2px}
-
 @media(max-width:850px){
   nav{display:none}
   .hero-grid{grid-template-columns:1fr;padding:60px 0}
@@ -214,7 +212,6 @@ footer{padding:30px 0;background:#070707;color:#777;font-size:13px}
 </style>
 </head>
 <body>
-
 <header>
   <div class="container nav">
     <a href="#" class="logo">PEDIDOS<span>PRO</span></a>
@@ -226,26 +223,23 @@ footer{padding:30px 0;background:#070707;color:#777;font-size:13px}
     <a class="btn btn-yellow" href="#comprar">Comprar ahora</a>
   </div>
 </header>
-
 <main>
 <section class="hero">
   <div class="container hero-grid">
     <div>
       <div class="badge">Sistema de Seguimiento de Pedidos</div>
-      <h1>Analiza el Seguimiento de tus Pedidos<br><span>e Indica al Cliente Estado de su Pedido</span></h1>
-      <p>Visualiza tus pedidos, sigue su recorrido y visualiza desde su salida hasta su llegada hasta el cliente. Todo desde un solo sistema.</p>
+      <h1>Controla el seguimiento de tus pedidos<br><span>y avisa al cliente en cada etapa</span></h1>
+      <p>Visualiza el estado, la ruta y el avance de cada pedido desde que sale hasta que llega al cliente. Todo en un solo sistema.</p>
       <div class="actions">
         <a class="btn btn-yellow" href="#comprar">Quiero el sistema</a>
         <a class="btn btn-outline" href="#funciones">Ver funciones</a>
       </div>
     </div>
-
     <div class="dashboard map-dashboard">
       <div class="dash-top">
         <div class="dash-title"><span class="dot"></span>Seguimiento en vivo</div>
         <div style="color:#aaa;font-size:12px">PED-1048</div>
       </div>
-
       <div class="map">
         <div class="map-grid"></div>
         <div class="road r1"></div>
@@ -253,27 +247,22 @@ footer{padding:30px 0;background:#070707;color:#777;font-size:13px}
         <div class="road r3"></div>
         <div class="road r4"></div>
         <div class="road r5"></div>
-
         <div class="route"></div>
         <div class="route-dot d1"></div>
         <div class="route-dot d2"></div>
         <div class="route-dot d3"></div>
-
         <div class="map-pin warehouse">▣</div>
         <div class="map-pin rider">●</div>
         <div class="map-pin client">⌂</div>
-
         <div class="map-label label1">Almacén</div>
         <div class="map-label label2">Repartidor</div>
         <div class="map-label label3">Cliente</div>
-
         <div class="map-card">
           <strong>Pedido en camino</strong>
           <span>Entrega estimada: <b>12:35 PM</b></span>
           <span class="live"><i></i> Ubicación actualizada</span>
         </div>
       </div>
-
       <div class="tracking-info">
         <div><small>ESTADO</small><strong class="yellow">En ruta</strong></div>
         <div><small>RECORRIDO</small><strong>8.4 km</strong></div>
@@ -282,7 +271,6 @@ footer{padding:30px 0;background:#070707;color:#777;font-size:13px}
     </div>
   </div>
 </section>
-
 <section class="section light" id="funciones">
   <div class="container">
     <div class="center">
@@ -290,7 +278,6 @@ footer{padding:30px 0;background:#070707;color:#777;font-size:13px}
       <h2>Monitorea tus pedidos hasta la entrega</h2>
       <p class="subtitle">Consulta el recorrido, ubicación y estado de cada pedido para saber exactamente qué está pasando.</p>
     </div>
-
     <div class="features">
       <div class="card">
         <div class="icon">01</div>
@@ -325,7 +312,6 @@ footer{padding:30px 0;background:#070707;color:#777;font-size:13px}
     </div>
   </div>
 </section>
-
 <section class="section" style="background:#0d0d0d;border-top:1px solid #242424;border-bottom:1px solid #242424;">
   <div class="container">
     <div class="center">
@@ -352,7 +338,6 @@ footer{padding:30px 0;background:#070707;color:#777;font-size:13px}
     </div>
   </div>
 </section>
-
 <section class="section" id="como-funciona">
   <div class="container">
     <div class="center">
@@ -368,21 +353,18 @@ footer{padding:30px 0;background:#070707;color:#777;font-size:13px}
     </div>
   </div>
 </section>
-
 <section class="cta" id="comprar">
   <div class="container">
     <h2>Sabe dónde está tu pedido hasta que llegue al cliente</h2>
     <p>Dale a tu negocio una forma moderna de monitorear cada entrega.</p>
     <div class="price-box" id="precio">
       <div class="price-label">ELIGE TU PLAN</div>
-
       <div style="border:2px solid #ffd21c;border-radius:14px;padding:20px;margin:18px 0 14px;text-align:center;">
         <div style="font-size:13px;text-transform:uppercase;font-weight:800;color:#777;">Plan Mensual</div>
         <div class="price">$50 <small>mensuales</small></div>
         <div style="font-size:14px;font-weight:800;color:#b08b00;margin-bottom:14px;">Paga en tu moneda</div>
         <a class="btn btn-yellow" style="width:100%" href="https://pay.hotmart.com/F69496861W?off=m9qebb8i&bid=1791219764896" target="_blank" rel="noopener">Pagar $50 Mensual</a>
       </div>
-
       <div style="border:2px solid #ffd21c;border-radius:14px;padding:20px;margin:14px 0 20px;text-align:center;">
         <div style="font-size:13px;text-transform:uppercase;font-weight:800;color:#777;">Plan Anual</div>
         <div class="price">$299 <small>anual</small></div>
@@ -402,13 +384,11 @@ footer{padding:30px 0;background:#070707;color:#777;font-size:13px}
   </div>
 </section>
 </main>
-
 <footer>
   <div class="container footer">
     <div>© 2026 PEDIDOSPRO — Sistema de Seguimiento de Pedidos</div>
     <div>Monitoreo • Ruta • Entrega</div>
   </div>
 </footer>
-
 </body>
 </html>
